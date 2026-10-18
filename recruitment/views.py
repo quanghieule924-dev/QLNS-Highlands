@@ -1,4 +1,4 @@
 from django.shortcuts import render
 
-# Create your views here.
-ấdasdasdasdádasdas d
+# Create your views here
+asd
