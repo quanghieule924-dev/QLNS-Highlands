@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Tổng quan Tuyển dụng</title>
+    <!-- Nhúng Tailwind CSS qua CDN (Chỉ dùng để test) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Thêm thư viện FontAwesome để hiển thị các Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #F8F9FA; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar Trái -->
+    <aside class="w-64 bg-white border-r flex flex-col h-full">
+        <div class="p-4 flex items-center gap-3 border-b">
+            <!-- ĐÃ SỬA: Thay vòng tròn đỏ "HL" bằng Logo Highlands thật -->
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Highlands_Coffee_logo.svg/1024px-Highlands_Coffee_logo.svg.png" alt="Highlands Logo" class="w-10 h-10 object-contain">
+            <div>
+                <h1 class="font-bold text-red-600">HIGHLANDS</h1>
+                <p class="text-xs text-gray-500">COFFEE - HRM</p>
+            </div>
+        </div>
+        <div class="p-4">
+            <div class="bg-red-50 text-red-700 text-sm p-2 rounded mb-4 font-semibold">
+                📍 Chi nhánh hiện tại<br>
+                <span class="text-xs text-gray-600 font-normal">258 Bạch Đằng, Đà Nẵng</span>
+            </div>
+
+            <!-- ĐÃ SỬA: Menu thay bằng thẻ <a> để có thể click chuyển trang -->
+            <div class="space-y-2 text-sm text-gray-700 flex flex-col">
+                <a href="#" class="p-2 hover:bg-gray-100 rounded cursor-pointer block">Tổng quan</a>
+                <!-- Link của trang Tuyển dụng hiện tại -->
+                <a href="/tuyen-dung/tong-quan/" class="p-2 bg-red-600 text-white rounded cursor-pointer font-semibold shadow-sm block">Tuyển dụng</a>
+                <a href="#" class="p-2 hover:bg-gray-100 rounded cursor-pointer block">Đào tạo</a>
+                <a href="#" class="p-2 hover:bg-gray-100 rounded cursor-pointer block">Hợp đồng & Phúc lợi</a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Phải -->
+    <main class="flex-1 flex flex-col h-full overflow-y-auto">
+        <!-- Header -->
+        <header class="bg-white border-b p-4 flex justify-between items-center">
+            <div class="text-sm text-gray-500">Nhân sự > <span class="font-semibold text-black">Tuyển dụng</span></div>
+            <div class="flex gap-4">
+                <button class="border px-3 py-1 text-sm rounded text-gray-600">Cập nhật hôm nay</button>
+            </div>
+        </header>
+
+        <!-- Nội dung -->
+        <div class="p-6 max-w-6xl">
+            <div class="flex justify-between items-end mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold mb-1">Tổng quan Tuyển dụng</h2>
+                    <p class="text-gray-500 text-sm">Theo dõi tình hình tuyển dụng và xử lý ứng viên tại chi nhánh</p>
+                </div>
+            </div>
+
+            <!-- 4 Thẻ thống kê (Dữ liệu từ View Django) -->
+            <div class="grid grid-cols-4 gap-4 mb-8">
+                <div class="bg-white p-4 rounded-lg shadow-sm border">
+                    <div class="text-gray-500 text-sm mb-2">Đợt tuyển đang mở</div>
+                    <div class="text-3xl font-bold">{{ open_campaigns_count }}</div>
+                    <div class="text-xs text-red-600 mt-2 border-l-2 border-red-600 pl-2">Đang tiếp nhận hồ sơ</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border">
+                    <div class="text-gray-500 text-sm mb-2">Vị trí đang tuyển</div>
+                    <div class="text-3xl font-bold">{{ hiring_positions_count }}</div>
+                    <div class="text-xs text-red-600 mt-2 border-l-2 border-red-600 pl-2">Đang có nhu cầu tuyển</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border">
+                    <div class="text-gray-500 text-sm mb-2">Hồ sơ chờ xét duyệt</div>
+                    <div class="text-3xl font-bold">{{ pending_applicants_count }}</div>
+                    <div class="text-xs text-red-600 mt-2 border-l-2 border-red-600 pl-2">Cần đánh giá CV</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border">
+                    <div class="text-gray-500 text-sm mb-2">Lịch phỏng vấn sắp tới</div>
+                    <div class="text-3xl font-bold">{{ upcoming_interviews_count }}</div>
+                    <div class="text-xs text-red-600 mt-2 border-l-2 border-red-600 pl-2">Trong 7 ngày tới</div>
+                </div>
+            </div>
+
+            <!-- Chức năng nhanh -->
+            <h3 class="font-bold text-lg mb-4">Chức năng nhanh</h3>
+            <div class="grid grid-cols-3 gap-4">
+
+                <!-- Nút Đăng tin tuyển dụng -->
+                <div class="border-2 border-red-500 bg-red-50 p-4 rounded-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="bg-red-600 text-white p-2 rounded"><i class="fas fa-bullhorn"></i></div>
+                            <h4 class="font-bold">Đăng tin tuyển dụng</h4>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-4">Tạo và quản lý đợt tuyển dụng, vị trí và số lượng cần tuyển</p>
+                    </div>
+                    <!-- ĐÃ SỬA: Đổi thẻ <button> thành thẻ <a> để click đổi trang -->
+                    <!-- Thuộc tính block text-center giúp chữ căn giữa giống như button -->
+                    <a href="/tuyen-dung/dang-tin/" class="block text-center w-full bg-white text-red-600 border border-red-200 py-2 rounded text-sm hover:bg-red-50 transition">Màn hình đăng tin tuyển dụng</a>
+                </div>
+
+                <!-- Nút Hồ sơ ứng viên -->
+                <div class="border bg-white p-4 rounded-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <h4 class="font-bold">Hồ sơ ứng viên</h4>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-4">Xem danh sách và thông tin hồ sơ ứng tuyển</p>
+                    </div>
+                    <!-- ĐÃ SỬA: Đổi thẻ <button> thành thẻ <a> -->
+                    <a href="/tuyen-dung/ho-so/" class="block text-center w-full bg-white border py-2 rounded text-sm hover:bg-gray-50 transition">Danh sách hồ sơ ứng viên</a>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</body>
+</html>
