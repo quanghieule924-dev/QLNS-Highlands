@@ -1,6 +1,6 @@
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
-
+from django.shortcuts import render
 
 class AccountLoginView(LoginView):
     template_name = 'accounts/login.html'
@@ -22,3 +22,6 @@ from django.shortcuts import render
 @login_required
 def dashboard(request):
     return render(request, 'accounts/dashboard.html')
+
+def register_view(request):
+    return render(request, 'accounts/register.html')
