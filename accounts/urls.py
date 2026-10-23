@@ -1,6 +1,6 @@
 
 from django.urls import path
-from .views import AccountLoginView, dashboard
+from .views import AccountLoginView, dashboard, register_view
 
 app_name = 'accounts'
 
@@ -15,5 +15,11 @@ urlpatterns = [
         'dashboard/',
         dashboard,
         name='dashboard'
+    ),
+
+    path(
+        'register/',
+        register_view,
+        name='register'
     ),
 ]
