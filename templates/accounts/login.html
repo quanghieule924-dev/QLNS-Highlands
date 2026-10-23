@@ -1,0 +1,42 @@
+{% load static %}
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đăng nhập | HRM Highlands</title>
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+  <header class="site-header"><div class="header-inner">
+    <a href="/" class="brand" aria-label="HRM Highlands - Trang chủ"><span class="brand-mark">☕</span><strong>HRM</strong><span class="brand-copy"><b>HIGHLANDS COFFEE</b><small>Hệ thống quản lý nhân sự</small></span></a>
+    <nav class="main-nav" aria-label="Điều hướng chính"><a href="/">Trang chủ</a><span>Tuyển dụng</span><span>Giới thiệu</span></nav>
+    <div class="header-right"><span>Trợ giúp</span><a class="active" href="{% url 'accounts:login' %}">Đăng nhập</a></div>
+  </div></header>
+  <main class="page"><div class="page-inner">
+    <div class="breadcrumbs"><a href="/">Trang chủ</a><span>/</span><span>Đăng nhập</span></div>
+    <div class="content-grid">
+      <section class="intro" aria-label="Giới thiệu hệ thống">
+        <h1>Chào mừng đến với HRM</h1>
+        <p class="lead">Quản lý nhân sự hiệu quả, minh bạch và thuận tiện.</p>
+        <img class="intro-art" src="{% static 'images/hrm-illustration.svg' %}" alt="Minh họa nhân sự và quy trình làm việc">
+        <ul class="benefits"><li>Quản lý hồ sơ nhân viên</li><li>Theo dõi hợp đồng và phúc lợi</li><li>Phân ca, chấm công và tính lương</li></ul>
+      </section>
+      <section class="login-card" aria-labelledby="login-heading">
+        <h2 id="login-heading">Đăng nhập</h2>
+        <p class="subtitle">Đăng nhập vào hệ thống quản lý nhân sự</p>
+        {% if form.non_field_errors %}<div class="form-error" role="alert">Tên đăng nhập hoặc mật khẩu không đúng. Vui lòng thử lại.</div>{% endif %}
+        <form method="post" action="{% url 'accounts:login' %}">
+          {% csrf_token %}
+          {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+          <div class="field"><label for="id_username">Tên đăng nhập</label><input type="text" id="id_username" name="username" value="{{ form.username.value|default_if_none:'' }}" placeholder="Nhập tên đăng nhập" autocomplete="username" required autofocus></div>
+          <div class="field"><label for="id_password">Mật khẩu</label><div class="password-wrap"><input type="password" id="id_password" name="password" placeholder="Nhập mật khẩu" autocomplete="current-password" required><button class="eye" type="button" id="toggle-password" aria-label="Hiện mật khẩu" aria-pressed="false">◉</button></div></div>
+          <div class="form-options"><label class="remember"><input type="checkbox" name="remember_me" value="1"> Ghi nhớ đăng nhập</label><span class="forgot" title="Sẽ bổ sung sau">Quên mật khẩu?</span></div>
+          <button class="submit" type="submit">Đăng nhập</button>
+        </form>
+      </section>
+    </div>
+  </div></main>
+  <footer class="site-footer"><div class="footer-inner"><span>© 2026 HRM System</span><div><span>Chính sách bảo mật</span><span>Điều khoản sử dụng</span></div></div></footer>
+  <script>const btn=document.getElementById('toggle-password');const pw=document.getElementById('id_password');btn.addEventListener('click',()=>{const show=pw.type==='password';pw.type=show?'text':'password';btn.setAttribute('aria-label',show?'Ẩn mật khẩu':'Hiện mật khẩu');btn.setAttribute('aria-pressed',String(show));});</script>
+</body></html>
