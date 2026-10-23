@@ -1,28 +1,31 @@
-from django.shortcuts import render
-from .models import Campaign, JobPosition, Applicant, Interview
-from datetime import timedelta
 from django.utils import timezone
+from employees.models import NhanVien  # Import bảng Nhân viên chung của nhóm
+from .models import UngVien
 
 
-def recruitment_overview(request):
-    # Lấy các con số thống kê cho các Card
-    open_campaigns_count = Campaign.objects.filter(is_open=True).count()
-    hiring_positions_count = JobPosition.objects.filter(is_hiring=True).count()
-    pending_applicants_count = Applicant.objects.filter(status='pending').count()
+def xac_nhan_nhan_viec(request, ma_ung_vien_dau):
+    # 1. Lấy thông tin ứng viên vừa đậu
+    ung_vien = UngVien.objects.get(ma_ung_vien=ma_ung_vien_dau)
 
-    # Tính số lượng lịch phỏng vấn trong 7 ngày tới
-    now = timezone.now()
-    next_7_days = now + timedelta(days=7)
-    upcoming_interviews_count = Interview.objects.filter(
-        scheduled_time__gte=now,
-        scheduled_time__lte=next_7_days
-    ).count()
+    # 2. Tạo mã nhân viên mới (Ví dụ: Thêm tiền tố NV vào trước mã ứng viên)
+    ma_nhan_vien_moi = f"NV_{ung_vien.ma_ung_vien}"
 
-    context = {
-        'open_campaigns_count': open_campaigns_count,
-        'hiring_positions_count': hiring_positions_count,
-        'pending_applicants_count': pending_applicants_count,
-        'upcoming_interviews_count': upcoming_interviews_count,
-    }
+    # 3. Tạo record Nhân viên mới trên database dùng chung
+    NhanVien.objects.create(
+        manv=ma_nhan_vien_moi,
+        ho_ten=ung_vien.ho_ten,
+        ngay_sinh=ung_vien.ngay_sinh,
+        sdt=ung_vien.sdt,
+        email=ung_vien.email,
+        gioi_tinh=ung_vien.gioi_tinh,
+        vi_tri=ung_vien.vi_tri,
+        dia_chi=ung_vien.dia_chi,
+        trang_thai="Thử việc",  # Mặc định là Thử việc khi mới vào
+        ngay_vao_lam=timezone.now().date()
+    )
 
-    return render(request, 'recruitment/overview.html', context)
+    # 4. Cập nhật trạng thái ứng viên để không bị lọc lại
+    ung_vien.trang_thai = "Đã thành nhân viên"
+    ung_vien.save()
+
+    # ... trả về thông báo thành công cho giao diện ...
