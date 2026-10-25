@@ -1,0 +1,267 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}HRM System | Highlands Coffee{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <link rel="stylesheet" href="{% static 'css/internal.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    {% if preview_mode or request.user.is_authenticated and request.user.role != 'candidate' %}
+
+        <!-- THANH NGANG -->
+        <header class="internal-header">
+
+            <a href="{% url 'accounts:dashboard' %}" class="internal-brand">
+                <span class="brand-logo">H</span>
+
+                <span class="brand-text">
+                    <strong>HRM System</strong>
+                    <small>HIGHLANDS COFFEE</small>
+                </span>
+            </a>
+
+            <div class="header-search">
+                <span class="search-icon">⌕</span>
+
+                <input
+                    type="search"
+                    name="search"
+                    placeholder="Tìm nhân viên, hợp đồng..."
+                    aria-label="Tìm kiếm"
+                >
+            </div>
+
+            <div class="header-account">
+
+                <button
+                    type="button"
+                    class="notification"
+                    aria-label="Thông báo"
+                >
+                    ♧
+                </button>
+
+                <!-- AVATAR THEO VAI TRO -->
+                <span class="account-avatar">
+                    {% if request.user.role == 'admin' %}
+                        QL
+                    {% else %}
+                        NV
+                    {% endif %}
+                </span>
+
+                <!-- THONG TIN TAI KHOAN -->
+                <div class="account-info">
+                    <strong>
+                        {{ request.user.get_full_name|default:request.user.username }}
+                    </strong>
+
+                    <small>
+                        {% if request.user.role == 'admin' %}
+                            QUẢN LÝ
+                        {% else %}
+                            NHÂN VIÊN
+                        {% endif %}
+                    </small>
+                </div>
+
+                <!-- DANG XUAT -->
+                <form method="post" action="{% url 'accounts:logout' %}">
+                    {% csrf_token %}
+
+                    <button type="submit" class="logout-button">
+                        Đăng xuất
+                    </button>
+                </form>
+
+            </div>
+        </header>
+
+        <!-- SIDEBAR -->
+        <aside class="internal-sidebar">
+
+            <div class="branch-info">
+                <strong>HIGHLANDS COFFEE</strong>
+                <p>Chi nhánh 258 Bạch Đằng</p>
+                <small>● Hệ thống quản lý nhân sự</small>
+            </div>
+
+            <nav class="sidebar-menu">
+
+                <!-- MENU QUAN LY: ADMIN -->
+                {% if request.user.role == 'admin' %}
+
+                    <a
+                        href="#"
+                        class="{% if active_menu == 'dashboard' %}active{% endif %}"
+                    >
+                        <span class="menu-icon">▦</span>
+                        <span>Tổng quan</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        class="{% if active_menu == 'employees' %}active{% endif %}"
+                    >
+                        <span class="menu-icon">♙</span>
+                        <span>Quản lý nhân viên</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        class="{% if active_menu == 'recruitment' %}active{% endif %}"
+                    >
+                        <span class="menu-icon">♧</span>
+                        <span>Tuyển dụng</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        class="{% if active_menu == 'contracts' %}active{% endif %}"
+                    >
+                        <span class="menu-icon">▤</span>
+                        <span>Hợp đồng &amp; Phúc lợi</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        class="{% if active_menu == 'scheduling' %}active{% endif %}"
+                    >
+                        <span class="menu-icon">▦</span>
+                        <span>Phân ca làm việc</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        class="{% if active_menu == 'attendance' %}active{% endif %}"
+                    >
+                        <span class="menu-icon">◷</span>
+                        <span>Chấm công</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        class="{% if active_menu == 'payroll' %}active{% endif %}"
+                    >
+                        <span class="menu-icon">▤</span>
+                        <span>Quản lý lương</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        class="{% if active_menu == 'training' %}active{% endif %}"
+                    >
+                        <span class="menu-icon">♧</span>
+                        <span>Đào tạo</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        class="{% if active_menu == 'reports' %}active{% endif %}"
+                    >
+                        <span class="menu-icon">▥</span>
+                        <span>Báo cáo thống kê</span>
+                    </a>
+
+                <!-- MENU NHAN VIEN -->
+                {% elif request.user.role == 'employee' %}
+
+                    <a
+                        href="#"
+                        class="{% if active_menu == 'dashboard' %}active{% endif %}"
+                    >
+                        <span class="menu-icon">▦</span>
+                        <span>Tổng quan</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        class="{% if active_menu == 'employees' %}active{% endif %}"
+                    >
+                        <span class="menu-icon">♙</span>
+                        <span>Hồ sơ của tôi</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        class="{% if active_menu == 'contracts' %}active{% endif %}"
+                    >
+                        <span class="menu-icon">▤</span>
+                        <span>Hợp đồng &amp; Phúc lợi</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        class="{% if active_menu == 'scheduling' %}active{% endif %}"
+                    >
+                        <span class="menu-icon">▦</span>
+                        <span>Lịch làm việc</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        class="{% if active_menu == 'attendance' %}active{% endif %}"
+                    >
+                        <span class="menu-icon">◷</span>
+                        <span>Chấm công</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        class="{% if active_menu == 'payroll' %}active{% endif %}"
+                    >
+                        <span class="menu-icon">▤</span>
+                        <span>Phiếu lương</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        class="{% if active_menu == 'training' %}active{% endif %}"
+                    >
+                        <span class="menu-icon">♧</span>
+                        <span>Đào tạo</span>
+                    </a>
+
+                {% endif %}
+
+            </nav>
+
+            <div class="sidebar-note">
+                <strong>Không gian chi nhánh</strong>
+                <p>Theo dõi nhân sự và hoạt động tại chi nhánh của bạn.</p>
+            </div>
+
+        </aside>
+
+        <!-- NOI DUNG RIENG CUA TUNG APP -->
+        <main class="internal-main">
+            {% block content %}{% endblock %}
+        </main>
+
+    {% else %}
+
+        <!-- KHONG CO QUYEN TRUY CAP -->
+        <main class="internal-access-denied">
+            <h2>Bạn không có quyền truy cập</h2>
+            <p>Vui lòng đăng nhập bằng tài khoản nội bộ.</p>
+
+            <a href="{% url 'accounts:login' %}">Đăng nhập</a>
+            <a href="{% url 'home' %}">Về trang chủ</a>
+        </main>
+
+    {% endif %}
+
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>

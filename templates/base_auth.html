@@ -1,0 +1,39 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}HRM Highlands{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="public-layout auth-layout">
+
+    {% include 'partials/public_header.html' %}
+
+    <main class="page">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <span>© 2026 HRM Highlands Coffee</span>
+
+            <div>
+                <span>Chính sách bảo mật</span>
+                <span>Điều khoản sử dụng</span>
+            </div>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>

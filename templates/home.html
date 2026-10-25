@@ -1,6 +1,74 @@
+
 {% extends 'base.html' %}
-{% block title %}Trang chủ | Highlands{% endblock %}
+{% load static %}
+
+{% block title %}Trang chủ | HRM Highlands{% endblock %}
+
 {% block content %}
-    <h2>Chào mừng đến với hệ thống quản lý nhân sự Highlands</h2>
-    <p>Quản lý nhân viên, lịch làm việc, chấm công và tiền lương trên một nền tảng.</p>
+<div class="home-page">
+
+    <div class="home-breadcrumb">
+        <a href="{% url 'home' %}">Trang chủ</a>
+        <span>/</span>
+        <span>HRM Highlands</span>
+    </div>
+
+    <section class="home-hero">
+        <div class="home-intro">
+            <p class="home-eyebrow">HIGHLANDS COFFEE</p>
+
+            <h1>Chào mừng đến với HRM Highlands</h1>
+
+            <p class="home-subtitle">
+                Quản lý nhân sự hiệu quả, minh bạch và thuận tiện.
+            </p>
+
+            <p class="home-description">
+                Hệ thống hỗ trợ quản lý hồ sơ nhân viên, lịch làm việc,
+                chấm công, hợp đồng và tiền lương trên cùng một nền tảng.
+            </p>
+
+            <div class="home-actions">
+                <a href="{% url 'accounts:login' %}"
+                   class="home-button">
+                    Đăng nhập hệ thống
+                </a>
+
+                <a href="#about" class="home-link">
+                    Tìm hiểu thêm →
+                </a>
+            </div>
+
+            <ul class="home-benefits">
+                <li>Quản lý hồ sơ nhân viên</li>
+                <li>Theo dõi hợp đồng và phúc lợi</li>
+                <li>Phân ca, chấm công và tính lương</li>
+            </ul>
+        </div>
+
+        <div class="home-illustration">
+            <img
+                src="{% static 'images/hrm-illustration.svg' %}"
+                alt="Minh họa quản lý nhân sự"
+            >
+        </div>
+    </section>
+
+    <section class="home-about" id="about">
+        <h2>Quản lý nhân sự trên một nền tảng</h2>
+        <p>
+            Hỗ trợ theo dõi thông tin nhân viên và các nghiệp vụ
+            nhân sự cơ bản của Highlands Coffee.
+        </p>
+    </section>
+
+    <section class="home-careers" id="careers">
+        <h2>Cơ hội nghề nghiệp</h2>
+        <p>
+            Tìm hiểu thông tin tuyển dụng và các cơ hội làm việc
+            tại Highlands Coffee.
+        </p>
+    </section>
+
+</div>
 {% endblock %}

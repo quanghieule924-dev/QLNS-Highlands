@@ -1,0 +1,62 @@
+{% extends "base_internal.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/internal_preview.css' %}">
+{% endblock %}
+
+
+{% block title %}Tổng quan quản lý | HRM System{% endblock %}
+
+{% block breadcrumb %}TỔNG QUAN{% endblock %}
+
+{% block page_heading %}Tổng quan{% endblock %}
+
+{% block page_description %}
+Theo dõi nhân sự và các công việc cần xử lý tại chi nhánh Highlands Coffee.
+{% endblock %}
+
+{% block content %}
+<div class="preview-stats">
+    <div class="preview-card">
+        <span>Nhân viên đang làm việc</span>
+        <h2>36</h2>
+        <small>30 toàn thời gian · 6 bán thời gian</small>
+    </div>
+
+    <div class="preview-card">
+        <span>Có mặt hôm nay</span>
+        <h2>28 / 30</h2>
+        <small>Số liệu minh họa</small>
+    </div>
+
+    <div class="preview-card">
+        <span>Hợp đồng sắp hết hạn</span>
+        <h2>7</h2>
+        <small>Trong 30 ngày tới</small>
+    </div>
+
+    <div class="preview-card">
+        <span>Yêu cầu cần xử lý</span>
+        <h2>18</h2>
+        <small>Đang chờ xem xét</small>
+    </div>
+</div>
+
+<section class="preview-panel">
+    <h3>Công việc cần ưu tiên</h3>
+    <div class="preview-row">
+        <span>Duyệt yêu cầu nhân sự</span>
+        <span class="preview-status">Cần xử lý</span>
+    </div>
+    <div class="preview-row">
+        <span>Rà soát hợp đồng sắp hết hạn</span>
+        <span class="preview-status">Ưu tiên</span>
+    </div>
+    <div class="preview-row">
+        <span>Hoàn thiện lịch làm việc</span>
+        <span class="preview-status">Đang thực hiện</span>
+    </div>
+</section>
+{% endblock %}
+

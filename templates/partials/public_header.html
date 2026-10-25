@@ -1,0 +1,29 @@
+
+<header class="site-header">
+    <div class="header-inner">
+        <a href="{% url 'home' %}" class="brand">
+            <span class="brand-mark">H</span>
+
+            <strong>HRM</strong>
+
+            <span class="brand-copy">
+                <b>HIGHLANDS COFFEE</b>
+                <small>Hệ thống quản lý nhân sự</small>
+            </span>
+        </a>
+
+        <nav class="main-nav" aria-label="Điều hướng chính">
+            <a href="{% url 'home' %}">Trang chủ</a>
+            <a href="{% url 'home' %}#careers">Tuyển dụng</a>
+            <a href="{% url 'home' %}#about">Giới thiệu</a>
+        </nav>
+
+        <div class="header-right">
+            <a href="{% url 'accounts:login' %}">Trợ giúp</a>
+            <a class="active" href="{% url 'accounts:login' %}">
+                Đăng nhập
+            </a>
+        </div>
+    </div>
+</header>
+
