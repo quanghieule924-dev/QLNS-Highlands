@@ -1,0 +1,355 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Đăng nhập | HRM Highlands{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Khoảng đệm tự nhiên, thoáng đãng, đẩy footer xuống dưới để phải cuộn nhẹ */
+    .page-inner {
+        width: calc(100% - 64px) !important;
+        max-width: 1300px !important;
+        margin: 0 auto !important;
+        padding: 30px 0 60px !important;
+    }
+
+    /* Đường dẫn breadcrumbs có khoảng cách cân đối */
+    .breadcrumbs {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        margin-bottom: 30px !important;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .breadcrumbs span:last-child {
+        color: #333;
+        font-weight: 600;
+    }
+
+    .breadcrumbs a:hover {
+        color: #8A1A22;
+    }
+
+    /* Bố cục 2 cột hoành tráng, cân đối */
+    .content-grid {
+        display: grid !important;
+        grid-template-columns: 1.15fr 0.85fr !important;
+        gap: 60px !important;
+        align-items: center !important;
+    }
+
+    .intro {
+        min-width: 0;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+
+    .intro h1 {
+        margin: 0 0 25px !important;
+        font-size: 42px !important;
+        line-height: 1.2 !important;
+        font-weight: 800;
+        color: #2e2e2e;
+        letter-spacing: -0.5px;
+    }
+
+    /* Khung chứa ảnh và lợi ích thẳng hàng tuyệt đối */
+    .intro-wrapper {
+        width: 100%;
+        max-width: 540px;
+    }
+
+    /* HIỆU ỨNG HÌNH ẢNH ĐỘNG (KEN BURNS ZOOM LIÊN TỤC) */
+    .intro-art {
+        display: block !important;
+        width: 100% !important;
+        height: 310px !important;
+        object-fit: cover !important;
+        border-radius: 14px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        margin-bottom: 25px !important;
+        animation: imageZoomPulse 12s infinite alternate ease-in-out;
+    }
+
+    @keyframes imageZoomPulse {
+        0% {
+            transform: scale(1);
+        }
+        100% {
+            transform: scale(1.06);
+        }
+    }
+
+    /* Danh sách lợi ích thẳng hàng chuẩn chỉnh với ảnh */
+    .benefits {
+        margin: 0 !important;
+        padding: 0 !important;
+        list-style: none !important;
+        width: 100% !important;
+    }
+
+    .benefits li {
+        display: flex !important;
+        align-items: center !important;
+        gap: 14px !important;
+        margin: 14px 0 !important;
+        font-size: 16px !important;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .benefits li::before {
+        content: "✓";
+        display: grid;
+        place-items: center;
+        width: 22px;
+        height: 22px;
+        flex: 0 0 22px;
+        border: 2px solid #8A1A22;
+        border-radius: 50%;
+        color: #8A1A22;
+        font-size: 12px;
+        font-weight: bold;
+        background-color: rgba(138, 26, 34, 0.05);
+    }
+
+    /* Khung đăng nhập to rộng, sang trọng và nổi bật */
+    .login-card {
+        background: #ffffff !important;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08) !important;
+        padding: 40px 45px !important;
+        font-family: 'Montserrat', sans-serif;
+        width: 100% !important;
+        max-width: 500px !important;
+        justify-self: center !important;
+        border: 1px solid #eee;
+    }
+
+    .login-card h2 {
+        color: #2e2e2e;
+        font-weight: 800;
+        font-size: 30px;
+        margin-bottom: 8px !important;
+    }
+
+    .login-card .subtitle {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 25px !important;
+    }
+
+    .login-card .field {
+        margin-bottom: 20px !important;
+    }
+
+    .login-card .field label {
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+        margin-bottom: 8px !important;
+        display: block;
+    }
+
+    .login-card .field input {
+        width: 100% !important;
+        height: 48px !important;
+        padding: 0 16px !important;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-size: 15px;
+        font-family: 'Montserrat', sans-serif;
+        transition: all 0.3s;
+    }
+
+    .login-card .field input:focus {
+        border-color: #8A1A22;
+        box-shadow: 0 0 0 4px rgba(138, 26, 34, 0.12);
+        outline: none;
+    }
+
+    .login-card .submit {
+        width: 100% !important;
+        height: 48px !important;
+        background-color: #8A1A22;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px !important;
+        font-family: 'Montserrat', sans-serif;
+        transition: background 0.3s, transform 0.2s;
+    }
+
+    .login-card .submit:hover {
+        background-color: #6d131a;
+        transform: translateY(-1px);
+    }
+
+    .login-card .form-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+        margin: 15px 0 20px !important;
+    }
+
+    .login-card .forgot {
+        color: #8A1A22;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .login-card .forgot:hover {
+        text-decoration: underline;
+    }
+
+    .login-card .register-text {
+        text-align: center;
+        margin-top: 20px !important;
+        font-size: 14px;
+        color: #666;
+    }
+
+    .login-card .register-text a {
+        color: #8A1A22;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .login-card .register-text a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-inner">
+    <div class="breadcrumbs">
+        <a href="{% url 'home' %}">Trang chủ</a>
+        <span>/</span>
+        <span>Đăng nhập</span>
+    </div>
+
+    <div class="content-grid">
+        <!-- Phần giới thiệu bên trái với ảnh động sinh động -->
+        <section class="intro">
+            <h1>Chào mừng đến với HRM</h1>
+
+            <div class="intro-wrapper">
+                <img
+                    class="intro-art"
+                    src="{% static 'images/hr-team.jpg' %}"
+                    alt="Minh họa nhân sự"
+                >
+
+                <ul class="benefits">
+                    <li>Quản lý hồ sơ nhân viên</li>
+                    <li>Theo dõi hợp đồng và phúc lợi</li>
+                    <li>Phân ca, chấm công và tính lương</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Form đăng nhập bên phải to rộng -->
+        <section class="login-card">
+            <h2>Đăng nhập</h2>
+            <p class="subtitle">
+                Đăng nhập vào hệ thống quản lý nhân sự
+            </p>
+
+            {% if form.non_field_errors %}
+                <div class="form-error" role="alert" style="color: #d9534f; font-size: 14px; margin-bottom: 15px;">
+                    Tên đăng nhập hoặc mật khẩu không đúng. Vui lòng thử lại.
+                </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'accounts:login' %}">
+                {% csrf_token %}
+
+                {% if next %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                {% endif %}
+
+                <div class="field">
+                    <label for="id_username">Tên đăng nhập</label>
+                    <input
+                        type="text"
+                        id="id_username"
+                        name="username"
+                        value="{{ form.username.value|default_if_none:'' }}"
+                        placeholder="Nhập tên đăng nhập"
+                        autocomplete="username"
+                        required
+                        autofocus
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="id_password">Mật khẩu</label>
+                    <div class="password-wrap" style="position: relative;">
+                        <input
+                            type="password"
+                            id="id_password"
+                            name="password"
+                            placeholder="Nhập mật khẩu"
+                            autocomplete="current-password"
+                            required
+                            style="width: 100%; padding-right: 45px;"
+                        >
+                        <button
+                            class="eye"
+                            type="button"
+                            id="toggle-password"
+                            aria-label="Hiện mật khẩu"
+                            aria-pressed="false"
+                            style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #777; font-size: 16px;"
+                        >◉</button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" name="remember_me" value="1" style="width: 16px; height: 16px;">
+                        Ghi nhớ đăng nhập
+                    </label>
+                    <a href="#" class="forgot">Quên mật khẩu?</a>
+                </div>
+
+                <button class="submit" type="submit">Đăng nhập</button>
+
+                <p class="register-text">
+                    Chưa có tài khoản?
+                    <a href="{% url 'accounts:register' %}">
+                        Đăng ký ngay
+                    </a>
+                </p>
+            </form>
+        </section>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const btn = document.getElementById('toggle-password');
+    const pw = document.getElementById('id_password');
+
+    if (btn && pw) {
+        btn.addEventListener('click', () => {
+            const show = pw.type === 'password';
+            pw.type = show ? 'text' : 'password';
+            btn.setAttribute(
+                'aria-label',
+                show ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'
+            );
+            btn.setAttribute('aria-pressed', String(show));
+        });
+    }
+</script>
+{% endblock %}

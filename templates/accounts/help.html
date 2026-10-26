@@ -1,0 +1,435 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Trợ giúp & Hỗ trợ | HRM Highlands{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Khung tổng thể trang trợ giúp hoành tráng, có chiều sâu */
+    .help-container {
+        max-width: 1380px;
+        margin: 0 auto;
+        padding: 10px 30px 60px 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Hiệu ứng ánh sáng nền mờ ảo sang trọng */
+    .help-container::before {
+        content: '';
+        position: absolute;
+        top: -60px;
+        right: -80px;
+        width: 650px;
+        height: 650px;
+        background: radial-gradient(circle, rgba(138, 26, 34, 0.06) 0%, rgba(255, 255, 255, 0) 70%);
+        z-index: -1;
+    }
+
+    /* Đường dẫn breadcrumbs xích sát lên trên */
+    .breadcrumbs {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: #777;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .breadcrumbs a {
+        color: #8A1A22;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .breadcrumbs a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumbs span:last-child {
+        color: #333;
+        font-weight: 600;
+    }
+
+    /* Tiêu đề & Hero Banner của trang trợ giúp */
+    .help-hero-banner {
+        background: linear-gradient(135deg, #8A1A22 0%, #6d131a 100%);
+        border-radius: 20px;
+        padding: 50px 40px;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 40px;
+        box-shadow: 0 12px 35px rgba(138, 26, 34, 0.25);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .help-hero-banner h1 {
+        font-size: 38px;
+        font-weight: 800;
+        margin-bottom: 12px;
+        letter-spacing: -0.5px;
+    }
+
+    .help-hero-banner p {
+        font-size: 16px;
+        opacity: 0.9;
+        margin-bottom: 30px;
+        max-width: 650px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Ô tìm kiếm thông minh */
+    .help-search-box {
+        max-width: 580px;
+        margin: 0 auto;
+        display: flex;
+        background: #fff;
+        border-radius: 35px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .help-search-box input {
+        flex: 1;
+        border: none;
+        outline: none;
+        padding: 16px 24px;
+        font-size: 15px;
+        font-family: 'Montserrat', sans-serif;
+        color: #333;
+    }
+
+    .help-search-btn {
+        background-color: #FFD43B;
+        color: #2e2e2e;
+        border: none;
+        padding: 0 30px;
+        font-weight: 800;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .help-search-btn:hover {
+        background-color: #ffc400;
+    }
+
+    /* Các chủ đề hỗ trợ chính (Grid 4 cột ấn tượng) */
+    .help-categories-title {
+        font-size: 26px;
+        color: #2e2e2e;
+        font-weight: 800;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .help-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 25px;
+        margin-bottom: 50px;
+    }
+
+    .help-card {
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1.5px solid #f0e6dc;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .help-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(138, 26, 34, 0.15);
+        border-color: #8A1A22;
+    }
+
+    .help-card-img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+    }
+
+    .help-card-body {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .help-card-body h3 {
+        font-size: 18px;
+        color: #2e2e2e;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .help-card-body p {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        flex: 1;
+    }
+
+    .help-link-btn {
+        color: #8A1A22;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: gap 0.2s;
+    }
+
+    .help-link-btn:hover {
+        gap: 10px;
+        text-decoration: underline;
+    }
+
+    /* Phần Câu hỏi thường gặp (FAQ) */
+    .faq-section {
+        margin-bottom: 50px;
+    }
+
+    .faq-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+    }
+
+    .faq-item {
+        background: #fff;
+        padding: 25px;
+        border-radius: 14px;
+        border: 1.5px solid #f0e6dc;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    }
+
+    .faq-item h4 {
+        font-size: 16px;
+        color: #8A1A22;
+        font-weight: 700;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .faq-item h4 i {
+        font-size: 14px;
+        color: #FFD43B;
+        background: #8A1A22;
+        width: 24px;
+        height: 24px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+    }
+
+    .faq-item p {
+        font-size: 14px;
+        color: #555;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* Khung liên hệ HR trực tiếp */
+    .hr-contact-banner {
+        background: linear-gradient(135deg, #FFF9F3 0%, #faeee3 100%);
+        border-radius: 18px;
+        padding: 40px 50px;
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 40px;
+        align-items: center;
+        border: 1.5px solid #ebdcd0;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+
+    .hr-info h3 {
+        font-size: 26px;
+        color: #8A1A22;
+        font-weight: 800;
+        margin-bottom: 12px;
+    }
+
+    .hr-info p {
+        font-size: 15px;
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .hr-card-box {
+        background: #fff;
+        padding: 25px;
+        border-radius: 14px;
+        border: 1.5px solid #ebdcd0;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .hr-card-box .hr-name {
+        font-size: 18px;
+        font-weight: 800;
+        color: #2e2e2e;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .hr-card-box .hr-name i {
+        color: #8A1A22;
+    }
+
+    .hr-card-box .hr-detail {
+        font-size: 14px;
+        color: #555;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .hr-card-box .hr-detail i {
+        color: #8A1A22;
+        width: 20px;
+        text-align: center;
+    }
+
+    .hr-action-btn {
+        margin-top: 5px;
+        background-color: #8A1A22;
+        color: #fff;
+        text-align: center;
+        padding: 12px;
+        border-radius: 8px;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 14px;
+        transition: background 0.3s;
+    }
+
+    .hr-action-btn:hover {
+        background-color: #701318;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="help-container">
+    <!-- Breadcrumbs xích sát lên trên -->
+    <div class="breadcrumbs">
+        <a href="{% url 'home' %}">Trang chủ</a> <span>/</span> <span>Trợ giúp & Hỗ trợ</span>
+    </div>
+
+    <!-- Hero Banner & Ô tìm kiếm -->
+    <div class="help-hero-banner">
+        <h1>Trung Tâm Trợ Giúp HRM Highlands</h1>
+        <p>Giải đáp mọi thắc mắc về quy trình tuyển dụng, nộp hồ sơ, tài khoản đăng nhập, phân ca và tính lương.</p>
+
+        <div class="help-search-box">
+            <input type="text" placeholder="Bạn cần tìm kiếm thông tin gì? (Ví dụ: tuyển dụng, chấm công, mật khẩu...)">
+            <button class="help-search-btn">Tìm kiếm</button>
+        </div>
+    </div>
+
+    <!-- Danh mục hỗ trợ chính với hình ảnh mới đúng chủ đề -->
+    <h2 class="help-categories-title">Danh Mục Hỗ Trợ Trọng Tâm</h2>
+    <div class="help-grid">
+        <!-- 1. Tuyển dụng -->
+        <div class="help-card">
+            <img src="{% static 'images/help-tuyen-dung.jpg' %}" alt="Vấn đề Tuyển dụng" class="help-card-img">
+            <div class="help-card-body">
+                <h3>Vấn Đề Tuyển Dụng</h3>
+                <p>Hướng dẫn nộp hồ sơ, xem thông tin các đợt tuyển dụng mới nhất và theo dõi trạng thái ứng tuyển.</p>
+                <a href="#" class="help-link-btn">Xem chi tiết &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 2. Phân ca, chấm công & lương -->
+        <div class="help-card">
+            <img src="{% static 'images/help-cham-cong.jpg' %}" alt="Phân ca, Chấm công & Lương" class="help-card-img">
+            <div class="help-card-body">
+                <h3>Phân Ca, Chấm Công & Lương</h3>
+                <p>Giải đáp thắc mắc về lịch làm việc theo ca, quy định chấm công hàng ngày và bảng kê lương thưởng.</p>
+                <a href="#" class="help-link-btn">Xem chi tiết &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 3. Quản lý tài khoản & Mật khẩu -->
+        <div class="help-card">
+            <img src="{% static 'images/help-bao-mat.jpg' %}" alt="Quản lý & Quên Mật Khẩu" class="help-card-img">
+            <div class="help-card-body">
+                <h3>Quản Lý & Quên Mật Khẩu</h3>
+                <p>Hướng dẫn đăng nhập hệ thống, khôi phục mật khẩu khi quên và cập nhật thông tin cá nhân bảo mật.</p>
+                <a href="#" class="help-link-btn">Xem chi tiết &rarr;</a>
+            </div>
+        </div>
+
+        <!-- 4. Hợp đồng & Phúc lợi -->
+        <div class="help-card">
+            <img src="{% static 'images/help-phuc-loi.jpg' %}" alt="Hợp Đồng & Phúc Lợi" class="help-card-img">
+            <div class="help-card-body">
+                <h3>Hợp Đồng & Phúc Lợi</h3>
+                <p>Thông tin về các loại hợp đồng lao động, chế độ bảo hiểm xã hội và các quyền lợi dành riêng cho nhân sự.</p>
+                <a href="#" class="help-link-btn">Xem chi tiết &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phần Câu hỏi thường gặp (FAQ) -->
+    <div class="faq-section">
+        <h2 class="help-categories-title">Câu Hỏi Thường Gặp (FAQ)</h2>
+        <div class="faq-grid">
+            <div class="faq-item">
+                <h4><i>?</i> Tôi muốn ứng tuyển vào Highlands thì làm thế nào?</h4>
+                <p>Bạn có thể vào mục <b>Tuyển dụng</b> trên thanh menu để xem thông tin các đợt tuyển dụng mới nhất, sau đó tiến hành đăng ký tài khoản và nộp hồ sơ trực tuyến trực tiếp trên hệ thống.</p>
+            </div>
+            <div class="faq-item">
+                <h4><i>?</i> Tôi lỡ quên mật khẩu đăng nhập hệ thống thì phải làm sao?</h4>
+                <p>Tại khung đăng nhập, bạn bấm vào mục <b>Quên mật khẩu?</b> hoặc liên hệ trực tiếp với bộ phận HR của chúng tôi để được hỗ trợ cấp lại mật khẩu mới nhanh chóng.</p>
+            </div>
+            <div class="faq-item">
+                <h4><i>?</i> Tôi có thể xem lịch phân ca làm việc và bảng lương ở đâu?</h4>
+                <p>Sau khi đăng nhập thành công bằng tài khoản nhân viên, bạn có thể dễ dàng theo dõi chi tiết lịch phân ca, lịch sử chấm công cũng như bảng lương chi tiết hàng tháng tại trang quản lý cá nhân.</p>
+            </div>
+            <div class="faq-item">
+                <h4><i>?</i> Sau khi nộp hồ sơ tuyển dụng bao lâu thì có kết quả?</h4>
+                <p>Bộ phận nhân sự sẽ tiếp nhận và sàng lọc hồ sơ trong vòng 3-5 ngày làm việc. Nếu hồ sơ phù hợp, đội ngũ tuyển dụng sẽ liên hệ trực tiếp với bạn qua điện thoại hoặc email.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Khung liên hệ HR trực tiếp -->
+    <div class="hr-contact-banner">
+        <div class="hr-info">
+            <h3>Cần Hỗ Trợ Trực Tiếp Từ Bộ Phận HR?</h3>
+            <p>Nếu bạn là ứng viên có thắc mắc về đợt tuyển dụng hoặc nhân sự cần giải đáp về chế độ, công lương, hãy liên hệ trực tiếp với chuyên viên nhân sự phụ trách của chúng tôi để được hỗ trợ tận tình nhất.</p>
+        </div>
+
+        <div class="hr-card-box">
+            <div class="hr-name">
+                <i class="fa-solid fa-user-tie"></i> Lê Quang Hiếu
+            </div>
+            <div class="hr-detail">
+                <i class="fa-solid fa-phone"></i> 0837824357
+            </div>
+            <div class="hr-detail">
+                <i class="fa-solid fa-envelope"></i> hieu.lq@highlandscoffee.com.vn
+            </div>
+            <a href="tel:0837824357" class="hr-action-btn">Gọi ngay cho HR</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

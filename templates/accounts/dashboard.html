@@ -1,0 +1,27 @@
+
+{% extends "base_internal.html" %}
+
+{% block title %}Tổng quan | HRM System{% endblock %}
+
+{% block content %}
+
+{% if role == 'admin' %}
+    <!-- Nội dung tổng quan quản lý -->
+    <h1>Tổng quan quản lý</h1>
+    <p>Theo dõi nhân sự và hoạt động tại chi nhánh.</p>
+
+    {# Chuyển các thẻ thống kê từ internal_preview.html vào đây #}
+
+{% elif role == 'employee' %}
+    <!-- Nội dung tổng quan nhân viên -->
+    <h1>
+        Xin chào,
+        {{ request.user.first_name|default:request.user.username }}!
+    </h1>
+    <p>Đây là không gian làm việc của bạn tại Highlands Coffee.</p>
+
+    {# Thêm lịch làm việc, chấm công, phiếu lương tại đây #}
+
+{% endif %}
+
+{% endblock %}
