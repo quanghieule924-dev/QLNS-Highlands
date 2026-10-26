@@ -1,13 +1,34 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Đăng ký tài khoản</title>
-</head>
-<body>
-    <h1>Đăng ký tài khoản ứng viên</h1>
-    <a href="{% url 'accounts:login' %}">
-        Quay lại đăng nhập
-    </a>
-</body>
-</html>
+
+{% extends "base_auth.html" %}
+
+{% block title %}Đăng ký | HRM Highlands{% endblock %}
+
+{% block content %}
+<div class="page-inner">
+    <div class="breadcrumbs">
+        <a href="{% url 'home' %}">Trang chủ</a>
+        <span>/</span>
+        <span>Đăng ký</span>
+    </div>
+
+    <section class="login-card">
+        <h2>Đăng ký tài khoản ứng viên</h2>
+
+        <p class="subtitle">
+            Tạo tài khoản để sử dụng các chức năng tuyển dụng.
+        </p>
+
+        <p>
+            Chức năng đăng ký sẽ được hoàn thiện ở bước xây dựng
+            tài khoản và xử lý biểu mẫu.
+        </p>
+
+        <p class="register-text">
+            Đã có tài khoản?
+            <a href="{% url 'accounts:login' %}">
+                Đăng nhập
+            </a>
+        </p>
+    </section>
+</div>
+{% endblock %}
