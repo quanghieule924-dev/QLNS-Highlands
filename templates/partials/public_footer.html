@@ -1,0 +1,124 @@
+{% load static %}
+<!-- FOOTER: LOGO TO RÕ, KHUNG ĐỎ GỌN GÀNG -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <!-- Logo bên trái được phóng to -->
+        <div class="footer-left">
+            <img src="{% static 'images/logo-highlands.png' %}" alt="Highlands Coffee" class="footer-logo">
+        </div>
+
+        <!-- Các cột thông tin ở giữa -->
+        <div class="footer-links">
+            <div class="footer-col">
+                <h4>VỀ HIGHLANDS</h4>
+                <a href="#">Nguồn gốc</a>
+                <a href="#">Dịch vụ</a>
+                <a href="#">Nghề nghiệp</a>
+            </div>
+            <div class="footer-col">
+                <h4>HỆ THỐNG CỬA HÀNG</h4>
+                <a href="#">Tìm cửa hàng gần nhất</a>
+            </div>
+            <div class="footer-col">
+                <h4>TIN TỨC</h4>
+                <a href="#">Bản tin & Sự kiện</a>
+            </div>
+        </div>
+
+        <!-- Mạng xã hội bên phải -->
+        <div class="footer-right">
+            <h4>THEO DÕI CHÚNG TÔI</h4>
+            <div class="social-icons">
+                <a href="https://www.facebook.com/highlandscoffeevietnam" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </a>
+                <a href="https://www.instagram.com/highlandscoffeevietnam" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://www.youtube.com/user/HighlandsCoffeeVN" target="_blank" rel="noopener noreferrer" aria-label="Youtube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="https://www.tiktok.com/@highlandscoffeevietnam" target="_blank" rel="noopener noreferrer" aria-label="Tiktok">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+    .site-footer {
+        background-color: #8A1A22;
+        color: #ffffff;
+        padding: 12px 0; /* Giữ chiều cao khung đỏ gọn gàng, tinh tế */
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .site-footer .footer-inner {
+        max-width: 1350px;
+        margin: 0 auto;
+        padding: 0 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 50px;
+    }
+
+    .footer-left .footer-logo {
+        width: 130px; /* Phóng to logo lớn sắc nét như yêu cầu */
+        height: auto;
+        display: block;
+    }
+
+    .footer-links {
+        display: flex;
+        gap: 60px;
+    }
+
+    .footer-col h4,
+    .footer-right h4 {
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+        color: #fff;
+    }
+
+    .footer-col a {
+        display: block;
+        color: #f1f1f1;
+        text-decoration: none;
+        font-size: 13px;
+        margin-bottom: 3px;
+        transition: color 0.2s;
+    }
+
+    .footer-col a:hover {
+        color: #FFD43B;
+        text-decoration: underline;
+    }
+
+    .site-footer .social-icons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .site-footer .social-icons a {
+        width: 32px;
+        height: 32px;
+        background: rgba(255, 255, 255, 0.15);
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        color: #fff;
+        font-size: 13px;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+
+    .site-footer .social-icons a:hover {
+        background: #fff;
+        color: #8A1A22;
+        transform: translateY(-2px);
+    }
+</style>

@@ -1,29 +1,47 @@
-
+{% load static %}
+<!-- HEADER ĐỎ SẪM & LOGO CHUẨN -->
 <header class="site-header">
     <div class="header-inner">
-        <a href="{% url 'home' %}" class="brand">
-            <span class="brand-mark">H</span>
-
-            <strong>HRM</strong>
-
-            <span class="brand-copy">
-                <b>HIGHLANDS COFFEE</b>
-                <small>Hệ thống quản lý nhân sự</small>
-            </span>
+        <a href="/" class="brand" aria-label="HRM Highlands - Trang chủ">
+            <img src="{% static 'images/logo-highlands.png' %}" alt="Highlands Coffee" class="brand-logo-img">
+            <div class="brand-text">
+                <span class="brand-title">HRM</span>
+                <span class="brand-subtitle"><b>HIGHLANDS COFFEE</b><small>Hệ thống quản lý nhân sự</small></span>
+            </div>
         </a>
-
-        <nav class="main-nav" aria-label="Điều hướng chính">
-            <a href="{% url 'home' %}">Trang chủ</a>
-            <a href="{% url 'home' %}#careers">Tuyển dụng</a>
-            <a href="{% url 'home' %}#about">Giới thiệu</a>
+        <nav class="main-nav">
+            <a href="/" class="active">Trang chủ</a>
+            <a href="#">Tuyển dụng</a>
+            <a href="{% url 'accounts:about' %}">Giới thiệu</a>
         </nav>
-
         <div class="header-right">
-            <a href="{% url 'accounts:login' %}">Trợ giúp</a>
-            <a class="active" href="{% url 'accounts:login' %}">
-                Đăng nhập
-            </a>
+            <a href="{% url 'accounts:help' %}" class="help-link">Trợ giúp</a>
+            <a href="{% url 'accounts:login' %}" class="btn-login-round">Đăng nhập</a>
         </div>
     </div>
 </header>
 
+<style>
+    /* Đảm bảo các mục menu ở trạng thái bình thường luôn là màu trắng */
+    .main-nav a {
+        color: #ffffff !important;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    /* Khi rê chuột (hover) mới chuyển sang màu vàng */
+    .main-nav a:hover {
+        color: #FFD43B !important;
+    }
+
+    /* Riêng mục đang active (đang đứng ở trang đó) nếu muốn giữ điểm nhấn thì tùy chọn,
+       nhưng nếu bạn muốn tất cả màu trắng thì bỏ luôn dòng color trong .active đi */
+    .main-nav a.active {
+        color: #ffffff !important;
+        font-weight: 700;
+    }
+
+    .main-nav a.active:hover {
+        color: #FFD43B !important;
+    }
+</style>

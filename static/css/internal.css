@@ -1,4 +1,3 @@
-
 /* ========================================
    HRM HIGHLANDS COFFEE - GIAO DIEN CHUNG
    ======================================== */
@@ -15,7 +14,9 @@
     --white: #ffffff;
 }
 
-* {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
@@ -334,7 +335,6 @@ body {
 }
 
 /* ===== VUNG NOI DUNG CHINH ===== */
-
 
 .internal-main {
     margin-left: var(--sidebar-width);

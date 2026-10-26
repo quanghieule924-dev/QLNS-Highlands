@@ -48,3 +48,10 @@ def dashboard(request):
 
 def register_view(request):
     return render(request, 'accounts/register.html')
+
+
+def about_view(request):
+    return render(request, 'about.html')
+
+def help_page(request):
+    return render(request, 'accounts/help.html')
