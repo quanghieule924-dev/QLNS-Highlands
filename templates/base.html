@@ -1,25 +1,29 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Quản lý nhân sự Highlands{% endblock %}</title>
+    <!-- Nhúng Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Nhúng FontAwesome Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
-<body>
-    <header>
-        <h1>HỆ THỐNG QUẢN LÝ NHÂN SỰ HIGHLANDS</h1>
-        <nav>
-            <a href="/">Trang chủ</a>
-        </nav>
-    </header>
+<body class="public-layout">
 
-    <main>
+    <!-- GỌI HEADER DÙNG CHUNG -->
+    {% include 'partials/public_header.html' %}
+
+    <!-- NỘI DUNG CHÍNH -->
+    <main class="page-content">
         {% block content %}
         {% endblock %}
     </main>
 
-    <footer>
-        <p>Đồ án Lập trình Web - Nhóm 6</p>
-    </footer>
+    <!-- GỌI FOOTER DÙNG CHUNG -->
+    {% include 'partials/public_footer.html' %}
 </body>
 </html>

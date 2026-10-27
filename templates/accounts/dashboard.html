@@ -1,8 +1,27 @@
-<!DOCTYPE html>
-<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Đã đăng nhập | HRM Highlands</title></head>
-<body style="font-family:Arial,sans-serif;padding:40px;background:#f7f7f7;color:#252525">
-<h1>Đăng nhập thành công!</h1>
-<p>Xin chào <strong>{{ request.user.username }}</strong>.</p>
-<p>Đây là trang tạm để kiểm tra đăng nhập. Dashboard và phân quyền sẽ làm ở bước tiếp theo.</p>
-<a href="/admin/">Trang quản trị Django</a>
-</body></html>
+
+{% extends "base_internal.html" %}
+
+{% block title %}Tổng quan | HRM System{% endblock %}
+
+{% block content %}
+
+{% if role == 'admin' %}
+    <!-- Nội dung tổng quan quản lý -->
+    <h1>Tổng quan quản lý</h1>
+    <p>Theo dõi nhân sự và hoạt động tại chi nhánh.</p>
+
+    {# Chuyển các thẻ thống kê từ internal_preview.html vào đây #}
+
+{% elif role == 'employee' %}
+    <!-- Nội dung tổng quan nhân viên -->
+    <h1>
+        Xin chào,
+        {{ request.user.first_name|default:request.user.username }}!
+    </h1>
+    <p>Đây là không gian làm việc của bạn tại Highlands Coffee.</p>
+
+    {# Thêm lịch làm việc, chấm công, phiếu lương tại đây #}
+
+{% endif %}
+
+{% endblock %}

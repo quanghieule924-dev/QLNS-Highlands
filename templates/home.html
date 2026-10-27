@@ -1,6 +1,435 @@
 {% extends 'base.html' %}
-{% block title %}Trang chủ | Highlands{% endblock %}
+{% load static %}
+
+{% block title %}Trang chủ | Quản lý nhân sự Highlands{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Cấu hình khung chứa chính hoành tráng, có hiệu ứng ánh sáng nền mờ ảo sang trọng */
+    .home-container {
+        max-width: 1380px;
+        margin: 0 auto;
+        padding: 10px 30px 60px 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .home-container::before {
+        content: '';
+        position: absolute;
+        top: -60px;
+        right: -80px;
+        width: 650px;
+        height: 650px;
+        background: radial-gradient(circle, rgba(138, 26, 34, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+        z-index: -1;
+    }
+
+    /* Đường dẫn xích sát lên thanh header ngang */
+    .breadcrumbs {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: #777;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .breadcrumbs a {
+        color: #8A1A22;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .breadcrumbs a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumbs span:last-child {
+        color: #333;
+        font-weight: 600;
+    }
+
+    /* BANNER CHÀO MỪNG HOÀNH TRÁNG */
+    .welcome-hero {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 50px;
+        align-items: center;
+        padding: 20px 0 50px 0;
+    }
+
+    .hero-left {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .hero-title {
+        font-size: 46px;
+        color: #1a1a1a;
+        line-height: 1.2;
+        margin-bottom: 25px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+
+    .hero-title .highlight {
+        color: #8A1A22;
+    }
+
+    /* Nút CTA nổi khối cao cấp */
+    .btn-cta {
+        background: linear-gradient(135deg, #8A1A22 0%, #6d131a 100%);
+        color: #fff;
+        padding: 15px 30px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 15px;
+        display: inline-block;
+        width: fit-content;
+        box-shadow: 0 8px 25px rgba(138, 26, 34, 0.3);
+        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        margin-bottom: 35px;
+    }
+
+    .btn-cta:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(138, 26, 34, 0.4);
+    }
+
+    /* Các tiện ích dạng Icon sinh động */
+    .benefit-badges {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        padding: 0;
+        margin: 0;
+    }
+
+    .benefit-badges li {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: transform 0.2s;
+    }
+
+    .benefit-badges li:hover {
+        transform: translateX(5px);
+    }
+
+    .benefit-badges li i {
+        color: #8A1A22;
+        font-size: 18px;
+        width: 36px;
+        height: 36px;
+        background: rgba(138, 26, 34, 0.08);
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+    }
+
+    /* Khung ảnh bên phải với hiệu ứng động mượt mà */
+    .hero-right {
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        border: 2px solid rgba(138, 26, 34, 0.1);
+        height: 390px;
+    }
+
+    .hero-illustration {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        animation: imageZoomPulse 12s infinite alternate ease-in-out;
+    }
+
+    @keyframes imageZoomPulse {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.06); }
+    }
+
+    /* =========================================================
+       SECTION 1: ĐỒNG HÀNH CÙNG HIGHLANDS (BỐ CỤC 3 ẢNH TRÊN, 2 ẢNH DƯỚI TO RỘNG)
+       ========================================================= */
+    .section-activities {
+        padding: 40px 0 60px 0;
+    }
+
+    .section-title {
+        font-size: 32px;
+        color: #2e2e2e;
+        text-align: center;
+        margin-bottom: 45px;
+        font-weight: 800;
+        position: relative;
+    }
+
+    .section-title::after {
+        content: '';
+        display: block;
+        width: 70px;
+        height: 4px;
+        background-color: #8A1A22;
+        margin: 10px auto 0;
+        border-radius: 2px;
+    }
+
+    /* Lưới chia 2 hàng theo ý muốn: Hàng trên 3 cột, Hàng dưới 2 cột to */
+    .activities-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 35px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .cards-row-top {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 3 ảnh hàng trên */
+        gap: 30px;
+    }
+
+    .cards-row-bottom {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* 2 ảnh to hàng dưới */
+        gap: 35px;
+        max-width: 950px; /* Làm cho 2 ảnh dưới tập trung và to rõ hơn */
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .activity-card {
+        background-color: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+        border: 1.5px solid #f0e6dc;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    /* Kích thước chiều cao ảnh hàng trên (3 ảnh) */
+    .cards-row-top .card-img-wrapper {
+        width: 100%;
+        height: 280px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* Kích thước chiều cao ảnh hàng dưới (2 ảnh to rộng) */
+    .cards-row-bottom .card-img-wrapper {
+        width: 100%;
+        height: 320px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .card-img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    .activity-card h3 {
+        font-size: 15px;
+        font-weight: 700;
+        padding: 20px 15px;
+        color: #2e2e2e;
+        background-color: #fff;
+        letter-spacing: 0.5px;
+        transition: all 0.4s ease;
+    }
+
+    /* Hiệu ứng tương tác mượt mà khi rê chuột vào card */
+    .activity-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(138, 26, 34, 0.2);
+        border-color: #8A1A22;
+    }
+
+    .activity-card:hover .card-img-wrapper img {
+        transform: scale(1.08);
+    }
+
+    .activity-card:hover h3 {
+        background-color: #8A1A22;
+        color: #fff;
+    }
+
+    /* SECTION 2: CỬA HÀNG GẦN BẠN */
+    .section-location {
+        padding: 30px 0 40px 0;
+    }
+
+    .location-banner {
+        background: linear-gradient(135deg, #FFF9F3 0%, #faeee3 100%);
+        border-radius: 18px;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 45% 55%;
+        border: 1.5px solid #ebdcd0;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+
+    .location-left {
+        padding: 50px 45px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .location-left h2 {
+        font-size: 34px;
+        color: #8A1A22;
+        margin-bottom: 12px;
+        font-weight: 800;
+    }
+
+    .location-left p {
+        font-size: 17px;
+        color: #555;
+        margin-bottom: 25px;
+    }
+
+    .btn-discover {
+        display: inline-block;
+        padding: 13px 32px;
+        border: 2px solid #8A1A22;
+        color: #8A1A22;
+        text-decoration: none;
+        font-weight: 800;
+        border-radius: 30px;
+        font-size: 14px;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-discover:hover {
+        background-color: #8A1A22;
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(138, 26, 34, 0.3);
+    }
+
+    .location-right {
+        height: 360px;
+        overflow: hidden;
+    }
+
+    .location-right img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    .location-banner:hover .location-right img {
+        transform: scale(1.05);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-    <h2>Chào mừng đến với hệ thống quản lý nhân sự Highlands</h2>
-    <p>Quản lý nhân viên, lịch làm việc, chấm công và tiền lương trên một nền tảng.</p>
+<div class="home-container">
+    <!-- Breadcrumb nhỏ gọn xích sát lên trên -->
+    <div class="breadcrumbs">
+        <a href="/">Trang chủ</a> <span>/</span> <span>HRM Highlands</span>
+    </div>
+
+    <!-- BANNER CHÀO MỪNG -->
+    <section class="welcome-hero">
+        <div class="hero-left">
+            <h1 class="hero-title">Chào mừng đến với <br><span class="highlight">HRM Highlands</span></h1>
+
+            <!-- Nút bấm điều hướng cuốn hút -->
+            <a href="{% url 'accounts:login' %}" class="btn-cta">Đăng nhập hệ thống tìm hiểu thêm &rarr;</a>
+
+            <!-- Các tiện ích dạng Icon sinh động -->
+            <ul class="benefit-badges">
+                <li><i class="fa-solid fa-user-tie"></i> Quản lý hồ sơ nhân viên</li>
+                <li><i class="fa-solid fa-file-contract"></i> Theo dõi hợp đồng & phúc lợi</li>
+                <li><i class="fa-solid fa-calendar-days"></i> Phân ca & chấm công</li>
+            </ul>
+        </div>
+        <div class="hero-right">
+            <!-- Hình ảnh thực tế chuyên nghiệp có hiệu ứng động -->
+            <img class="hero-illustration" src="{% static 'images/hr-team.jpg' %}" alt="Đội ngũ nhân sự chuyên nghiệp Highlands Coffee">
+        </div>
+    </section>
+
+    <!-- SECTION 1: ĐỒNG HÀNH CÙNG HIGHLANDS (3 TRÊN - 2 DƯỚI TO RỘNG) -->
+    <section class="section-activities">
+        <h2 class="section-title">Đồng Hành Cùng Highlands</h2>
+
+        <div class="activities-layout">
+            <!-- HÀNG TRÊN: 3 ẢNH -->
+            <div class="cards-row-top">
+                <!-- Card 1 -->
+                <div class="activity-card">
+                    <div class="card-img-wrapper">
+                        <img src="{% static 'images/card-dat-hang.jpg' %}" alt="Đặt hàng ngay">
+                    </div>
+                    <h3>ĐẶT HÀNG NGAY</h3>
+                </div>
+                <!-- Card 2 -->
+                <div class="activity-card">
+                    <div class="card-img-wrapper">
+                        <img src="{% static 'images/card-co-hoi.jpg' %}" alt="Cơ hội nghề nghiệp">
+                    </div>
+                    <h3>CƠ HỘI NGHỀ NGHIỆP</h3>
+                </div>
+                <!-- Card 3 -->
+                <div class="activity-card">
+                    <div class="card-img-wrapper">
+                        <img src="{% static 'images/card-tin-tuc.jpg' %}" alt="Tin tức">
+                    </div>
+                    <h3>TIN TỨC</h3>
+                </div>
+            </div>
+
+            <!-- HÀNG DƯỚI: 2 ẢNH TO RỘNG CÂN ĐỐI -->
+            <div class="cards-row-bottom">
+                <!-- Card 4 -->
+                <div class="activity-card">
+                    <div class="card-img-wrapper">
+                        <img src="{% static 'images/card-nuoc-ngon.jpg' %}" alt="Nước ngon thưởng vị">
+                    </div>
+                    <h3>NƯỚC NGON THƯỞNG VỊ</h3>
+                </div>
+                <!-- Card 5 -->
+                <div class="activity-card">
+                    <div class="card-img-wrapper">
+                        <img src="{% static 'images/card-banh-mi.jpg' %}" alt="Bánh ngon no đầy">
+                    </div>
+                    <h3>BÁNH NGON NO ĐẦY</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: CỬA HÀNG GẦN BẠN -->
+    <section class="section-location">
+        <div class="location-banner">
+            <div class="location-left">
+                <h2>Cửa Hàng Highlands Gần Bạn</h2>
+                <p>Bạn ở đâu, có Highlands ở đó!</p>
+                <a href="#" class="btn-discover">KHÁM PHÁ NGAY</a>
+            </div>
+            <div class="location-right">
+                <img src="{% static 'images/location-store.jpg' %}" alt="Cửa hàng Highlands Coffee">
+            </div>
+        </div>
+    </section>
+</div>
 {% endblock %}
