@@ -42,10 +42,33 @@ urlpatterns = [
         name='xoa_hop_dong'
     ),
 
+    #Chấm dứt hợp đồng
+    path(
+       '<str:mahd>/cham-dut/',
+        views.cham_dut_hop_dong,
+        name='cham_dut_hop_dong'
+    ),
+
+    #Gia hạn hợp đông
+    path(
+      '<str:mahd>/gia-han/',
+      views.gia_han_hop_dong,
+      name='gia_han_hop_dong'
+    ),
+
     # Hợp đồng sắp hết hạn
     path(
         'hop-dong-sap-het-han/',
         views.hop_dong_sap_het_han,
         name='hop_dong_sap_het_han'
     ),
+
+
+# Nhân viên ký hợp đồng
+path(
+    'hop-dong/<str:mahd>/ky/',
+    views.ky_hop_dong,
+    name='ky_hop_dong'
+),
 ]
+

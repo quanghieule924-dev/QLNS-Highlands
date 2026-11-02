@@ -1,0 +1,71 @@
+{% extends 'base_internal.html' %}
+{% load static %}
+
+{% block title %}
+    {{ tieu_de }} | HRM System
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/contracts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+
+    <div class="page-header">
+        <div>
+            <h1>{{ tieu_de }}</h1>
+            <p>Quản lý thông tin hợp đồng nhân viên.</p>
+        </div>
+    </div>
+
+    <div class="form-container">
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="form-grid">
+
+                {% for field in form %}
+                    <div class="form-group">
+
+                        {{ field.label_tag }}
+
+                        {{ field }}
+
+                        {% if field.help_text %}
+                            <small>{{ field.help_text }}</small>
+                        {% endif %}
+
+                        {% for error in field.errors %}
+                            <p class="error-message">{{ error }}</p>
+                        {% endfor %}
+
+                    </div>
+                {% endfor %}
+
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    Lưu thông tin
+                </button>
+
+                <a href="{% url 'contracts:danh_sach_hop_dong' %}"
+                   class="btn btn-secondary">
+                    Quay lại
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+{% endblock %}

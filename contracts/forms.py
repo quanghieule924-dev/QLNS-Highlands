@@ -9,7 +9,11 @@ from .models import (
     CheDoPhucLoi,
     PhucLoiHopDong,
     PhuCap,
+
 )
+
+from django.utils import timezone
+from .models import HopDong
 
 
 # =========================================================
@@ -28,10 +32,8 @@ class HopDongForm(forms.ModelForm):
             'loai_hd',
             'ngay_bat_dau',
             'ngay_ket_thuc',
-            'ngay_ky',
             'hinh_thuc_luong',
             'muc_luong',
-            'trang_thai_hd',
         ]
 
         widgets = {
@@ -75,6 +77,43 @@ class HopDongForm(forms.ModelForm):
             }),
             'trang_thai_hd': forms.Select(attrs={
                 'class': 'form-control',
+            }),
+        }
+
+
+class GiaHanHopDongForm(forms.ModelForm):
+
+    class Meta:
+        model = HopDong
+        fields = [
+            'mahd',
+            'so_hd',
+            'ngay_ket_thuc',
+            'hinh_thuc_luong',
+            'muc_luong',
+        ]
+
+        widgets = {
+            'mahd': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Nhập mã hợp đồng mới',
+            }),
+            'so_hd': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Nhập số hợp đồng mới',
+            }),
+            'ngay_ket_thuc': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date',
+            }),
+            'hinh_thuc_luong': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'muc_luong': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Nhập mức lương',
+                'min': '0.01',
+                'step': '0.01',
             }),
         }
 
@@ -124,11 +163,8 @@ class YeuCauNghiTruocHanForm(forms.ModelForm):
         fields = [
             'mayc',
             'hop_dong',
-            'ngay_gui',
             'ngay_muon_nghi',
             'ly_do',
-            'trang_thai_duyet',
-            'ngay_duyet',
         ]
 
         widgets = {
@@ -139,10 +175,6 @@ class YeuCauNghiTruocHanForm(forms.ModelForm):
             'hop_dong': forms.Select(attrs={
                 'class': 'form-control',
             }),
-            'ngay_gui': forms.DateInput(attrs={
-                'class': 'form-control',
-                'type': 'date',
-            }),
             'ngay_muon_nghi': forms.DateInput(attrs={
                 'class': 'form-control',
                 'type': 'date',
@@ -152,6 +184,58 @@ class YeuCauNghiTruocHanForm(forms.ModelForm):
                 'rows': 4,
                 'placeholder': 'Nhập lý do nghỉ trước hạn',
             }),
+        }
+
+    def __init__(self, *args, nhan_vien=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Chỉ hiển thị hợp đồng thuộc nhân viên đang đăng nhập
+        if nhan_vien is not None:
+            from django import forms
+
+            hop_dong_field = self.fields['hop_dong']
+
+            if isinstance(hop_dong_field, forms.ModelChoiceField):
+                hop_dong_field.queryset = HopDong.objects.filter(
+                    nhan_vien=nhan_vien
+                )
+
+        else:
+            from django import forms
+
+            hop_dong_field = self.fields['hop_dong']
+
+            if isinstance(hop_dong_field, forms.ModelChoiceField):
+                hop_dong_field.queryset = HopDong.objects.none()
+
+# =========================================================
+# 4. FORM YÊU CẦU CHỈNH SỬA HỢP ĐỒNG
+# =========================================================
+
+class YeuCauChinhSuaHDForm(forms.ModelForm):
+
+    class Meta:
+        model = YeuCauChinhSuaHD
+        fields = ['noi_dung']
+
+        widgets = {
+            'noi_dung': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Nhập nội dung cần chỉnh sửa',
+            }),
+        }
+
+class DuyetYeuCauNghiTruocHanForm(forms.ModelForm):
+
+    class Meta:
+        model = YeuCauNghiTruocHan
+        fields = [
+            'trang_thai_duyet',
+            'ngay_duyet',
+        ]
+
+        widgets = {
             'trang_thai_duyet': forms.Select(attrs={
                 'class': 'form-control',
             }),
@@ -162,44 +246,19 @@ class YeuCauNghiTruocHanForm(forms.ModelForm):
         }
 
 
-# =========================================================
-# 4. FORM YÊU CẦU CHỈNH SỬA HỢP ĐỒNG
-# =========================================================
-
-class YeuCauChinhSuaHDForm(forms.ModelForm):
+class DuyetYeuCauChinhSuaHDForm(forms.ModelForm):
 
     class Meta:
         model = YeuCauChinhSuaHD
         fields = [
-            'macs',
-            'hop_dong',
-            'ngay_yeu_cau',
-            'noi_dung',
             'trang_thai_cs',
         ]
 
         widgets = {
-            'macs': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Nhập mã yêu cầu',
-            }),
-            'hop_dong': forms.Select(attrs={
-                'class': 'form-control',
-            }),
-            'ngay_yeu_cau': forms.DateInput(attrs={
-                'class': 'form-control',
-                'type': 'date',
-            }),
-            'noi_dung': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 4,
-                'placeholder': 'Nhập nội dung cần chỉnh sửa',
-            }),
             'trang_thai_cs': forms.Select(attrs={
                 'class': 'form-control',
             }),
         }
-
 
 # =========================================================
 # 5. FORM QUẢN LÝ BẢO HIỂM XÃ HỘI
@@ -354,3 +413,36 @@ class PhuCapForm(forms.ModelForm):
                 'placeholder': 'YYYY-MM, ví dụ 2026-11',
             }),
         }
+
+
+class ChamDutHopDongForm(forms.ModelForm):
+
+    class Meta:
+        model = HopDong
+        fields = [
+            'ngay_cham_dut',
+            'ly_do_cham_dut',
+        ]
+
+        widgets = {
+            'ngay_cham_dut': forms.DateInput(attrs={
+                'type': 'date',
+                'class': 'form-control',
+            }),
+
+            'ly_do_cham_dut': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Nhập lý do chấm dứt hợp đồng',
+            }),
+        }
+
+    def clean_ngay_cham_dut(self):
+        ngay_cham_dut = self.cleaned_data.get('ngay_cham_dut')
+
+        if ngay_cham_dut and ngay_cham_dut > timezone.localdate():
+            raise forms.ValidationError(
+                'Ngày chấm dứt không được lớn hơn ngày hiện tại.'
+            )
+
+        return ngay_cham_dut

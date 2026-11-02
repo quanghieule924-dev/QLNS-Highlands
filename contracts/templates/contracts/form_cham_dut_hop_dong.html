@@ -1,0 +1,78 @@
+
+{% extends 'base_internal.html' %}
+{% load static %}
+
+{% block title %}
+    Chấm dứt hợp đồng | HRM System
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/contracts.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="page-container">
+
+    <div class="page-header">
+        <div>
+            <h1>Chấm dứt hợp đồng</h1>
+            <p>Thực hiện chấm dứt hợp đồng lao động.</p>
+        </div>
+
+        <a href="{% url 'contracts:chi_tiet_hop_dong' hop_dong.mahd %}"
+           class="btn btn-secondary">
+            ← Quay lại
+        </a>
+    </div>
+
+    <div class="contract-detail-card">
+
+        <h3>Thông tin hợp đồng</h3>
+
+        <div class="detail-grid">
+
+            <div class="detail-item">
+                <span>Mã hợp đồng</span>
+                <strong>{{ hop_dong.mahd }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Số hợp đồng</span>
+                <strong>{{ hop_dong.so_hd }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Nhân viên</span>
+                <strong>{{ hop_dong.nhan_vien }}</strong>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <h3>Thông tin chấm dứt</h3>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit" class="btn btn-danger"
+                    onclick="return confirm('Bạn có chắc chắn muốn chấm dứt hợp đồng này không?');">
+                Xác nhận chấm dứt
+            </button>
+
+            <a href="{% url 'contracts:chi_tiet_hop_dong' hop_dong.mahd %}"
+               class="btn btn-secondary">
+                Hủy
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
+

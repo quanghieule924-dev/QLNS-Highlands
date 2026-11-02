@@ -27,6 +27,7 @@ class HopDong(models.Model):
 
     TRANG_THAI_CHOICES = [
         ('cho_ky', 'Chờ ký'),
+        ('da_ky_cho_hieu_luc', 'Đã ký - Chờ hiệu lực'),
         ('dang_hieu_luc', 'Đang hiệu lực'),
         ('da_het_han', 'Đã hết hạn'),
         ('da_cham_dut', 'Đã chấm dứt'),
@@ -112,11 +113,26 @@ class HopDong(models.Model):
         verbose_name="Trạng thái hợp đồng"
     )
 
+    ngay_cham_dut = models.DateField(
+        null=True,
+        blank=True,
+        db_column="Ngay_cham_dut",
+        verbose_name="Ngày chấm dứt"
+    )
+
+    ly_do_cham_dut = models.TextField(
+        blank=True,
+        db_column="Ly_do_cham_dut",
+        verbose_name="Lý do chấm dứt"
+    )
+
     class Meta:
         db_table = "HopDong"
         ordering = ['-ngay_bat_dau']
         verbose_name = "Hợp đồng"
         verbose_name_plural = "Hợp đồng"
+
+
 
     def clean(self):
         super().clean()
@@ -358,6 +374,9 @@ class YeuCauChinhSuaHD(models.Model):
         default='cho_duyet',
         db_column="Trang_thai_CS"
     )
+
+    related_name = "yeu_cau_chinh_sua"
+
 
     class Meta:
         db_table = "YeuCauChinhSuaHD"
