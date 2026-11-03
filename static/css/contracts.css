@@ -296,94 +296,638 @@
 }
 
 
-/* =========================================
-   FORM HỢP ĐỒNG
-   ========================================= */
+/* ==============================
+   FORM HỢP ĐỒNG LAO ĐỘNG
+================================ */
 
-.form-container {
+.contract-page {
+    padding: 18px 20px 28px;
+    background: #f7f7f8;
+    min-height: 100vh;
+    color: #252525;
+}
+
+.contract-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    margin-bottom: 18px;
+}
+
+.contract-breadcrumb {
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 7px;
+}
+
+.contract-breadcrumb span {
+    margin: 0 6px;
+    color: #bbb;
+}
+
+.contract-page-header h1 {
+    font-size: 23px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.contract-page-header > p {
+    color: #888;
+    font-size: 12px;
+    margin: 0 0 4px;
+}
+
+.contract-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.contract-card {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 11px;
+    padding: 16px 18px;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.025);
+}
+
+.contract-card-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.contract-card-heading h2 {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.contract-card-heading > span {
+    color: #999;
+    font-size: 11px;
+}
+
+.contract-field {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 6px;
+}
+
+.contract-field label,
+.section-label {
+    color: #333;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.required {
+    color: #d20a2e;
+}
+
+.contract-field .form-control,
+.contract-field input,
+.contract-field select,
+.allowance-row .form-control {
     width: 100%;
-    padding: 24px;
-    background: #ffffff;
-    border: 1px solid #eaeaea;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    height: 37px;
+    border: 1px solid #dedede;
+    border-radius: 7px;
+    background: #fff;
+    padding: 0 10px;
+    font-size: 12px;
+    color: #333;
+    outline: none;
+    box-sizing: border-box;
 }
 
-.form-grid {
+.contract-field .form-control:focus,
+.allowance-row .form-control:focus {
+    border-color: #ce1234;
+    box-shadow: 0 0 0 2px rgba(206, 18, 52, 0.07);
+}
+
+.readonly-field {
+    background: #f4f4f4 !important;
+    color: #888 !important;
+}
+
+.employee-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 24px;
-    row-gap: 18px;
+    grid-template-columns: 1.6fr 1fr 1fr 1.7fr;
+    gap: 12px;
 }
 
-.form-group {
+.contract-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px 12px;
+}
+
+.salary-field {
+    grid-column: span 2;
+}
+
+.previous-contract-field {
+    grid-column: span 2;
+}
+
+.field-error {
+    color: #d20a2e;
+    font-size: 11px;
+}
+
+.contract-alert {
+    background: #fff0f1;
+    border: 1px solid #ffd5db;
+    color: #c20b2c;
+    padding: 10px 13px;
+    border-radius: 7px;
+    font-size: 12px;
+}
+
+/* Phụ cấp */
+
+.btn-add-allowance {
+    border: 0;
+    background: transparent;
+    color: #ce1234;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-add-allowance:hover {
+    color: #a50926;
+}
+
+.allowance-heading,
+.allowance-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 38px;
+    gap: 10px;
+    align-items: center;
+}
+
+.allowance-heading {
+    margin-bottom: 6px;
+}
+
+.allowance-heading span {
+    font-size: 11px;
+    font-weight: 500;
+    color: #444;
+}
+
+.allowance-row {
+    margin-bottom: 9px;
+}
+
+.allowance-row .form-control {
+    height: 37px;
+}
+
+.input-suffix {
+    position: relative;
+    min-width: 0;
+}
+
+.input-suffix .form-control {
+    padding-right: 75px;
+}
+
+.input-suffix > span {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    font-size: 10px;
+    pointer-events: none;
+}
+
+.btn-remove-allowance {
+    width: 35px;
+    height: 35px;
+    border: 1px solid #e2e2e2;
+    border-radius: 7px;
+    background: #fff;
+    color: #777;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.btn-remove-allowance:hover {
+    color: #ce1234;
+    border-color: #ce1234;
+}
+
+/* Phúc lợi và BHXH */
+
+.benefit-bhxh-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    border-top: 1px solid #eee;
+    margin-top: 13px;
+    padding-top: 13px;
+}
+
+.benefit-area {
+    min-width: 0;
+}
+
+.benefit-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 9px;
+    min-height: 38px;
+    align-items: center;
+}
+
+.benefit-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 9px;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    background: #fafafa;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.benefit-option input {
+    accent-color: #ce1234;
+    margin: 0;
+}
+
+.field-hint,
+.empty-benefit {
+    display: block;
+    color: #999;
+    font-size: 10px;
+    margin-top: 8px;
+}
+
+.bhxh-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.bhxh-heading > label:first-child {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Công tắc BHXH */
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 19px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch-slider {
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+    background: #ccc;
+    border-radius: 20px;
+    transition: 0.2s;
+}
+
+.switch-slider::before {
+    content: "";
+    position: absolute;
+    width: 13px;
+    height: 13px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.2s;
+}
+
+.switch input:checked + .switch-slider {
+    background: #ce1234;
+}
+
+.switch input:checked + .switch-slider::before {
+    transform: translateX(17px);
+}
+
+.bhxh-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+/* Phần cuối trang */
+
+.contract-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 3px 0;
+}
+
+.contract-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+}
+
+.note-icon {
+    color: #888;
+    font-size: 17px;
+}
+
+.contract-note strong {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.contract-note p {
+    color: #888;
+    font-size: 10px;
+    margin: 4px 0 0;
+}
+
+.contract-actions {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.btn-cancel,
+.btn-save {
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #333;
+}
+
+.btn-save {
+    border: 1px solid #ce1234;
+    background: #ce1234;
+    color: #fff;
+}
+
+.btn-save:hover {
+    background: #b30d2b;
+}
+
+/* Responsive */
+
+@media (max-width: 1000px) {
+    .employee-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .contract-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .benefit-bhxh-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .contract-page {
+        padding: 12px;
+    }
+
+    .contract-page-header {
+        display: block;
+    }
+
+    .contract-page-header > p {
+        margin-top: 8px;
+    }
+
+    .employee-grid,
+    .contract-grid,
+    .bhxh-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .salary-field,
+    .previous-contract-field {
+        grid-column: auto;
+    }
+
+    .allowance-heading {
+        display: none;
+    }
+
+    .allowance-row {
+        grid-template-columns: 1fr;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 12px;
+    }
+
+    .btn-remove-allowance {
+        width: 100%;
+    }
+
+    .contract-bottom {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .contract-actions {
+        justify-content: flex-end;
+    }
+}
+
+
+
+
+/* ==============================
+   TRANG CHI TIẾT HỢP ĐỒNG
+================================ */
+
+.detail-info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px 14px;
+}
+
+.detail-info-item {
     display: flex;
     flex-direction: column;
     gap: 7px;
     min-width: 0;
 }
 
-.form-group label {
-    color: #444;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    min-height: 39px;
-    padding: 9px 12px;
-    border: 1px solid #dedede;
-    border-radius: 6px;
-    outline: none;
-    background: #fff;
-    color: #333;
-    font-family: inherit;
-    font-size: 12px;
-}
-
-.form-group textarea {
-    min-height: 100px;
-    resize: vertical;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    border-color: #c8102e;
-    box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.08);
-}
-
-.form-group .form-text {
+.detail-info-item > span:first-child {
     color: #888;
     font-size: 11px;
 }
 
-.form-group .error-message {
-    color: #c8102e;
-    font-size: 11px;
+.detail-info-item > strong {
+    color: #292929;
+    font-size: 13px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
 }
 
-.form-actions {
-    display: flex;
+.detail-status {
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
-    margin-top: 25px;
-    padding-top: 18px;
-    border-top: 1px solid #eeeeee;
+    width: fit-content;
+    padding: 5px 10px;
+    border-radius: 20px;
+    background: #fff1f3;
+    color: #ce1234;
+    font-size: 11px;
+    font-weight: 600;
 }
 
-@media (max-width: 700px) {
-    .form-container {
-        padding: 16px;
-    }
+.detail-money {
+    color: #ce1234 !important;
+}
 
-    .form-grid {
+.detail-subsection {
+    margin-top: 15px;
+}
+
+.detail-subsection + .detail-subsection {
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+.detail-subsection h3 {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 12px;
+}
+
+.detail-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.detail-table th {
+    background: #f8f8f9;
+    color: #777;
+    font-weight: 600;
+    text-align: left;
+}
+
+.detail-table th,
+.detail-table td {
+    padding: 11px 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-table td {
+    color: #333;
+}
+
+.detail-benefit-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.detail-benefit-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 11px;
+    background: #fafafa;
+    border: 1px solid #e8e8e8;
+    border-radius: 7px;
+    font-size: 12px;
+}
+
+.benefit-check {
+    color: #ce1234;
+    font-weight: 700;
+}
+
+.detail-empty {
+    color: #999;
+    font-size: 12px;
+    margin: 0;
+}
+
+.btn-delete {
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 17px;
+    border: 1px solid #ce1234;
+    border-radius: 7px;
+    background: #fff;
+    color: #ce1234;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-delete:hover {
+    background: #fff1f3;
+}
+
+.contract-actions form {
+    margin: 0;
+}
+
+@media (max-width: 900px) {
+    .detail-info-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .detail-info-grid {
         grid-template-columns: 1fr;
     }
+
+    .contract-actions {
+        flex-wrap: wrap;
+    }
 }
+
 
 #chi tiết hơp đồng*************************
 
@@ -540,4 +1084,298 @@ a.btn-renewal:hover {
     border-color: #70121a !important;
     color: #fff !important;
     text-decoration: none !important;
+}
+
+
+
+
+
+/* =========================================
+   QUẢN LÝ CHẾ ĐỘ PHÚC LỢI
+========================================= */
+
+.benefit-page {
+    padding-bottom: 30px;
+}
+
+/* Bảng danh sách */
+.benefit-table-container {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    margin-top: 24px;
+    overflow: hidden;
+}
+
+.benefit-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #eee;
+}
+
+.benefit-table-header strong {
+    font-size: 16px;
+    color: #252525;
+}
+
+.benefit-table-header span {
+    color: #777;
+    font-size: 13px;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.benefit-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 750px;
+}
+
+.benefit-table th {
+    background: #f8f9fb;
+    color: #555;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
+    padding: 15px 18px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.benefit-table td {
+    padding: 17px 18px;
+    border-bottom: 1px solid #eee;
+    color: #555;
+    font-size: 14px;
+    vertical-align: top;
+    line-height: 1.6;
+}
+
+.benefit-table tbody tr:hover {
+    background: #fafafa;
+}
+
+.benefit-name {
+    font-weight: 600;
+    color: #292929 !important;
+    min-width: 170px;
+}
+
+.benefit-description,
+.benefit-condition {
+    min-width: 200px;
+    max-width: 320px;
+}
+
+.benefit-edit-link {
+    color: #b71c2c;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.benefit-edit-link:hover {
+    text-decoration: underline;
+}
+
+.benefit-empty {
+    text-align: center;
+    padding: 45px 15px !important;
+    color: #888 !important;
+}
+
+/* Phân trang */
+.benefit-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 17px 24px;
+    gap: 15px;
+    color: #777;
+    font-size: 13px;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pagination-arrow,
+.pagination-current {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
+.pagination-arrow {
+    border: 1px solid #ddd;
+    color: #555;
+    font-size: 20px;
+}
+
+.pagination-arrow:hover {
+    background: #f5f5f5;
+}
+
+.pagination-arrow.disabled {
+    color: #bbb;
+    cursor: not-allowed;
+}
+
+.pagination-current {
+    background: #b71c2c;
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Ghi chú cuối trang */
+.benefit-note {
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    margin-top: 18px;
+    color: #777;
+    font-size: 13px;
+}
+
+/* =========================================
+   POPUP THÊM / SỬA PHÚC LỢI
+========================================= */
+
+.benefit-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.benefit-modal {
+    width: 100%;
+    max-width: 620px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+    padding: 28px;
+    margin: auto;
+}
+
+.benefit-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 26px;
+}
+
+.benefit-modal-header h2 {
+    font-size: 21px;
+    color: #292929;
+    margin: 0 0 8px;
+}
+
+.benefit-modal-header p {
+    color: #777;
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.benefit-modal-close {
+    color: #888;
+    font-size: 27px;
+    text-decoration: none;
+    line-height: 1;
+}
+
+.benefit-modal-close:hover {
+    color: #b71c2c;
+}
+
+.benefit-form-group {
+    margin-bottom: 20px;
+}
+
+.benefit-form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 9px;
+}
+
+.benefit-form-group label span {
+    color: #c62828;
+}
+
+.benefit-form-group input,
+.benefit-form-group textarea,
+.benefit-form-group select {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #d9dce2;
+    border-radius: 7px;
+    padding: 11px 13px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #333;
+    background: #fff;
+    outline: none;
+}
+
+.benefit-form-group input:focus,
+.benefit-form-group textarea:focus,
+.benefit-form-group select:focus {
+    border-color: #b71c2c;
+    box-shadow: 0 0 0 3px rgba(183, 28, 44, 0.08);
+}
+
+.benefit-form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.benefit-form-group .error-message {
+    display: block;
+    color: #c62828;
+    margin-top: 6px;
+    font-size: 12px;
+}
+
+/* Nút popup */
+.benefit-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .benefit-modal {
+        padding: 22px 18px;
+    }
+
+    .benefit-pagination {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .benefit-table-header {
+        padding: 16px;
+    }
 }

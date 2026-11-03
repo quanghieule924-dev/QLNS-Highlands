@@ -63,12 +63,39 @@ urlpatterns = [
         name='hop_dong_sap_het_han'
     ),
 
+    path(
+       'thong-bao/<str:matb>/',
+        views.mo_thong_bao,
+        name='mo_thong_bao'
+    ),
 
-# Nhân viên ký hợp đồng
-path(
-    'hop-dong/<str:mahd>/ky/',
-    views.ky_hop_dong,
-    name='ky_hop_dong'
-),
-]
 
+
+
+    # Nhân viên ký hợp đồng
+    path(
+        'hop-dong/<str:mahd>/ky/',
+        views.ky_hop_dong,
+        name='ky_hop_dong'
+    ),
+
+
+    # Quản lý chế độ phúc lợi
+    path(
+        'phuc-loi/',
+        views.danh_sach_che_do_phuc_loi,
+        name='danh_sach_che_do_phuc_loi'
+    ),
+
+    path(
+        'phuc-loi/them/',
+        views.them_che_do_phuc_loi,
+        name='them_che_do_phuc_loi'
+    ),
+
+    path(
+        'phuc-loi/<str:mapl>/sua/',
+        views.sua_che_do_phuc_loi,
+        name='sua_che_do_phuc_loi'
+    ),
+    ]

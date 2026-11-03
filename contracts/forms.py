@@ -1,5 +1,7 @@
 
 from django import forms
+from django.forms import inlineformset_factory
+
 from .models import (
     HopDong,
     ThongBao,
@@ -15,7 +17,6 @@ from .models import (
 from django.utils import timezone
 from .models import HopDong
 
-
 # =========================================================
 # 1. FORM QUẢN LÝ HỢP ĐỒNG
 # =========================================================
@@ -25,7 +26,6 @@ class HopDongForm(forms.ModelForm):
     class Meta:
         model = HopDong
         fields = [
-            'mahd',
             'so_hd',
             'nhan_vien',
             'hop_dong_truoc',
@@ -313,7 +313,6 @@ class CheDoPhucLoiForm(forms.ModelForm):
     class Meta:
         model = CheDoPhucLoi
         fields = [
-            'mapl',
             'ten_pl',
             'mo_ta',
             'dieu_kien_huong',
@@ -415,6 +414,10 @@ class PhuCapForm(forms.ModelForm):
         }
 
 
+
+# =========================================================
+# 9. FORM chấm dứt hợp đồng
+# =========================================================
 class ChamDutHopDongForm(forms.ModelForm):
 
     class Meta:
@@ -446,3 +449,6 @@ class ChamDutHopDongForm(forms.ModelForm):
             )
 
         return ngay_cham_dut
+
+
+

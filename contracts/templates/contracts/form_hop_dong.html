@@ -10,62 +10,401 @@
 {% endblock %}
 
 {% block content %}
-<div class="page-container">
+<div class="contract-page">
 
-    <div class="page-header">
+    <!-- Tiêu đề trang -->
+    <div class="contract-page-header">
         <div>
-            <h1>{{ tieu_de }}</h1>
-            <p>Quản lý thông tin hợp đồng nhân viên.</p>
+            <div class="contract-breadcrumb">
+                Hợp đồng & Phúc lợi <span>›</span>
+                Danh sách hợp đồng <span>›</span>
+                {{ tieu_de }}
+            </div>
+            <h1>{{ tieu_de }} lao động</h1>
         </div>
+        <p>Hoàn thiện thông tin và gửi hợp đồng để nhân viên ký.</p>
     </div>
 
-    <div class="form-container">
+    <form method="post" class="contract-form">
+        {% csrf_token %}
 
-        <form method="post">
-            {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="contract-alert">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
 
-            {% if form.non_field_errors %}
-                <div class="alert alert-danger">
-                    {{ form.non_field_errors }}
+        <!-- 1. THÔNG TIN NHÂN VIÊN -->
+        <section class="contract-card">
+            <div class="contract-card-heading">
+                <h2>Thông tin nhân viên</h2>
+                <span>Thông tin được lấy từ hồ sơ nhân viên</span>
+            </div>
+
+            <div class="employee-grid">
+                <div class="contract-field employee-select">
+                    <label for="{{ form.nhan_vien.id_for_label }}">
+                        Chọn nhân viên <span class="required">*</span>
+                    </label>
+                    {{ form.nhan_vien }}
+                    {% for error in form.nhan_vien.errors %}
+                        <small class="field-error">{{ error }}</small>
+                    {% endfor %}
                 </div>
-            {% endif %}
 
-            <div class="form-grid">
+                <div class="contract-field">
+                    <label>Vị trí</label>
+                    <input type="text" class="form-control readonly-field"
+                           value="Thông tin từ hồ sơ nhân viên" readonly>
+                </div>
 
-                {% for field in form %}
-                    <div class="form-group">
+                <div class="contract-field">
+                    <label>Số điện thoại</label>
+                    <input type="text" class="form-control readonly-field"
+                           value="—" readonly>
+                </div>
 
-                        {{ field.label_tag }}
+                <div class="contract-field">
+                    <label>Email</label>
+                    <input type="text" class="form-control readonly-field"
+                           value="—" readonly>
+                </div>
+            </div>
+        </section>
 
-                        {{ field }}
+        <!-- 2. THÔNG TIN HỢP ĐỒNG -->
+        <section class="contract-card">
+            <div class="contract-card-heading">
+                <h2>Thông tin hợp đồng</h2>
+                <span>* Thông tin bắt buộc</span>
+            </div>
 
-                        {% if field.help_text %}
-                            <small>{{ field.help_text }}</small>
-                        {% endif %}
+            <div class="contract-grid">
 
-                        {% for error in field.errors %}
-                            <p class="error-message">{{ error }}</p>
-                        {% endfor %}
+                <div class="contract-field">
+                    <label for="{{ form.so_hd.id_for_label }}">
+                        Số hợp đồng <span class="required">*</span>
+                    </label>
+                    {{ form.so_hd }}
+                    {% for error in form.so_hd.errors %}
+                        <small class="field-error">{{ error }}</small>
+                    {% endfor %}
+                </div>
 
+                <div class="contract-field">
+                    <label for="{{ form.loai_hd.id_for_label }}">
+                        Loại hợp đồng <span class="required">*</span>
+                    </label>
+                    {{ form.loai_hd }}
+                    {% for error in form.loai_hd.errors %}
+                        <small class="field-error">{{ error }}</small>
+                    {% endfor %}
+                </div>
+
+                <div class="contract-field">
+                    <label for="{{ form.ngay_bat_dau.id_for_label }}">
+                        Ngày bắt đầu <span class="required">*</span>
+                    </label>
+                    {{ form.ngay_bat_dau }}
+                    {% for error in form.ngay_bat_dau.errors %}
+                        <small class="field-error">{{ error }}</small>
+                    {% endfor %}
+                </div>
+
+                <div class="contract-field">
+                    <label for="{{ form.ngay_ket_thuc.id_for_label }}">
+                        Ngày kết thúc
+                    </label>
+                    {{ form.ngay_ket_thuc }}
+                    {% for error in form.ngay_ket_thuc.errors %}
+                        <small class="field-error">{{ error }}</small>
+                    {% endfor %}
+                </div>
+
+                <div class="contract-field">
+                    <label for="{{ form.hinh_thuc_luong.id_for_label }}">
+                        Hình thức trả lương
+                    </label>
+                    {{ form.hinh_thuc_luong }}
+                    {% for error in form.hinh_thuc_luong.errors %}
+                        <small class="field-error">{{ error }}</small>
+                    {% endfor %}
+                </div>
+
+                <div class="contract-field salary-field">
+                    <label for="{{ form.muc_luong.id_for_label }}">
+                        Lương cơ bản <span class="required">*</span>
+                    </label>
+                    {{ form.muc_luong }}
+                    {% for error in form.muc_luong.errors %}
+                        <small class="field-error">{{ error }}</small>
+                    {% endfor %}
+                </div>
+
+                <div class="contract-field previous-contract-field">
+                    <label for="{{ form.hop_dong_truoc.id_for_label }}">
+                        Hợp đồng trước (nếu có)
+                    </label>
+                    {{ form.hop_dong_truoc }}
+                    {% for error in form.hop_dong_truoc.errors %}
+                        <small class="field-error">{{ error }}</small>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. PHỤ CẤP VÀ PHÚC LỢI -->
+        <section class="contract-card">
+            <div class="contract-card-heading">
+                <h2>Phụ cấp & phúc lợi</h2>
+                <button type="button" id="btn-add-allowance"
+                        class="btn-add-allowance">
+                    + Thêm phụ cấp
+                </button>
+            </div>
+
+            <!-- Danh sách phụ cấp -->
+            <div class="allowance-heading">
+                <span>Loại phụ cấp</span>
+                <span>Giá trị</span>
+                <span>Tháng áp dụng</span>
+                <span></span>
+            </div>
+
+            <div id="allowance-list">
+                {% for pc in danh_sach_phu_cap %}
+                    <div class="allowance-row">
+                        <div>
+                            <input type="text" name="loai_pc[]"
+                                   class="form-control"
+                                   placeholder="Nhập loại phụ cấp"
+                                   value="{{ pc.loai_pc }}">
+                        </div>
+                        <div class="input-suffix">
+                            <input type="number" name="gia_tri_pc[]"
+                                   class="form-control"
+                                   placeholder="Nhập giá trị"
+                                   min="0" step="0.01"
+                                   value="{{ pc.gia_tri }}">
+                            <span>VND</span>
+                        </div>
+                        <div>
+                            <input type="month" name="thang_ap_dung[]"
+                                   class="form-control"
+                                   value="{{ pc.thang_ap_dung }}">
+                        </div>
+                        <button type="button"
+                                class="btn-remove-allowance"
+                                title="Xóa phụ cấp">×</button>
+                    </div>
+                {% empty %}
+                    <div class="allowance-row">
+                        <div>
+                            <input type="text" name="loai_pc[]"
+                                   class="form-control"
+                                   placeholder="Nhập loại phụ cấp">
+                        </div>
+                        <div class="input-suffix">
+                            <input type="number" name="gia_tri_pc[]"
+                                   class="form-control"
+                                   placeholder="Nhập giá trị"
+                                   min="0" step="0.01">
+                            <span>VND</span>
+                        </div>
+                        <div>
+                            <input type="month" name="thang_ap_dung[]"
+                                   class="form-control">
+                        </div>
+                        <button type="button"
+                                class="btn-remove-allowance"
+                                title="Xóa phụ cấp">×</button>
                     </div>
                 {% endfor %}
-
             </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">
-                    Lưu thông tin
-                </button>
+            <!-- Phúc lợi và BHXH -->
+            <div class="benefit-bhxh-grid">
 
+                <div class="benefit-area">
+                    <label class="section-label">Chọn chế độ phúc lợi áp dụng</label>
+
+                    <div class="benefit-options">
+                        {% for che_do in danh_sach_che_do %}
+                            <label class="benefit-option">
+                                <input type="checkbox"
+                                       name="che_do_phuc_loi[]"
+                                       value="{{ che_do.mapl }}"
+                                       {% if che_do.mapl in phuc_loi_da_chon %}
+                                           checked
+                                       {% endif %}>
+                                <span>{{ che_do.ten_pl }}</span>
+                            </label>
+                        {% empty %}
+                            <p class="empty-benefit">
+                                Chưa có chế độ phúc lợi nào.
+                            </p>
+                        {% endfor %}
+                    </div>
+
+                    <small class="field-hint">
+                        Có thể chọn nhiều chế độ phúc lợi.
+                    </small>
+                </div>
+
+                <div class="bhxh-area">
+                    <div class="bhxh-heading">
+                        <label for="co_tham_gia_bhxh">Có tham gia BHXH</label>
+                        <label class="switch">
+                            <input type="checkbox"
+                                   id="co_tham_gia_bhxh"
+                                   name="co_tham_gia_bhxh"
+                                   {% if bhxh %}checked{% endif %}>
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+
+                    <div id="bhxh-fields"
+                         {% if not bhxh %}style="display:none"{% endif %}>
+                        <div class="bhxh-grid">
+                            <div class="contract-field">
+                                <label for="ma_so_bh">
+                                    Số sổ BHXH <span class="required">*</span>
+                                </label>
+                                <input type="text" id="ma_so_bh"
+                                       name="ma_so_bh"
+                                       class="form-control"
+                                       value="{{ bhxh.ma_so_bh|default:'' }}"
+                                       placeholder="Nhập số sổ BHXH">
+                            </div>
+
+                            <div class="contract-field">
+                                <label for="muc_dong">
+                                    Mức đóng <span class="required">*</span>
+                                </label>
+                                <div class="input-suffix">
+                                    <input type="number" id="muc_dong"
+                                           name="muc_dong"
+                                           class="form-control"
+                                           min="0" step="0.01"
+                                           value="{{ bhxh.muc_dong|default:'' }}"
+                                           placeholder="Nhập mức đóng">
+                                    <span>VND / tháng</span>
+                                </div>
+                            </div>
+
+                            <div class="contract-field">
+                                <label for="ngay_tham_gia">
+                                    Ngày tham gia <span class="required">*</span>
+                                </label>
+                                <input type="date" id="ngay_tham_gia"
+                                       name="ngay_tham_gia"
+                                       class="form-control"
+                                       value="{{ bhxh.ngay_tham_gia|date:'Y-m-d'|default:'' }}">
+                            </div>
+
+                            <div class="contract-field">
+                                <label for="trang_thai_bhxh">Trạng thái BHXH</label>
+                                <select name="trang_thai_bhxh"
+                                        id="trang_thai_bhxh"
+                                        class="form-control">
+                                    <option value="dang_tham_gia"
+                                        {% if bhxh.trang_thai == 'dang_tham_gia' %}selected{% endif %}>
+                                        Đang tham gia
+                                    </option>
+                                    <option value="tam_dung"
+                                        {% if bhxh.trang_thai == 'tam_dung' %}selected{% endif %}>
+                                        Tạm dừng
+                                    </option>
+                                    <option value="da_ngung"
+                                        {% if bhxh.trang_thai == 'da_ngung' %}selected{% endif %}>
+                                        Đã ngừng
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- GHI CHÚ VÀ NÚT LƯU -->
+        <div class="contract-bottom">
+            <div class="contract-note">
+                <span class="note-icon">ⓘ</span>
+                <div>
+                    <strong>Sau khi lưu, hợp đồng luôn ở trạng thái Chờ ký.</strong>
+                    <p>Gửi đến nhân viên để ký, không tự động có hiệu lực.</p>
+                </div>
+            </div>
+
+            <div class="contract-actions">
                 <a href="{% url 'contracts:danh_sach_hop_dong' %}"
-                   class="btn btn-secondary">
-                    Quay lại
-                </a>
+                   class="btn-cancel">Hủy</a>
+
+                <button type="submit" class="btn-save">
+                    Lưu và gửi đến nhân viên
+                </button>
             </div>
+        </div>
 
-        </form>
-
-    </div>
-
+    </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // Bật/tắt khu vực BHXH
+    const bhxhCheckbox = document.getElementById('co_tham_gia_bhxh');
+    const bhxhFields = document.getElementById('bhxh-fields');
+
+    bhxhCheckbox.addEventListener('change', function () {
+        bhxhFields.style.display = this.checked ? 'block' : 'none';
+    });
+
+    // Thêm và xóa phụ cấp
+    const allowanceList = document.getElementById('allowance-list');
+    const addAllowanceBtn = document.getElementById('btn-add-allowance');
+
+    function attachRemoveEvent(button) {
+        button.addEventListener('click', function () {
+            button.closest('.allowance-row').remove();
+        });
+    }
+
+    document.querySelectorAll('.btn-remove-allowance').forEach(function (button) {
+        attachRemoveEvent(button);
+    });
+
+    addAllowanceBtn.addEventListener('click', function () {
+        const row = document.createElement('div');
+        row.className = 'allowance-row';
+
+        row.innerHTML = `
+            <div>
+                <input type="text" name="loai_pc[]"
+                       class="form-control"
+                       placeholder="Nhập loại phụ cấp">
+            </div>
+            <div class="input-suffix">
+                <input type="number" name="gia_tri_pc[]"
+                       class="form-control"
+                       placeholder="Nhập giá trị"
+                       min="0" step="0.01">
+                <span>VND</span>
+            </div>
+            <div>
+                <input type="month" name="thang_ap_dung[]"
+                       class="form-control">
+            </div>
+            <button type="button" class="btn-remove-allowance"
+                    title="Xóa phụ cấp">×</button>
+        `;
+
+        allowanceList.appendChild(row);
+        attachRemoveEvent(row.querySelector('.btn-remove-allowance'));
+    });
+});
+</script>
 {% endblock %}

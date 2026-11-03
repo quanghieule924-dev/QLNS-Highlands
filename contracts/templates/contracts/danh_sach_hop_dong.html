@@ -16,17 +16,26 @@
 
     <!-- TIÊU ĐỀ TRANG -->
     <div class="page-header">
-        <div>
-            <h1>Quản lý hợp đồng</h1>
-            <p>Theo dõi và quản lý thông tin hợp đồng nhân viên.</p>
-        </div>
+      <div>
+        <h1>Quản lý hợp đồng</h1>
+        <p>Theo dõi và quản lý thông tin hợp đồng nhân viên.</p>
+      </div>
 
-        {% if request.user.role == 'admin' %}
+      {% if request.user.role == 'admin' %}
+        <div class="page-header-actions">
+
             <a href="{% url 'contracts:them_hop_dong' %}"
                class="btn btn-primary">
                 + Thêm hợp đồng
             </a>
-        {% endif %}
+
+            <a href="{% url 'contracts:hop_dong_sap_het_han' %}"
+                class="btn btn-secondary">
+                <i class="fas fa-exclamation-triangle"></i>
+                Hợp đồng sắp hết hạn
+            </a>
+        </div>
+      {% endif %}
     </div>
 
     <!-- KHU VỰC TÌM KIẾM VÀ LỌC -->

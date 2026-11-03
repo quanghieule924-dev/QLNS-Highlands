@@ -10,6 +10,35 @@
 
     <link rel="stylesheet" href="{% static 'css/common.css' %}">
     <link rel="stylesheet" href="{% static 'css/internal.css' %}">
+    <style>
+        .notification-wrapper {
+            position: relative !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .notification-dropdown {
+            display: none !important;
+            position: absolute !important;
+            top: calc(100% + 10px) !important;
+            right: 0 !important;
+
+            width: 350px !important;
+            max-height: 400px !important;
+            overflow-y: auto !important;
+
+            background: #fff !important;
+            border: 1px solid #e5e5e5 !important;
+            border-radius: 10px !important;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12) !important;
+
+            z-index: 99999 !important;
+        }
+
+        .notification-dropdown.show {
+            display: block !important;
+        }
+    </style>
 
     {% block extra_css %}{% endblock %}
 </head>
@@ -43,13 +72,84 @@
 
             <div class="header-account">
 
-                <button
-                    type="button"
-                    class="notification"
-                    aria-label="Thông báo"
-                >
-                    ♧
-                </button>
+                {% if request.user.role == 'admin' %}
+                    <div class="notification-wrapper">
+
+                        <button
+                            type="button"
+                            class="notification"
+                            id="notificationButton"
+                            aria-label="Thông báo"
+                        >
+                            🔔
+
+                            {% if so_thong_bao_chua_doc > 0 %}
+                                <span class="notification-count">
+                                    {{ so_thong_bao_chua_doc }}
+                                </span>
+                            {% endif %}
+                        </button>
+
+                        <div class="notification-dropdown" id="notificationDropdown">
+
+                            <div class="notification-header">
+                                <div>
+                                    <h3>Thông báo</h3>
+                                    <span>{{ so_thong_bao_chua_doc }} thông báo chưa đọc</span>
+                                </div>
+                                <span class="notification-bell">♧</span>
+                            </div>
+
+                            <div class="notification-list">
+
+                                {% for tb in thong_bao_moi_nhat %}
+                                    <a
+                                        href="{% url 'contracts:mo_thong_bao' tb.matb %}"
+                                        class="notification-item {% if tb.trang_thai == 'chua_doc' %}unread{% endif %}"
+                                    >
+                                        <span class="notification-icon">📄</span>
+
+                                        <div class="notification-content">
+                                            <strong>Hợp đồng sắp hết hạn</strong>
+
+                                            <p>{{ tb.noi_dung }}</p>
+
+                                            <small>
+                                                Mã hợp đồng: {{ tb.hop_dong.mahd }}
+                                            </small>
+
+                                            <span class="notification-status">
+                                                {% if tb.trang_thai == 'chua_doc' %}
+                                                    Chưa đọc
+                                                {% else %}
+                                                    Đã đọc
+                                                {% endif %}
+                                            </span>
+                                        </div>
+
+                                        {% if tb.trang_thai == 'chua_doc' %}
+                                            <span class="unread-dot"></span>
+                                        {% endif %}
+                                    </a>
+
+                                {% empty %}
+                                    <div class="notification-empty">
+                                        <span>♧</span>
+                                        <strong>Chưa có thông báo</strong>
+                                        <p>Các thông báo mới sẽ xuất hiện tại đây.</p>
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+
+                            <div class="notification-footer">
+                                <span>Hiển thị 10 thông báo gần nhất</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+                {% endif %}
 
                 <!-- AVATAR THEO VAI TRO -->
                 <span class="account-avatar">
@@ -260,6 +360,27 @@
         </main>
 
     {% endif %}
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const button = document.getElementById('notificationButton');
+        const dropdown = document.getElementById('notificationDropdown');
+
+        if (button && dropdown) {
+            button.addEventListener('click', function (event) {
+                event.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+
+            document.addEventListener('click', function (event) {
+                if (!dropdown.contains(event.target) &&
+                    !button.contains(event.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        }
+    });
+    </script>
 
     {% block extra_js %}{% endblock %}
 

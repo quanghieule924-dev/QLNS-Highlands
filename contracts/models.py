@@ -7,6 +7,7 @@ from django.core.validators import MinValueValidator
 from django.utils import timezone
 
 from employees.models import NhanVien
+from django.conf import settings
 
 
 # =========================================================
@@ -132,6 +133,23 @@ class HopDong(models.Model):
         verbose_name = "Hợp đồng"
         verbose_name_plural = "Hợp đồng"
 
+    def save(self, *args, **kwargs):
+        if not self.mahd:
+            hop_dong_cuoi = (
+                HopDong.objects
+                .order_by('-mahd')
+                .first()
+            )
+
+            if hop_dong_cuoi and hop_dong_cuoi.mahd.startswith('HD'):
+                so_thu_tu = int(hop_dong_cuoi.mahd[2:]) + 1
+            else:
+                so_thu_tu = 1
+
+            self.mahd = f'HD{so_thu_tu:03d}'
+
+        super().save(*args, **kwargs)
+
 
 
     def clean(self):
@@ -210,6 +228,13 @@ class HopDong(models.Model):
 
         return hom_nay <= self.ngay_ket_thuc <= ngay_canh_bao
 
+    @property
+    def so_ngay_con_lai(self):
+        if not self.ngay_ket_thuc:
+            return None
+
+        return (self.ngay_ket_thuc - timezone.localdate()).days
+
     def __str__(self):
         return self.so_hd
 
@@ -238,6 +263,16 @@ class ThongBao(models.Model):
         related_name="thong_bao"
     )
 
+    nguoi_nhan = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        db_column="Nguoi_nhan",
+        related_name="thong_bao",
+        null=True,
+        blank=True,
+        verbose_name="Người nhận"
+    )
+
     noi_dung = models.TextField(
         db_column="Noi_dung"
     )
@@ -251,6 +286,12 @@ class ThongBao(models.Model):
 
     class Meta:
         db_table = "ThongBao"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['hop_dong', 'nguoi_nhan'],
+                name='unique_thong_bao_hop_dong_nguoi_nhan'
+            )
+        ]
 
     def __str__(self):
         return self.matb
@@ -505,6 +546,8 @@ class PhucLoiHopDong(models.Model):
     gia_tri = models.DecimalField(
         max_digits=12,
         decimal_places=2,
+        null=True,
+        blank=True,
         validators=[MinValueValidator(0)],
         db_column="Gia_tri"
     )
