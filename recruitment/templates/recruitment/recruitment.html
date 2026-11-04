@@ -1,0 +1,623 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cơ hội việc làm - Highlands Coffee</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: #F8F6F0;
+            color: #333;
+        }
+
+        .navbar {
+            background-color: #8A1A22;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        /* LOGO HIGHLANDS CHUẨN TỪ THƯ MỤC STATIC */
+        .navbar-brand img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+        }
+
+        .navbar-brand span {
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.9;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .nav-links a.active {
+            border-bottom: 2px solid #FFD43B;
+            padding-bottom: 3px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-badge {
+            background-color: #fff;
+            color: #8A1A22;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 13px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .user-badge:hover {
+            background-color: #f0f0f0;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .breadcrumb {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .page-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+
+        .page-title h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+
+        .page-title p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .branch-tag {
+            background-color: #FFF0F1;
+            color: #8A1A22;
+            border: 1px solid #ffd1d4;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            text-align: right;
+        }
+
+        .branch-tag span {
+            display: block;
+            font-weight: 400;
+            font-size: 12px;
+            color: #555;
+            margin-top: 2px;
+        }
+
+        .job-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 22px 25px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+            border: 1px solid #eaeaea;
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .job-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .job-subtitle {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 18px;
+        }
+
+        .status-badge {
+            background-color: #E6F8ED;
+            color: #198754;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .job-details-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr) auto auto;
+            gap: 15px;
+            align-items: center;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 15px;
+        }
+
+        .job-meta-item label {
+            display: block;
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .job-meta-item value {
+            font-size: 13px;
+            font-weight: 600;
+            color: #222;
+        }
+
+        /* NÚT XEM CHI TIẾT: Bo tròn, rê chuột đổi sang màu đỏ */
+        .btn-detail {
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #ccc;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .btn-detail:hover {
+            background-color: #8A1A22;
+            border-color: #8A1A22;
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(138, 26, 34, 0.2);
+        }
+
+        /* NÚT NỘP HỒ SƠ: Bo tròn */
+        .btn-apply-direct {
+            background-color: #8A1A22;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .btn-apply-direct:hover {
+            background-color: #701319;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-container {
+            background: #fff;
+            width: 750px;
+            max-width: 90%;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: none; border: none;
+            font-size: 20px; cursor: pointer;
+            color: #666;
+        }
+
+        .modal-header h2 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #111;
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            background: #FAFAFA;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .modal-grid div span {
+            display: block;
+            color: #777;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .modal-section-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #222;
+        }
+
+        .modal-list {
+            margin-bottom: 20px;
+            padding-left: 20px;
+            font-size: 13px;
+            color: #444;
+        }
+
+        .modal-list li {
+            margin-bottom: 5px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-close-modal {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-close-modal:hover {
+            background: #f0f0f0;
+        }
+
+        .footer-note {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="navbar-brand">
+            <!-- Thay logo chuẩn từ thư mục static -->
+            <img src="{% static 'images/logo-highlands.png' %}" alt="Highlands Coffee Logo">
+            <div>
+                HIGHLANDS COFFEE
+                <span>Cổng ứng viên</span>
+            </div>
+        </div>
+        <nav class="nav-links">
+            <a href="/">Trang chủ</a>
+            <a href="{% url 'recruitment:recruitment_list' %}" class="active">Tuyển dụng</a>
+            <a href="/accounts/about/">Giới thiệu</a>
+        </nav>
+        <div class="nav-right">
+            <a href="/tro-giup/" style="color: #fff; text-decoration: none; font-size: 14px; font-weight: 500;">Trợ giúp</a>
+            <a href="/accounts/login/" class="user-badge">Đăng nhập</a>
+        </div>
+    </header>
+
+    <div class="main-container">
+
+        <!-- TIÊU ĐỀ ĐÃ ĐƯỢC CHỈNH THẲNG HÀNG NGANG -->
+        <div class="page-header-flex" style="align-items: center; margin-top: 20px; margin-bottom: 30px;">
+            <div class="page-title">
+                <h1 style="margin: 0;">Cơ hội việc làm</h1>
+            </div>
+            <div class="branch-tag">
+                ☕ CN BẠCH ĐẰNG, ĐÀ NẴNG
+                <span>256 Bạch Đằng, Đà Nẵng</span>
+            </div>
+        </div>
+
+        <!-- THANH TÌM KIẾM ĐÃ CẬP NHẬT: Thêm ô Mã đợt, giữ nguyên nút Tìm kiếm góc vuông bo nhẹ -->
+        <div style="background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #eaeaea; margin-bottom: 25px; box-shadow: 0 3px 12px rgba(0,0,0,0.02);">
+            <form method="GET" style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr auto; gap: 15px; align-items: center;">
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #777; text-transform: uppercase; margin-bottom: 5px;">Từ khóa</label>
+                    <input type="text" name="q" value="{{ search_query }}" placeholder="Tìm kiếm tên đợt, vị trí..." style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; outline: none;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #777; text-transform: uppercase; margin-bottom: 5px;">Mã đợt</label>
+                    <input type="text" name="ma_dot" value="{{ ma_dot_filter }}" placeholder="Nhập mã đợt..." style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; outline: none;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #777; text-transform: uppercase; margin-bottom: 5px;">Trạng thái</label>
+                    <select name="trang_thai" style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; background: #fff; outline: none;">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="Đang tuyển" {% if request.GET.trang_thai == 'Đang tuyển' %}selected{% endif %}>Đang tuyển</option>
+                        <option value="Chưa mở" {% if request.GET.trang_thai == 'Chưa mở' %}selected{% endif %}>Chưa mở</option>
+                        <option value="Đã đóng" {% if request.GET.trang_thai == 'Đã đóng' %}selected{% endif %}>Đã đóng</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #777; text-transform: uppercase; margin-bottom: 5px;">Mức lương</label>
+                    <select name="muc_luong" style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; background: #fff; outline: none;">
+                        <option value="">Tất cả mức lương</option>
+                        <option value="Thỏa thuận" {% if request.GET.muc_luong == 'Thỏa thuận' %}selected{% endif %}>Thỏa thuận</option>
+                    </select>
+                </div>
+                <div style="padding-top: 18px;">
+                    <button type="submit" style="background-color: #8A1A22; color: #fff; border: none; padding: 10px 24px; border-radius: 6px; font-weight: 700; font-size: 13px; cursor: pointer;">Tìm kiếm</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- SỐ LƯỢNG ĐỢT ĐANG MỞ -->
+        <div style="font-size: 15px; font-weight: 700; color: #222; margin-bottom: 15px;">
+            <span>{{ tong_dang_mo }} đợt tuyển dụng đang mở</span>
+        </div>
+
+        <!-- VÒNG LẶP SỬ DỤNG page_obj -->
+        {% for item in page_obj %}
+        <div class="job-card">
+            <div class="job-header">
+                <div class="job-title">{{ item.ten_dot }}</div>
+                <div class="status-badge" style="background-color: {% if item.trang_thai == 'Đang tuyển' %}#E6F8ED{% elif item.trang_thai == 'Chưa mở' %}#FFF3CD{% else %}#F8D7DA{% endif %}; color: {% if item.trang_thai == 'Đang tuyển' %}#198754{% elif item.trang_thai == 'Chưa mở' %}#856404{% else %}#842029{% endif %};">
+                    ● {{ item.trang_thai }}
+                </div>
+            </div>
+            <div class="job-subtitle">Vị trí: {{ item.vi_tri }}</div>
+            <div class="job-details-grid" style="grid-template-columns: repeat(4, 1fr) auto {% if item.trang_thai == 'Đang tuyển' %}auto{% endif %};">
+                <div class="job-meta-item">
+                    <label>Mã đợt tuyển dụng</label>
+                    <value>{{ item.ma_dot }}</value>
+                </div>
+                <div class="job-meta-item">
+                    <label>Số lượng cần tuyển</label>
+                    <value>{{ item.so_luong }}</value>
+                </div>
+                <div class="job-meta-item">
+                    <label>Mức lương</label>
+                    <value>{{ item.muc_luong }}</value>
+                </div>
+                <div class="job-meta-item">
+                    <label>Thời gian tuyển dụng</label>
+                    <value>{{ item.thoi_gian }}</value>
+                </div>
+
+                <!-- Nút Xem chi tiết đã bo tròn & có hiệu ứng rê chuột màu đỏ -->
+                <button class="btn-detail" onclick="openModal('{{ item.ma_dot }}', '{{ item.ten_dot }}', '{{ item.vi_tri }}', '{{ item.so_luong }}', '{{ item.muc_luong }}', '{{ item.ngay_bat_dau }}', '{{ item.ngay_ket_thuc }}', '{{ item.trang_thai }}')">Xem chi tiết</button>
+
+                {% if item.trang_thai == 'Đang tuyển' %}
+                    <a href="{% url 'recruitment:nop_ho_so' item.ma_dot %}" class="btn-apply-direct">Nộp hồ sơ ↗</a>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div style="background: #fff; padding: 40px; text-align: center; border-radius: 12px; color: #777;">
+            Hiện chưa có đợt tuyển dụng nào phù hợp. Vui lòng quay lại sau!
+        </div>
+        {% endfor %}
+
+        <!-- THANH PHÂN TRANG (CĂN PHẢI, LUÔN HIỆN, LƯU GIỮ BỘ LỌC) -->
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 40px; margin-bottom: 20px;">
+
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}&trang_thai={{ request.GET.trang_thai }}&muc_luong={{ request.GET.muc_luong }}&ma_dot={{ request.GET.ma_dot }}" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #eaeaea; border-radius: 8px; text-decoration: none; color: #666; font-weight: 700; font-size: 16px; background: #fff; transition: 0.2s;" onmouseover="this.style.borderColor='#8A1A22'; this.style.color='#8A1A22'" onmouseout="this.style.borderColor='#eaeaea'; this.style.color='#666'">&lt;</a>
+            {% else %}
+                <span style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #eaeaea; border-radius: 8px; color: #ccc; font-weight: 700; font-size: 16px; background: #f9f9f9; cursor: not-allowed;">&lt;</span>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <span style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #8A1A22; border-radius: 8px; background: #8A1A22; color: #fff; font-weight: 700; font-size: 14px;">{{ num }}</span>
+                {% else %}
+                    <a href="?page={{ num }}&q={{ request.GET.q }}&trang_thai={{ request.GET.trang_thai }}&muc_luong={{ request.GET.muc_luong }}&ma_dot={{ request.GET.ma_dot }}" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #eaeaea; border-radius: 8px; text-decoration: none; color: #666; font-weight: 700; font-size: 14px; background: #fff; transition: 0.2s;" onmouseover="this.style.borderColor='#8A1A22'; this.style.color='#8A1A22'" onmouseout="this.style.borderColor='#eaeaea'; this.style.color='#666'">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}&trang_thai={{ request.GET.trang_thai }}&muc_luong={{ request.GET.muc_luong }}&ma_dot={{ request.GET.ma_dot }}" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #eaeaea; border-radius: 8px; text-decoration: none; color: #666; font-weight: 700; font-size: 16px; background: #fff; transition: 0.2s;" onmouseover="this.style.borderColor='#8A1A22'; this.style.color='#8A1A22'" onmouseout="this.style.borderColor='#eaeaea'; this.style.color='#666'">&gt;</a>
+            {% else %}
+                <span style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #eaeaea; border-radius: 8px; color: #ccc; font-weight: 700; font-size: 16px; background: #f9f9f9; cursor: not-allowed;">&gt;</span>
+            {% endif %}
+
+        </div>
+
+        <div class="footer-note">
+            <div>© 2026 Highlands Coffee · Cổng tuyển dụng chi nhánh</div>
+            <div>Chính sách bảo mật</div>
+        </div>
+    </div>
+
+    <!-- MODAL CHI TIẾT ĐỢT TUYỂN DỤNG -->
+    <div id="jobModal" class="modal-overlay">
+        <div class="modal-container">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div class="modal-header">
+                <h2>Chi tiết đợt tuyển dụng</h2>
+            </div>
+
+            <div style="font-weight: 700; font-size: 16px; margin-bottom: 15px;" id="modalTitle">Tuyển nhân viên</div>
+
+            <div class="modal-grid">
+                <div><span>Mã đợt tuyển dụng</span><strong id="modalMaDot">DT01</strong></div>
+                <div><span>Vị trí</span><strong id="modalViTri">Nhân viên</strong></div>
+                <div><span>Số lượng cần tuyển</span><strong id="modalSoLuong">3</strong></div>
+                <div><span>Mức lương</span><strong id="modalMucLuong">25.000 - 30.000đ/giờ</strong></div>
+                <div><span>Ngày bắt đầu</span><strong id="modalNgayBD">01/10/2026</strong></div>
+                <div><span>Ngày kết thúc</span><strong id="modalNgayKT">15/10/2026</strong></div>
+                <div><span>Trạng thái</span><strong style="color: #198754;" id="modalTrangThai">● Đang tuyển</strong></div>
+                <div><span>Chi nhánh</span><strong>CN BẠCH ĐẰNG ĐÀ NẴNG</strong></div>
+            </div>
+
+            <div class="modal-section-title">Mô tả công việc</div>
+            <ul class="modal-list">
+                <li>Thực hiện công việc theo phân công tại cửa hàng</li>
+                <li>Hỗ trợ vận hành và phục vụ khách hàng</li>
+            </ul>
+
+            <div class="modal-section-title">Yêu cầu ứng viên</div>
+            <ul class="modal-list">
+                <li>Giao tiếp tốt, nhanh nhẹn, có trách nhiệm</li>
+                <li>Có thể làm việc theo ca linh hoạt</li>
+                <li>Nhiệt tình và chịu học hỏi</li>
+                <li>Đủ 18 trở lên</li>
+            </ul>
+
+            <div class="modal-section-title">Quyền lợi</div>
+            <ul class="modal-list" style="display: flex; gap: 20px; list-style: none; padding: 0;">
+                <li>✓ Được đào tạo nghiệp vụ chuyên nghiệp</li>
+                <li>✓ Môi trường làm việc năng động</li>
+                <li>✓ Trau dồi thêm nhiều kĩ năng để phát triển bản thân</li>
+            </ul>
+
+            <div class="modal-footer">
+                <div class="modal-footer-branch">
+                    <strong>CN BẠCH ĐẰNG, ĐÀ NẴNG</strong>
+                    <div style="color: #777; font-size: 11px;">256 Bạch Đằng, Đà Nẵng</div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn-close-modal" onclick="closeModal()">Đóng</button>
+                    <a href="#" id="btn-nop-ho-so-modal" style="background-color: #8A1A22; color: #fff; padding: 10px 24px; border-radius: 20px; text-decoration: none; font-weight: 700; display: inline-block;">
+                        Nộp hồ sơ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const buttons = document.querySelectorAll('.btn-detail');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.job-card');
+
+                    const ten = card.querySelector('.job-title').innerText;
+                    const viTri = card.querySelector('.job-subtitle').innerText.replace('Vị trí: ', '');
+                    const maDot = card.querySelectorAll('value')[0].innerText;
+                    const soLuong = card.querySelectorAll('value')[1].innerText;
+                    const mucLuong = card.querySelectorAll('value')[2].innerText;
+                    const thoiGian = card.querySelectorAll('value')[3].innerText;
+                    const trangThai = card.querySelector('.status-badge').innerText.replace('● ', '').trim();
+
+                    let dates = thoiGian.split(' - ');
+                    let ngayBD = dates[0] || '';
+                    let ngayKT = dates[1] || '';
+
+                    document.getElementById('modalTitle').innerText = ten;
+                    document.getElementById('modalMaDot').innerText = maDot;
+                    document.getElementById('modalViTri').innerText = viTri;
+                    document.getElementById('modalSoLuong').innerText = soLuong;
+                    document.getElementById('modalMucLuong').innerText = mucLuong;
+                    document.getElementById('modalNgayBD').innerText = ngayBD;
+                    document.getElementById('modalNgayKT').innerText = ngayKT;
+
+                    let badgeTrangThai = document.getElementById('modalTrangThai');
+                    badgeTrangThai.innerText = '● ' + trangThai;
+
+                    let btnNopHoSoModal = document.getElementById('btn-nop-ho-so-modal');
+
+                    if (trangThai === 'Đang tuyển') {
+                        badgeTrangThai.style.color = '#198754';
+                        btnNopHoSoModal.style.display = 'inline-block';
+                    } else if (trangThai === 'Chưa mở') {
+                        badgeTrangThai.style.color = '#856404';
+                        btnNopHoSoModal.style.display = 'none';
+                    } else {
+                        badgeTrangThai.style.color = '#842029';
+                        btnNopHoSoModal.style.display = 'none';
+                    }
+
+                    btnNopHoSoModal.href = "/recruitment/nop-ho-so/" + maDot + "/";
+                    document.getElementById('jobModal').style.display = 'flex';
+                });
+            });
+        });
+
+        function closeModal() {
+            document.getElementById('jobModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            let modal = document.getElementById('jobModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,613 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý lịch phỏng vấn - HRM Highlands</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <link rel="stylesheet" href="{% static 'css/internal.css' %}">
+    <style>
+        :root {
+            --sidebar-width: 210px !important;
+            --header-height: 72px !important;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', 'Be Vietnam Pro', sans-serif; }
+
+        body {
+            background-color: #F8F6F0 !important;
+            color: #333;
+            display: block !important;
+            overflow: auto !important;
+            height: auto !important;
+            margin: 0;
+        }
+
+        /* THANH HEADER NGANG ĐỎ ĐẬM HIGHLANDS */
+        .internal-header {
+            position: fixed !important;
+            top: 0; right: 0; left: 0;
+            z-index: 1000;
+            height: var(--header-height) !important;
+            display: flex;
+            align-items: center;
+            background: #8A1A22 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 0 !important;
+        }
+
+        .internal-brand {
+            width: var(--sidebar-width) !important;
+            min-width: var(--sidebar-width) !important;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 14px !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
+            background: #8A1A22 !important;
+            color: #fff;
+            text-decoration: none;
+        }
+        .brand-logo-img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        .brand-text strong {
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+        }
+        .brand-text small {
+            color: #FFD43B;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .header-search {
+            width: 320px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-left: 25px;
+            padding: 0 14px;
+            border-radius: 20px;
+            background: #ffffff !important;
+        }
+        .header-search input {
+            width: 100%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: #333 !important;
+            font-size: 13px;
+        }
+        .header-account {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-left: auto;
+            padding: 0 25px;
+        }
+        .account-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: #fff;
+            color: #8A1A22;
+            font-weight: 800;
+            font-size: 12px;
+            display: grid;
+            place-items: center;
+        }
+        .logout-button {
+            background-color: #ffffff !important;
+            color: #8A1A22 !important;
+            border: none !important;
+            padding: 8px 20px !important;
+            border-radius: 20px !important;
+            font-weight: 700 !important;
+            font-size: 13px !important;
+            cursor: pointer !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .logout-button:hover {
+            background-color: #FFF0F1 !important;
+        }
+
+        /* THANH SIDEBAR DỌC NỀN TRẮNG TÁCH BIỆT */
+        .internal-sidebar {
+            position: fixed !important;
+            top: var(--header-height) !important;
+            bottom: 0; left: 0;
+            z-index: 900;
+            width: var(--sidebar-width) !important;
+            padding: 20px 10px 14px !important;
+            background: #FFFFFF !important;
+            border-right: 1px solid #E5E0D8 !important;
+            overflow-y: auto;
+            color: #292929 !important;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-menu {
+            padding-top: 5px !important;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .sidebar-menu a {
+            color: #444444 !important;
+            font-size: 12px;
+            border-radius: 6px;
+            padding: 0 10px;
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: background 0.15s ease;
+        }
+        .sidebar-menu a:hover {
+            background: #FFF0F1 !important;
+            color: #8A1A22 !important;
+        }
+        .sidebar-menu a.active {
+            background: #8A1A22 !important;
+            color: #FFFFFF !important;
+            font-weight: 700 !important;
+            border-left: none !important;
+        }
+
+        .sidebar-note {
+            margin-top: auto;
+            padding: 10px;
+            border: 1px solid #EAE5DE;
+            border-radius: 8px;
+            background: #FAFAFA;
+        }
+        .sidebar-note strong {
+            color: #1A1A1A !important;
+            font-size: 10px;
+        }
+        .sidebar-note p {
+            color: #777777 !important;
+            margin: 4px 0 0;
+            font-size: 9px;
+            line-height: 1.5;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: var(--sidebar-width) !important;
+            margin-top: var(--header-height) !important;
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px 40px;
+            background-color: #F8F6F0 !important;
+            min-height: calc(100vh - var(--header-height));
+            box-sizing: border-box;
+        }
+
+        .top-header-clean {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-title h1 { font-size: 26px; font-weight: 800; color: #1a1a1a; margin: 0; }
+
+        /* THANH TÌM KIẾM VÀ LỌC NÂNG CAO */
+        .filter-bar {
+            background: #fff;
+            padding: 18px 20px;
+            border-radius: 12px;
+            border: 1px solid #eaeaea;
+            display: grid;
+            grid-template-columns: 2fr 1.3fr 1.1fr 1.2fr 1fr 100px;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .filter-input, .filter-select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            background: #fff;
+            color: #333;
+            font-family: inherit;
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            border-color: #8A1A22;
+        }
+
+        .btn-search-filter {
+            background: #8A1A22;
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.2s;
+        }
+
+        .btn-search-filter:hover {
+            background: #701319;
+        }
+
+        .card-container { background: #fff; border-radius: 12px; border: 1px solid #eaeaea; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+
+        .card-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #1a1a1a;
+            letter-spacing: -0.2px;
+            margin: 0;
+        }
+
+        .btn-primary {
+            background: #8A1A22;
+            color: #fff;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
+        }
+        .btn-primary:hover { background: #701319; }
+
+        .table-header { display: grid; grid-template-columns: 1fr 2fr 1.5fr 1.5fr 1fr 2fr 1fr; gap: 15px; padding-bottom: 12px; border-bottom: 1px solid #eee; font-size: 11px; font-weight: 700; color: #777; text-transform: uppercase; }
+        .table-row { display: grid; grid-template-columns: 1fr 2fr 1.5fr 1.5fr 1fr 2fr 1fr; gap: 15px; padding: 16px 0; border-bottom: 1px solid #f5f5f5; align-items: center; }
+
+        .applicant-info { display: flex; align-items: center; gap: 10px; }
+        .avatar-placeholder { width: 36px; height: 36px; background: #FFF0F1; color: #8A1A22; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; }
+        .app-name { font-size: 14px; font-weight: 700; color: #222; }
+        .app-code { font-size: 11px; color: #777; }
+
+        .action-btn { background: #FFF0F1; border: 1px solid #ffd1d4; padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; color: #8A1A22; transition: 0.2s; }
+        .action-btn:hover { background: #8A1A22; color: #fff; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-container { background: #fff; width: 600px; max-width: 90%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .modal-header { padding: 20px 25px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h2 { font-size: 18px; font-weight: 800; color: #111; }
+        .modal-close { background: #f5f5f5; border: none; cursor: pointer; width: 30px; height: 30px; border-radius: 8px; font-weight: bold; }
+
+        .modal-body { padding: 25px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+        .form-control { width: 100%; padding: 12px 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 13px; outline: none; }
+        .auto-field { display: flex; justify-content: space-between; align-items: center; background: #fdfdfd; border: 1px solid #eaeaea; padding: 12px 15px; border-radius: 8px; font-weight: 600; margin-bottom: 20px; font-size: 13px; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .segment-control { display: flex; background: #f5f5f5; border-radius: 8px; padding: 4px; gap: 4px; }
+        .segment-btn { flex: 1; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; border: none; background: transparent; color: #666; }
+        .segment-btn.active { background: #fff; color: #8A1A22; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #eaeaea; }
+
+        .modal-footer { padding: 20px 25px; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: #fafafa; border-radius: 0 0 12px 12px; }
+        .btn-cancel { background: #fff; border: 1px solid #ccc; padding: 10px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; }
+        .btn-submit { background: #8A1A22; color: #fff; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <!-- THANH HEADER NGANG -->
+    <header class="internal-header">
+        <a href="{% url 'home' %}" class="internal-brand">
+            <img src="{% static 'images/logo-highlands.png' %}" alt="Highlands Logo" class="brand-logo-img">
+            <span class="brand-text">
+                <strong>HRM System</strong>
+                <small>HIGHLANDS COFFEE</small>
+            </span>
+        </a>
+
+        <div class="header-search">
+            <span class="search-icon">⌕</span>
+            <input type="search" name="search" placeholder="Tìm nhân viên, hợp đồng..." aria-label="Tìm kiếm">
+        </div>
+
+        <div class="header-account">
+            <span class="account-avatar">QL</span>
+            <form method="post" action="{% url 'accounts:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-button">Đăng xuất</button>
+            </form>
+        </div>
+    </header>
+
+    <!-- THANH SIDEBAR DỌC -->
+    <aside class="internal-sidebar">
+        <nav class="sidebar-menu">
+            <a href="{% url 'home' %}" class="{% if active_menu == 'dashboard' %}active{% endif %}">
+                <span class="menu-icon">▦</span>
+                <span>Tổng quan</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'employees' %}active{% endif %}">
+                <span class="menu-icon">♙</span>
+                <span>Quản lý nhân viên</span>
+            </a>
+
+            <a href="{% url 'recruitment:quan_ly_tuyen_dung' %}" class="{% if active_menu == 'tuyen_dung' or request.resolver_match.namespace == 'recruitment' %}active{% endif %}">
+                <span class="menu-icon">♧</span>
+                <span>Tuyển dụng</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'contracts' %}active{% endif %}">
+                <span class="menu-icon">▤</span>
+                <span>Hợp đồng &amp; Phúc lợi</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'scheduling' %}active{% endif %}">
+                <span class="menu-icon">▦</span>
+                <span>Phân ca làm việc</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'attendance' %}active{% endif %}">
+                <span class="menu-icon">◷</span>
+                <span>Chấm công</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'payroll' %}active{% endif %}">
+                <span class="menu-icon">▤</span>
+                <span>Quản lý lương</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'training' %}active{% endif %}">
+                <span class="menu-icon">♧</span>
+                <span>Đào tạo</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'reports' %}active{% endif %}">
+                <span class="menu-icon">▥</span>
+                <span>Báo cáo thống kê</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-note">
+            <strong>Không gian chi nhánh</strong>
+            <p>Theo dõi nhân sự và hoạt động tại chi nhánh của bạn.</p>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- TIÊU ĐỀ CHÍNH VÀ NHÃN CHI NHÁNH THẲNG HÀNG -->
+        <div class="top-header-clean">
+            <div class="page-title">
+                <h1>Quản lý lịch phỏng vấn</h1>
+            </div>
+            <div style="font-size: 13px; font-weight: 600; color: #8A1A22; background: #FFF0F1; padding: 8px 16px; border-radius: 20px;">📍 Chi nhánh Bạch Đằng, Đà Nẵng</div>
+        </div>
+
+        <!-- THANH TÌM KIẾM VÀ LỌC NÂNG CAO ĐÃ ĐỔ 3 VỊ TRÍ CHUẨN -->
+        <form method="GET" action="{% url 'recruitment:hr_lich_phong_van' %}" class="filter-bar">
+            <input type="text" name="q" value="{{ search_query }}" class="filter-input" placeholder="🔍 Tìm tên ứng viên, SĐT...">
+
+            <select name="vi_tri" class="filter-select">
+                <option value="">💼 Vị trí ứng tuyển...</option>
+                <option value="Nhân viên phục vụ" {% if vi_tri_filter == 'Nhân viên phục vụ' %}selected{% endif %}>Nhân viên phục vụ</option>
+                <option value="Thu ngân" {% if vi_tri_filter == 'Thu ngân' %}selected{% endif %}>Thu ngân</option>
+                <option value="Pha chế" {% if vi_tri_filter == 'Pha chế' %}selected{% endif %}>Pha chế</option>
+            </select>
+
+            <select name="hinh_thuc" class="filter-select">
+                <option value="">📋 Hình thức...</option>
+                <option value="Trực tiếp" {% if hinh_thuc_filter == 'Trực tiếp' %}selected{% endif %}>Trực tiếp</option>
+                <option value="Trực tuyến" {% if hinh_thuc_filter == 'Trực tuyến' %}selected{% endif %}>Trực tuyến</option>
+            </select>
+
+            <select name="trang_thai" class="filter-select">
+                <option value="">⚙️ Trạng thái lịch...</option>
+                <option value="Đã lên lịch" {% if trang_thai_filter == 'Đã lên lịch' %}selected{% endif %}>Đã lên lịch</option>
+                <option value="Chờ xác nhận" {% if trang_thai_filter == 'Chờ xác nhận' %}selected{% endif %}>Chờ xác nhận</option>
+                <option value="Đã phỏng vấn" {% if trang_thai_filter == 'Đã phỏng vấn' %}selected{% endif %}>Đã phỏng vấn</option>
+            </select>
+
+            <input type="date" name="ngay_pv" value="{{ ngay_pv_filter }}" class="filter-input" title="Chọn ngày phỏng vấn">
+
+            <button type="submit" class="btn-search-filter">Tìm kiếm</button>
+        </form>
+
+        <div class="card-container">
+            <!-- TIÊU ĐỀ VÀ NÚT TẠO LỊCH NẰM TRONG KHUNG, THẲNG HÀNG -->
+            <div class="card-header-flex">
+                <div class="section-title">Danh sách lịch phỏng vấn</div>
+                <button class="btn-primary" onclick="openScheduleModal()">+ Tạo lịch phỏng vấn</button>
+            </div>
+
+            <div class="table-header">
+                <div>Mã hồ sơ</div>
+                <div>Ứng viên</div>
+                <div>Vị trí</div>
+                <div>Thời gian</div>
+                <div>Hình thức</div>
+                <div>Địa điểm</div>
+                <div style="text-align: right;">Thao tác</div>
+            </div>
+
+            {% for hs in danh_sach_lich %}
+            <div class="table-row">
+                <div style="font-size: 13px; font-weight: 700; color: #8A1A22;">{{ hs.ma_ho_so }}</div>
+                <div class="applicant-info">
+                    <div class="avatar-placeholder">{{ hs.ma_ung_vien.ho_ten|slice:":2"|upper }}</div>
+                    <div>
+                        <div class="app-name">{{ hs.ma_ung_vien.ho_ten }}</div>
+                        <div class="app-code">{{ hs.ma_ung_vien.sdt }}</div>
+                    </div>
+                </div>
+                <div style="font-size: 13px; font-weight: 600;">{{ hs.ma_vi_tri.ten_vi_tri }}</div>
+
+                <!-- DỮ LIỆU ĐỘNG -->
+                <div style="font-size: 12px; color: #555;">
+                    {% if hs.ngay_phong_van and hs.gio_phong_van %}
+                        <strong style="color: #222; display: block;">{{ hs.gio_phong_van|time:"H:i" }}</strong>
+                        {{ hs.ngay_phong_van|date:"d/m/Y" }}
+                    {% else %}
+                        <strong style="color: #222; display: block;">Chưa xếp giờ</strong>
+                        Chờ cập nhật
+                    {% endif %}
+                </div>
+
+                <div style="font-size: 12px; font-weight: 600;">
+                    {% if hs.hinh_thuc_pv %}
+                        {{ hs.hinh_thuc_pv }}
+                    {% else %}
+                        Chưa phân loại
+                    {% endif %}
+                </div>
+
+                <div style="font-size: 12px; color: #777; word-break: break-all;">
+                    {% if hs.dia_diem_pv %}
+                        <strong style="color: #111;">{{ hs.dia_diem_pv }}</strong>
+                    {% else %}
+                        Vui lòng xếp lịch
+                    {% endif %}
+                </div>
+                <!-- KẾT THÚC DỮ LIỆU ĐỘNG -->
+
+                <div style="text-align: right;">
+                    <button class="action-btn" onclick="openScheduleModal('{{ hs.ma_ho_so }}')">
+                        {% if hs.ngay_phong_van %}Đổi lịch{% else %}Xếp lịch{% endif %}
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div style="padding: 40px; text-align: center; color: #777; font-size: 14px;">
+                Chưa có ứng viên nào cần xếp lịch phỏng vấn.
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <div id="scheduleModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div>
+                    <h2>Tạo lịch phỏng vấn</h2>
+                    <p style="font-size: 12px; color: #666;"></p>
+                </div>
+                <button class="modal-close" onclick="closeScheduleModal()">✕</button>
+            </div>
+
+            <!-- GẮN ACTION ĐỂ TRUYỀN DỮ LIỆU VỀ VIEW BACKEND -->
+            <form method="POST" action="{% url 'recruitment:hr_lich_phong_van' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label>Ứng viên</label>
+                        <select name="ma_ho_so" id="select_ung_vien" class="form-control" required>
+                            <option value="">-- Chọn ứng viên cần phỏng vấn --</option>
+                            {% for hs in danh_sach_lich %}
+                                <option value="{{ hs.ma_ho_so }}">👤 {{ hs.ma_ung_vien.ho_ten }} — {{ hs.ma_vi_tri.ten_vi_tri }} ({{ hs.ma_ho_so }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Thời gian phỏng vấn</label>
+                        <div class="grid-2">
+                            <input type="date" name="ngay_pv" class="form-control" required>
+                            <input type="time" name="gio_pv" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hình thức</label>
+                        <div class="segment-control">
+                            <input type="hidden" name="hinh_thuc" id="input_hinh_thuc" value="Trực tiếp">
+                            <button type="button" class="segment-btn active" id="btn_truc_tiep" onclick="setHinhThuc('Trực tiếp')">👥 Trực tiếp</button>
+                            <button type="button" class="segment-btn" id="btn_truc_tuyen" onclick="setHinhThuc('Trực tuyến')">💻 Trực tuyến</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Địa điểm / Link Phỏng vấn</label>
+                        <input type="text" name="dia_diem" id="input_dia_diem" class="form-control" placeholder="Nhập địa chỉ hoặc link Meet..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Trạng thái</label>
+                        <select name="trang_thai" class="form-control">
+                            <option value="Đã lên lịch">Đã lên lịch</option>
+                            <option value="Chờ xác nhận">Chờ xác nhận</option>
+                            <option value="Đã phỏng vấn">Đã phỏng vấn (Chuyển sang Đánh giá)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <div style="font-size: 11px; color: #888;"></div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="btn-cancel" onclick="closeScheduleModal()">Hủy</button>
+                        <button type="submit" class="btn-submit">Lưu lịch</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openScheduleModal(maHoSo = '') {
+            document.getElementById('scheduleModal').style.display = 'flex';
+            if(maHoSo) {
+                document.getElementById('select_ung_vien').value = maHoSo;
+            } else {
+                document.getElementById('select_ung_vien').value = '';
+            }
+        }
+
+        function closeScheduleModal() {
+            document.getElementById('scheduleModal').style.display = 'none';
+        }
+
+        function setHinhThuc(hinhThuc) {
+            document.getElementById('input_hinh_thuc').value = hinhThuc;
+            let btnTrucTiep = document.getElementById('btn_truc_tiep');
+            let btnTrucTuyen = document.getElementById('btn_truc_tuyen');
+            let inputDiaDiem = document.getElementById('input_dia_diem');
+
+            if(hinhThuc === 'Trực tiếp') {
+                btnTrucTiep.classList.add('active');
+                btnTrucTuyen.classList.remove('active');
+                inputDiaDiem.value = '';
+                inputDiaDiem.placeholder = 'Vd: Highlands Coffee Nguyễn Huệ...';
+                inputDiaDiem.readOnly = false;
+            } else {
+                btnTrucTuyen.classList.add('active');
+                btnTrucTiep.classList.remove('active');
+                inputDiaDiem.value = 'GGmeet';
+                inputDiaDiem.readOnly = true;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{% extends 'base_internal.html' %}
+{% load static %}
+{% block title %}Phiếu lương cá nhân | Highlands HRM{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/payroll_v4.css' %}">{% endblock %}
+{% block content %}
+<div class="hl-payroll hl-personal" data-page="employee">
+  <header class="hl-titlebar"><div><h1>Phiếu lương cá nhân</h1><p>Xem chi tiết thu nhập, khấu trừ và trạng thái chi trả theo kỳ.</p></div><span class="hl-demo">PHIẾU MINH HỌA · Không phải lương thật</span></header>
+  <div class="hl-notice" role="note">Đây là <strong>phiếu lương mẫu</strong> dùng để thử giao diện, <strong>không liên kết với hồ sơ nhân viên đang đăng nhập</strong>. Trong bản demo, phiếu mẫu NV001 chỉ hiển thị sau khi được Quản lý phát hành. Trạng thái được chia sẻ giữa hai trang bằng bộ nhớ trình duyệt, <strong>không phải dữ liệu lương thật của tài khoản đăng nhập</strong>.</div>
+  <div class="hl-top-controls"><label>Kỳ lương <select id="hl-employee-period"><option value="2026-10">Tháng 10/2026 · Phiếu mẫu</option><option value="2026-09">Tháng 09/2026 · Chưa phát hành</option></select></label><button type="button" class="hl-btn hl-outline" id="hl-print-slip">In phiếu mẫu</button></div>
+  <section class="hl-panel hl-slip" id="hl-slip">
+    <div class="hl-panel-head"><div><span class="hl-overline">HIGHLANDS COFFEE · PHIẾU LƯƠNG MẪU</span><h2>Phiếu lương tháng 10/2026</h2><p>Tài khoản đăng nhập: <strong>{{ request.user.username }}</strong> · Dữ liệu nhân viên bên dưới là giả định</p></div><span id="hl-slip-issued" class="hl-state">Chưa phát hành (demo)</span></div>
+    <div class="hl-profile"><strong>NV001 · Nguyễn Minh Anh</strong><span>Nhân viên pha chế · Kỳ lương 10/2026</span><span>Trạng thái chi trả: <strong id="hl-slip-paid">Chưa ghi nhận chi trả</strong></span></div>
+    <div class="hl-kpis hl-slip-kpis"><article><small>Lương thực nhận mẫu</small><strong>4.768.750 ₫</strong></article><article><small>Tổng giờ làm mẫu</small><strong>172,5 giờ</strong></article></div>
+    <div class="hl-slip-cols"><section><h3>A. Thu nhập</h3><div class="hl-line"><span>Lương giờ chuẩn (160 giờ × 25.000 ₫)</span><b>4.000.000 ₫</b></div><div class="hl-line"><span>Lương OT (12,5 giờ × 1,5 × 25.000 ₫)*</span><b>468.750 ₫</b></div><div class="hl-line"><span>Phụ cấp mẫu</span><b>300.000 ₫</b></div><div class="hl-line hl-bold"><span>Tổng thu nhập</span><b>4.768.750 ₫</b></div></section><section><h3>B. Khấu trừ</h3><div class="hl-line"><span>Khoản khấu trừ khác</span><b>0 ₫</b></div><div class="hl-line hl-bold"><span>Tổng khấu trừ</span><b>0 ₫</b></div><div class="hl-line hl-bold"><span>Trạng thái thanh toán</span><b id="hl-slip-paid-detail">Chưa ghi nhận</b></div></section></div>
+    <div class="hl-slip-final"><span>C. Lương thực nhận mẫu</span><strong>4.768.750 ₫</strong></div>
+    <p class="hl-footnote">*Hệ số OT và mức tiền trên phiếu hoàn toàn là giả định cho mục đích demo. Trạng thái trên phiếu này không phản ánh dữ liệu đã phát hành hay thanh toán thực tế.</p>
+  </section>
+  <section class="hl-panel hl-receipt" id="hl-receipt-panel" aria-labelledby="hl-receipt-title">
+    <div class="hl-panel-head"><div><h2 id="hl-receipt-title">Phản hồi nhận lương</h2><p>Sau khi Quản lý ghi nhận chi trả, bạn có thể xác nhận đã nhận đủ lương hoặc báo chưa nhận.</p></div><span id="hl-receipt-status" class="hl-state">Chờ chi trả</span></div>
+    <div class="hl-receipt-body">
+      <p id="hl-receipt-message">Phiếu lương chưa được phát hành.</p>
+      <div class="hl-receipt-actions"><button type="button" class="hl-btn hl-primary" id="hl-confirm-received">Tôi đã nhận đủ lương</button><button type="button" class="hl-btn hl-outline" id="hl-report-issue">Tôi chưa nhận được lương</button></div>
+      <p class="hl-footnote">Phản hồi này là mô phỏng. Khi tích hợp Django, hệ thống sẽ chỉ cho nhân viên phản hồi phiếu thuộc tài khoản của mình.</p>
+    </div>
+  </section>
+  <section class="hl-panel hl-empty hl-hidden" id="hl-no-slip"><h2>Chưa có phiếu lương</h2><p>Phiếu lương kỳ này chưa được phát hành. Vui lòng kiểm tra lại sau.</p></section>
+  <div class="hl-modal-back hl-hidden" id="hl-employee-modal" role="presentation"><div class="hl-modal" role="dialog" aria-modal="true" aria-labelledby="hl-employee-modal-title"><h2 id="hl-employee-modal-title">Xác nhận phản hồi</h2><p id="hl-employee-modal-message"></p><div class="hl-modal-actions"><button type="button" class="hl-btn hl-outline" id="hl-employee-cancel">Hủy</button><button type="button" class="hl-btn hl-primary" id="hl-employee-confirm">Xác nhận (demo)</button></div></div></div>
+  <div class="hl-toast hl-hidden" id="hl-toast" role="status" aria-live="polite"></div>
+</div>
+<script src="{% static 'js/payroll_v4.js' %}" defer></script>
+{% endblock %}

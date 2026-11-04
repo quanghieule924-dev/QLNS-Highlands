@@ -1,0 +1,4 @@
+/* Typography chỉ áp dụng phần nội bộ, không ảnh hưởng trang chủ */
+.internal-header,.internal-sidebar,.internal-main{font-family:'Montserrat',Arial,sans-serif}
+.internal-header input,.internal-header button,.internal-sidebar a{font-family:inherit}
+.internal-header .header-search input:disabled,.internal-header .notification:disabled{cursor:not-allowed;opacity:.65}

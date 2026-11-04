@@ -1,4 +1,4 @@
-/* Reset và cấu hình tổng thể cho to rõ, sắc nét */
+/* Reset và cấu hình tổng thể cho to rõ, sắc nét, chuẩn thương mại */
 *, *::before, *::after {
     margin: 0;
     padding: 0;
@@ -6,10 +6,12 @@
 }
 
 body {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Be Vietnam Pro', 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background-color: #FCF9F4;
-    color: #333;
+    color: #333333;
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* MỞ RỘNG KHUNG CHỨA ĐỂ GIAO DIỆN HOÀNH TRÁNG, KHÔNG BỊ NHỎ */
@@ -21,12 +23,12 @@ body {
     padding: 0 30px;
 }
 
-/* HEADER ĐỎ SẪM SANG TRỌNG (ĐÃ THU GỌN CHIỀU CAO CHO THANH THOÁT) */
+/* HEADER ĐỎ SẪM SANG TRỌNG (THU GỌN CHIỀU CAO CHO THANH THOÁT) */
 .site-header {
     background-color: #8A1A22;
-    color: #fff;
-    padding: 10px 0; /* Thu nhỏ padding trên dưới để header mỏng lại, không bị thô dày */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    color: #ffffff;
+    padding: 10px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -42,11 +44,10 @@ body {
     display: flex;
     align-items: center;
     text-decoration: none;
-    color: #fff;
+    color: #ffffff;
     gap: 14px;
 }
 
-/* Thu nhỏ logo vừa phải cho cân đối với header mỏng */
 .brand-logo-img {
     height: 52px;
     width: auto;
@@ -61,7 +62,7 @@ body {
 
 .brand-title {
     font-size: 20px;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: 0.5px;
     line-height: 1.1;
 }
@@ -70,6 +71,7 @@ body {
     font-size: 11px;
     letter-spacing: 1px;
     display: block;
+    font-weight: 600;
 }
 
 .brand-subtitle small {
@@ -88,11 +90,12 @@ body {
     color: #f1f1f1;
     text-decoration: none;
     font-size: 15px;
-    font-weight: 600;
-    transition: color 0.3s;
+    font-weight: 500;
+    transition: color 0.25s ease;
 }
 
-.main-nav a:hover, .main-nav a.active {
+.main-nav a:hover,
+.main-nav a.active {
     color: #FFD43B;
 }
 
@@ -103,27 +106,33 @@ body {
 }
 
 .help-link {
-    color: #fff;
+    color: #ffffff;
     text-decoration: none;
     font-size: 14px;
     opacity: 0.9;
+    transition: opacity 0.2s;
+}
+
+.help-link:hover {
+    opacity: 1;
 }
 
 .btn-login-round {
-    background-color: #fff;
+    background-color: #ffffff;
     color: #8A1A22;
     padding: 8px 20px;
     border-radius: 20px;
     text-decoration: none;
     font-size: 14px;
     font-weight: 700;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-    transition: all 0.3s ease;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    transition: all 0.25s ease;
 }
 
 .btn-login-round:hover {
     background-color: #FFD43B;
     transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* BANNER CHÀO MỪNG TO RÕ */
@@ -134,13 +143,17 @@ body {
 .breadcrumbs {
     font-size: 14px;
     margin-bottom: 25px;
-    color: #666;
+    color: #666666;
 }
 
 .breadcrumbs a {
     color: #8A1A22;
     text-decoration: none;
     font-weight: 600;
+}
+
+.breadcrumbs a:hover {
+    text-decoration: underline;
 }
 
 .welcome-hero {
@@ -158,36 +171,38 @@ body {
 }
 
 .hero-title {
-    font-size: 48px;
-    color: #2e2e2e;
+    font-size: 46px;
+    color: #2E2E2E;
     line-height: 1.2;
     margin-bottom: 30px;
     font-weight: 800;
+    letter-spacing: -0.5px;
 }
 
 .hero-title .highlight {
     color: #8A1A22;
 }
 
-/* NÚT BẤM */
+/* NÚT BẤM CTA */
 .btn-cta {
     background-color: #8A1A22;
-    color: #fff;
+    color: #ffffff;
     padding: 15px 30px;
-    border-radius: 6px;
+    border-radius: 8px;
     text-decoration: none;
     font-weight: 700;
     font-size: 16px;
     display: inline-block;
     width: fit-content;
-    box-shadow: 0 6px 15px rgba(138, 26, 34, 0.35);
-    transition: all 0.3s;
+    box-shadow: 0 6px 15px rgba(138, 26, 34, 0.3);
+    transition: all 0.25s ease;
     margin-bottom: 35px;
 }
 
 .btn-cta:hover {
     background-color: #701318;
-    transform: translateY(-3px);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(138, 26, 34, 0.4);
 }
 
 .benefit-badges {
@@ -198,9 +213,9 @@ body {
 }
 
 .benefit-badges li {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333333;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -208,15 +223,15 @@ body {
 
 .benefit-badges li i {
     color: #8A1A22;
-    font-size: 20px;
+    font-size: 18px;
 }
 
-/* KHUNG ẢNH THỰC TẾ CHUYÊN NGHIỆP PHẢI */
+/* KHUNG ẢNH THỰC TẾ PHẢI */
 .hero-right {
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    border: 1.5px solid #ebdcd0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1.5px solid #EBDCD0;
     height: 380px;
 }
 
@@ -224,7 +239,7 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.6s ease;
+    transition: transform 0.5s ease;
 }
 
 .hero-right:hover .hero-illustration {
@@ -237,18 +252,19 @@ body {
 }
 
 .section-title {
-    font-size: 32px;
-    color: #2e2e2e;
+    font-size: 30px;
+    color: #2E2E2E;
     text-align: center;
     margin-bottom: 40px;
-    font-weight: 800;
+    font-weight: 700;
     position: relative;
+    letter-spacing: -0.3px;
 }
 
 .section-title::after {
     content: '';
     display: block;
-    width: 80px;
+    width: 70px;
     height: 4px;
     background-color: #8A1A22;
     margin: 10px auto 0;
@@ -263,13 +279,13 @@ body {
 
 /* Thẻ card tổng thể */
 .activity-card {
-    background-color: #fff;
+    background-color: #ffffff;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-    border: 1.5px solid #f0e6dc;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    border: 1.5px solid #F0E6DC;
     text-align: center;
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .card-img-wrapper {
@@ -283,33 +299,33 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.6s ease;
+    transition: transform 0.5s ease;
 }
 
 .activity-card h3 {
-    font-size: 15px;
-    font-weight: 700;
-    padding: 20px 15px;
-    color: #2e2e2e;
-    background-color: #fff;
-    letter-spacing: 0.5px;
-    transition: all 0.4s ease;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 18px 15px;
+    color: #2E2E2E;
+    background-color: #ffffff;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
 }
 
 /* --- HIỆU ỨNG KHI HOVER CARD --- */
 .activity-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 30px rgba(138, 26, 34, 0.25);
+    transform: translateY(-6px);
+    box-shadow: 0 10px 25px rgba(138, 26, 34, 0.2);
     border-color: #8A1A22;
 }
 
 .activity-card:hover .card-img-wrapper img {
-    transform: scale(1.1);
+    transform: scale(1.08);
 }
 
 .activity-card:hover h3 {
     background-color: #8A1A22;
-    color: #fff;
+    color: #ffffff;
 }
 
 /* SECTION CỬA HÀNG GẦN BẠN */
@@ -323,8 +339,8 @@ body {
     overflow: hidden;
     display: grid;
     grid-template-columns: 45% 55%;
-    border: 1.5px solid #ebdcd0;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    border: 1.5px solid #EBDCD0;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
 }
 
 .location-left {
@@ -336,36 +352,38 @@ body {
 }
 
 .location-left h2 {
-    font-size: 36px;
+    font-size: 34px;
     color: #8A1A22;
     margin-bottom: 15px;
     font-weight: 800;
+    letter-spacing: -0.5px;
 }
 
 .location-left p {
-    font-size: 18px;
-    color: #555;
+    font-size: 16px;
+    color: #555555;
     margin-bottom: 30px;
+    line-height: 1.5;
 }
 
 .btn-discover {
     display: inline-block;
-    padding: 14px 35px;
+    padding: 13px 32px;
     border: 2px solid #8A1A22;
     color: #8A1A22;
     text-decoration: none;
-    font-weight: 800;
+    font-weight: 700;
     border-radius: 30px;
-    font-size: 15px;
-    letter-spacing: 1px;
-    transition: all 0.3s ease;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    transition: all 0.25s ease;
 }
 
 .btn-discover:hover {
     background-color: #8A1A22;
-    color: #fff;
+    color: #ffffff;
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(138, 26, 34, 0.3);
+    box-shadow: 0 5px 12px rgba(138, 26, 34, 0.25);
 }
 
 .location-right {
@@ -377,17 +395,17 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.6s ease;
+    transition: transform 0.5s ease;
 }
 
 .location-banner:hover .location-right img {
-    transform: scale(1.05);
+    transform: scale(1.04);
 }
 
 /* FOOTER ĐỎ SẪM ĐỒNG BỘ */
 .site-footer {
     background-color: #8A1A22;
-    color: #fff;
+    color: #ffffff;
     padding: 50px 0 0 0;
 }
 
@@ -400,7 +418,7 @@ body {
 }
 
 .footer-logo {
-    height: 85px;
+    height: 80px;
 }
 
 .footer-links {
@@ -409,19 +427,20 @@ body {
 }
 
 .footer-col h4 {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
     margin-bottom: 18px;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
 }
 
 .footer-col a {
     display: block;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
     font-size: 13px;
     margin-bottom: 10px;
-    transition: color 0.3s;
+    transition: color 0.2s;
 }
 
 .footer-col a:hover {
@@ -429,10 +448,11 @@ body {
 }
 
 .footer-right h4 {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
     margin-bottom: 18px;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
 }
 
 .social-icons {
@@ -446,18 +466,18 @@ body {
     justify-content: center;
     width: 38px;
     height: 38px;
-    border: 1.5px solid rgba(255,255,255,0.4);
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
     border-radius: 50%;
-    color: #fff;
+    color: #ffffff;
     text-decoration: none;
-    font-size: 16px;
-    transition: all 0.3s;
+    font-size: 15px;
+    transition: all 0.25s ease;
 }
 
 .social-icons a:hover {
-    background-color: #fff;
+    background-color: #ffffff;
     color: #8A1A22;
-    border-color: #fff;
+    border-color: #ffffff;
     transform: translateY(-2px);
 }
 
@@ -466,22 +486,25 @@ body {
     text-align: center;
     padding: 15px 20px;
     font-size: 12px;
-    color: #888;
+.footer-bottom {
+    background-color: #0c0c0c;
+    text-align: center;
+    padding: 15px 20px;
+    font-size: 12px;
+    color: #888888;
 }
 
-
+/* Nút hợp đồng sắp hết hạn */
 a.btn-expiring {
     display: inline-flex !important;
     align-items: center;
     justify-content: center;
     gap: 8px;
-
     padding: 11px 18px !important;
     background: #fff7e6 !important;
     color: #d97706 !important;
     border: 1px solid #f5d08a !important;
     border-radius: 8px !important;
-
     font-size: 14px;
     font-weight: 600;
     text-decoration: none !important;
@@ -492,4 +515,38 @@ a.btn-expiring:hover {
     background: #f59e0b !important;
     color: white !important;
     border-color: #f59e0b !important;
+}
+
+/* ===== CHỈNH ICON THẺ CHỨC NĂNG TUYỂN DỤNG ===== */
+
+/* Icon trong thẻ chức năng rõ nét và đậm hơn */
+.function-card .function-icon,
+.action-card .function-icon,
+.quick-action-card .function-icon {
+    font-size: 24px;
+    font-weight: 800;
+    color: #a30d25;
+}
+
+/* Làm mũi tên ở nút mở chức năng to và đậm hơn */
+.function-card .arrow-icon,
+.action-card .arrow-icon,
+.quick-action-card .arrow-icon {
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1;
+    color: #a30d25;
+    -webkit-text-stroke: 0.6px currentColor;
+}
+
+/* Nút mũi tên có kích thước đồng đều */
+.function-card .arrow-button,
+.action-card .arrow-button,
+.quick-action-card .arrow-button {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
 }
