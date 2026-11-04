@@ -1,0 +1,579 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách ứng viên - HRM Highlands</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <link rel="stylesheet" href="{% static 'css/internal.css' %}">
+    <style>
+        :root {
+            --sidebar-width: 210px !important;
+            --header-height: 72px !important;
+        }
+        body {
+            font-family: 'Be Vietnam Pro', Montserrat, Arial, sans-serif !important;
+            background-color: #F8F6F0 !important;
+            margin: 0;
+            display: block !important;
+            overflow: auto !important;
+            height: auto !important;
+        }
+
+        /* THANH HEADER NGANG ĐỎ ĐẬM HIGHLANDS */
+        .internal-header {
+            position: fixed !important;
+            top: 0; right: 0; left: 0;
+            z-index: 1000;
+            height: var(--header-height) !important;
+            display: flex;
+            align-items: center;
+            background: #8A1A22 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 0 !important;
+        }
+
+        .internal-brand {
+            width: var(--sidebar-width) !important;
+            min-width: var(--sidebar-width) !important;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 14px !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
+            background: #8A1A22 !important;
+            color: #fff;
+            text-decoration: none;
+        }
+        .brand-logo-img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        .brand-text strong {
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+        }
+        .brand-text small {
+            color: #FFD43B;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .header-search {
+            width: 320px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-left: 25px;
+            padding: 0 14px;
+            border-radius: 20px;
+            background: #ffffff !important;
+        }
+        .header-search input {
+            width: 100%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: #333 !important;
+            font-size: 13px;
+        }
+        .header-account {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-left: auto;
+            padding: 0 25px;
+        }
+        .account-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: #fff;
+            color: #8A1A22;
+            font-weight: 800;
+            font-size: 12px;
+            display: grid;
+            place-items: center;
+        }
+        .logout-button {
+            background-color: #ffffff !important;
+            color: #8A1A22 !important;
+            border: none !important;
+            padding: 8px 20px !important;
+            border-radius: 20px !important;
+            font-weight: 700 !important;
+            font-size: 13px !important;
+            cursor: pointer !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .logout-button:hover {
+            background-color: #FFF0F1 !important;
+        }
+
+        /* THANH SIDEBAR DỌC NỀN TRẮNG TÁCH BIỆT */
+        .internal-sidebar {
+            position: fixed !important;
+            top: var(--header-height) !important;
+            bottom: 0; left: 0;
+            z-index: 900;
+            width: var(--sidebar-width) !important;
+            padding: 20px 10px 14px !important;
+            background: #FFFFFF !important;
+            border-right: 1px solid #E5E0D8 !important;
+            overflow-y: auto;
+            color: #292929 !important;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-menu {
+            padding-top: 5px !important;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .sidebar-menu a {
+            color: #444444 !important;
+            font-size: 12px;
+            border-radius: 6px;
+            padding: 0 10px;
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: background 0.15s ease;
+        }
+        .sidebar-menu a:hover {
+            background: #FFF0F1 !important;
+            color: #8A1A22 !important;
+        }
+        .sidebar-menu a.active {
+            background: #8A1A22 !important;
+            color: #FFFFFF !important;
+            font-weight: 700 !important;
+            border-left: none !important;
+        }
+
+        .sidebar-note {
+            margin-top: auto;
+            padding: 10px;
+            border: 1px solid #EAE5DE;
+            border-radius: 8px;
+            background: #FAFAFA;
+        }
+        .sidebar-note strong {
+            color: #1A1A1A !important;
+            font-size: 10px;
+        }
+        .sidebar-note p {
+            color: #777777 !important;
+            margin: 4px 0 0;
+            font-size: 9px;
+            line-height: 1.5;
+        }
+
+        /* VÙNG NỘI DUNG CHÍNH */
+        .main-content {
+            margin-left: var(--sidebar-width) !important;
+            margin-top: var(--header-height) !important;
+            padding: 30px !important;
+            background-color: #F8F6F0 !important;
+            min-height: calc(100vh - var(--header-height));
+            box-sizing: border-box;
+            overflow-y: visible !important;
+        }
+
+        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .page-title { font-size: 26px; font-weight: 800; color: #1a1a1a; margin: 0; }
+
+        .filter-section { background: #fff; padding: 20px 25px; border-radius: 12px; border: 1px solid #eaeaea; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.01); }
+        .filter-form { display: grid; grid-template-columns: 2fr 1fr 1.5fr 1fr 1fr auto; gap: 15px; align-items: center; }
+        .filter-form input, .filter-form select { width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; outline: none; transition: 0.2s; font-family: inherit;}
+        .filter-form input:focus, .filter-form select:focus { border-color: #8A1A22; }
+        .btn-search { background-color: #8A1A22; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s; }
+        .btn-search:hover { background-color: #701319; }
+
+        .card-container { background: #fff; border-radius: 12px; border: 1px solid #eaeaea; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.01); }
+
+        .table-header { display: grid; grid-template-columns: 0.8fr 1.5fr 1fr 1fr 1.5fr 1fr 1fr 1.2fr; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid #eee; font-size: 11px; font-weight: 700; color: #777; text-transform: uppercase; }
+
+        .table-header div:nth-child(1),
+        .table-header div:nth-child(2),
+        .table-header div:nth-child(5),
+        .table-header div:nth-child(6),
+        .table-header div:nth-child(7),
+        .table-header div:nth-child(8)
+        { text-align: center; }
+
+        .table-row { display: grid; grid-template-columns: 0.8fr 1.5fr 1fr 1fr 1.5fr 1fr 1fr 1.2fr; gap: 10px; padding: 18px 0; border-bottom: 1px solid #f9f9f9; align-items: center; font-size: 13px; }
+        .table-row:hover { background-color: #fafafa; }
+
+        .col-center { text-align: center; }
+
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; }
+        .badge.choxacnhan { background: #FFF3CD; color: #856404; }
+        .badge.datcv { background: #E6F8ED; color: #198754; }
+        .badge.khongdat { background: #F8D7DA; color: #842029; }
+
+        .action-btns { display: flex; gap: 8px; flex-direction: column; align-items: center;}
+        .action-btn { background: #fff; border: 1px solid #ddd; padding: 8px 18px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; color: #444; text-align: center; transition: all 0.3s ease; width: 110px;}
+        .action-btn:hover { background: #8A1A22; border-color: #8A1A22; color: #fff; box-shadow: 0 4px 8px rgba(138, 26, 34, 0.2);}
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; padding: 20px 0;}
+        .modal-container { background: #fff; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); position: relative; max-height: 90vh; display: flex; flex-direction: column;}
+
+        .modal-header { padding: 20px 25px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;}
+        .modal-header h2 { font-size: 20px; color: #111; font-weight: 800;}
+        .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #999; line-height: 1;}
+
+        .modal-body { padding: 25px; overflow-y: auto; }
+
+        .modal-detail { width: 850px; max-width: 95%; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 20px; }
+        .info-section { background: #FAFAFA; padding: 25px; border-radius: 10px; border: 1px solid #eaeaea; }
+        .info-section h3 { font-size: 15px; margin-bottom: 20px; color: #111; display: flex; align-items: center; gap: 8px; font-weight: 700;}
+        .info-row { margin-bottom: 15px; font-size: 13px; }
+        .info-row label { display: block; font-size: 11px; color: #777; font-weight: 600; text-transform: uppercase; margin-bottom: 6px; }
+        .info-row div { font-weight: 600; color: #333; }
+        .cv-box { border: 1.5px dashed #ccc; padding: 20px; border-radius: 8px; text-align: center; background: #fff; }
+
+        .modal-review { width: 500px; }
+        .radio-group { display: flex; gap: 20px; margin-bottom: 20px; }
+        .radio-item { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px;}
+        .ly-do-box { width: 100%; height: 100px; padding: 12px; border: 1px solid #ccc; border-radius: 8px; resize: none; margin-bottom: 20px; font-family: inherit; font-size: 13px; outline: none;}
+        .ly-do-box:focus { border-color: #8A1A22; }
+
+        .modal-footer { padding: 20px 25px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px; background: #fafafa; border-radius: 0 0 12px 12px; flex-shrink: 0;}
+        .btn-cancel { background: #fff; border: 1px solid #ccc; padding: 10px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; color: #444; transition: 0.2s;}
+        .btn-cancel:hover { background: #f0f0f0; }
+        .btn-submit-review { background: #8A1A22; color: #fff; padding: 10px 24px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; transition: 0.2s;}
+        .btn-submit-review:hover { background: #701319; }
+    </style>
+</head>
+<body>
+    <!-- THANH HEADER NGANG -->
+    <header class="internal-header">
+        <a href="{% url 'home' %}" class="internal-brand">
+            <img src="{% static 'images/logo-highlands.png' %}" alt="Highlands Logo" class="brand-logo-img">
+            <span class="brand-text">
+                <strong>HRM System</strong>
+                <small>HIGHLANDS COFFEE</small>
+            </span>
+        </a>
+
+        <div class="header-search">
+            <span class="search-icon">⌕</span>
+            <input type="search" name="search" placeholder="Tìm nhân viên, hợp đồng..." aria-label="Tìm kiếm">
+        </div>
+
+        <div class="header-account">
+            <span class="account-avatar">QL</span>
+            <form method="post" action="{% url 'accounts:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-button">Đăng xuất</button>
+            </form>
+        </div>
+    </header>
+
+    <!-- THANH SIDEBAR DỌC -->
+    <aside class="internal-sidebar">
+        <nav class="sidebar-menu">
+            <a href="{% url 'home' %}" class="{% if active_menu == 'dashboard' %}active{% endif %}">
+                <span class="menu-icon">▦</span>
+                <span>Tổng quan</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'employees' %}active{% endif %}">
+                <span class="menu-icon">♙</span>
+                <span>Quản lý nhân viên</span>
+            </a>
+
+            <a href="{% url 'recruitment:quan_ly_tuyen_dung' %}" class="{% if active_menu == 'tuyen_dung' or request.resolver_match.namespace == 'recruitment' %}active{% endif %}">
+                <span class="menu-icon">♧</span>
+                <span>Tuyển dụng</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'contracts' %}active{% endif %}">
+                <span class="menu-icon">▤</span>
+                <span>Hợp đồng &amp; Phúc lợi</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'scheduling' %}active{% endif %}">
+                <span class="menu-icon">▦</span>
+                <span>Phân ca làm việc</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'attendance' %}active{% endif %}">
+                <span class="menu-icon">◷</span>
+                <span>Chấm công</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'payroll' %}active{% endif %}">
+                <span class="menu-icon">▤</span>
+                <span>Quản lý lương</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'training' %}active{% endif %}">
+                <span class="menu-icon">♧</span>
+                <span>Đào tạo</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'reports' %}active{% endif %}">
+                <span class="menu-icon">▥</span>
+                <span>Báo cáo thống kê</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-note">
+            <strong>Không gian chi nhánh</strong>
+            <p>Theo dõi nhân sự và hoạt động tại chi nhánh của bạn.</p>
+        </div>
+    </aside>
+
+    <!-- NỘI DUNG CHÍNH -->
+    <main class="main-content">
+        <div class="top-header">
+            <h1 class="page-title">Danh sách ứng viên</h1>
+            <div style="font-size: 13px; font-weight: 600; color: #8A1A22; background: #FFF0F1; padding: 8px 16px; border-radius: 20px;">📍 Chi nhánh Bạch Đằng</div>
+        </div>
+
+        <div class="filter-section">
+            <form method="GET" action="{% url 'recruitment:hr_danh_sach_ho_so' %}" class="filter-form">
+                <input type="text" name="q" value="{{ search_query }}" placeholder="🔍 Tìm tên, SĐT hoặc email...">
+
+                <select name="vi_tri">
+                    <option value="">💼 Vị trí ứng tuyển...</option>
+                    {% for vt in danh_sach_vi_tri %}
+                        <option value="{{ vt.ten_vi_tri }}" {% if vi_tri_filter == vt.ten_vi_tri %}selected{% endif %}>{{ vt.ten_vi_tri }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- ĐOẠN CODE MỚI (ĐÃ ĐỔI THÀNH INPUT ĐỂ GÕ TỰ DO) -->
+                <input type="text" name="ma_ho_so" value="{{ ma_ho_so_filter }}" class="filter-input" placeholder="🔍 Nhập mã hồ sơ (VD: HS001)">
+
+                <select name="trang_thai">
+                    <option value="">⚙️ Trạng thái...</option>
+                    <option value="Chờ xét duyệt" {% if trang_thai_filter == 'Chờ xét duyệt' %}selected{% endif %}>Chờ xét duyệt</option>
+                    <option value="Đạt vòng CV" {% if trang_thai_filter == 'Đạt vòng CV' %}selected{% endif %}>Đạt vòng CV</option>
+                    <option value="Không đạt vòng CV" {% if trang_thai_filter == 'Không đạt vòng CV' %}selected{% endif %}>Không đạt vòng CV</option>
+                </select>
+
+                <input type="date" name="ngay_nop" value="{{ ngay_nop_filter }}" title="Ngày nộp">
+
+                <button type="submit" class="btn-search">Tìm kiếm</button>
+            </form>
+            <!-- ĐÃ XÓA DÒNG QUY ƯỚC TRẠNG THÁI THEO YÊU CẦU -->
+        </div>
+
+        <div class="card-container">
+            <div style="font-weight: 800; margin-bottom: 20px; font-size: 16px; color: #111;">Danh sách hồ sơ ứng viên ({{ danh_sach_hs|length }})</div>
+            <div class="table-header">
+                <div>Mã Hồ Sơ</div>
+                <div>Họ Tên</div>
+                <div>Vị trí ứng tuyển</div>
+                <div>Số điện thoại</div>
+                <div>Email</div>
+                <div>Ngày nộp</div>
+                <div>Trạng thái</div>
+                <div>Thao tác</div>
+            </div>
+
+            {% for hs in danh_sach_hs %}
+            <div class="table-row">
+                <!-- CỘT 1: ĐÃ ĐỔI TÊN THÀNH MÃ HỒ SƠ VÀ XÓA HẲN CÁC DÒNG UV PHỤ -->
+                <div class="col-center">
+                    <strong style="color: #8A1A22; font-size: 14px;">{{ hs.ma_ho_so }}</strong>
+                </div>
+
+                <!-- CỘT 2: CHỈ HIỂN THỊ HỌ TÊN -->
+                <div class="col-center">
+                    <strong style="font-size: 14px; color: #111;">{{ hs.ma_ung_vien.ho_ten }}</strong>
+                </div>
+
+                <div style="font-weight: 600; color: #333;">{{ hs.ma_vi_tri.ten_vi_tri }}</div>
+                <div style="color: #444;">{{ hs.ma_ung_vien.sdt }}</div>
+                <div class="col-center" style="word-break: break-all; color: #444;">{{ hs.ma_ung_vien.email }}</div>
+                <div class="col-center" style="color: #444;">{{ hs.ngay_nop|date:"d/m/Y" }}</div>
+
+                <div class="col-center">
+                    {% if hs.trang_thai == 'Không đạt vòng CV' %}
+                        <span class="badge khongdat">● Không đạt vòng CV</span>
+                    {% elif hs.trang_thai == 'Chờ xét duyệt' %}
+                        <span class="badge choxacnhan">● Chờ xét duyệt</span>
+                    {% else %}
+                        <span class="badge datcv">● Đạt vòng CV</span>
+                    {% endif %}
+                </div>
+
+                <div class="action-btns">
+                    <!-- FIX ĐƯỜNG DẪN CV DÙNG {{ hs.cv_ung_vien.url }} CHUẨN DJANGO MEDIA -->
+                    <button type="button" class="action-btn" onclick="openDetailModal('{{ hs.ma_ung_vien.ma_ung_vien }}', '{{ hs.ma_ung_vien.ho_ten }}', '{{ hs.ma_ung_vien.ngay_sinh|date:"d/m/Y" }}', '{{ hs.ma_ung_vien.gioi_tinh }}', '{{ hs.ma_ung_vien.sdt }}', '{{ hs.ma_ung_vien.email }}', '{{ hs.ma_ung_vien.dia_chi }}', '{{ hs.ma_ho_so }}', '{{ hs.ma_dot.ten_dot }}', '{{ hs.ma_vi_tri.ten_vi_tri }}', '{{ hs.ngay_nop|date:"d/m/Y" }}', '{{ hs.trang_thai }}', '{% if hs.cv_ung_vien %}{{ hs.cv_ung_vien.url }}{% else %}#{% endif %}')">Xem hồ sơ</button>
+
+                    {% if hs.trang_thai == 'Chờ xét duyệt' %}
+                    <button type="button" class="action-btn" onclick="openReviewModal('{{ hs.ma_ho_so }}', '{{ hs.ma_ung_vien.ho_ten }}')">Đánh giá CV</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div style="padding: 40px; text-align: center; color: #777; background: #fafafa; border-radius: 8px;">Không tìm thấy hồ sơ nào phù hợp.</div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <!-- MODAL XEM CHI TIẾT HỒ SƠ -->
+    <div id="detailModal" class="modal-overlay">
+        <div class="modal-container modal-detail">
+            <div class="modal-header">
+                <h2>Chi tiết ứng viên</h2>
+                <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div style="margin-bottom: 25px;">
+                    <div id="det-trang-thai" class="badge" style="font-size: 14px; padding: 8px 16px;"></div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-section">
+                        <h3>👤 Thông tin cá nhân</h3>
+                        <div class="info-row"><label>Mã ứng viên</label><div id="det-ma-uv"></div></div>
+                        <div class="info-row"><label>Họ và tên</label><div id="det-ho-ten"></div></div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="info-row"><label>Ngày sinh</label><div id="det-ngay-sinh"></div></div>
+                            <div class="info-row"><label>Giới tính</label><div id="det-gioi-tinh"></div></div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="info-row"><label>Số điện thoại</label><div id="det-sdt"></div></div>
+                            <div class="info-row"><label>Email</label><div id="det-email"></div></div>
+                        </div>
+                        <div class="info-row"><label>Địa chỉ</label><div id="det-dia-chi"></div></div>
+                    </div>
+
+                    <div class="info-section">
+                        <h3>📄 Thông tin ứng tuyển</h3>
+                        <div class="info-row"><label>Mã hồ sơ</label><div id="det-ma-hs"></div></div>
+                        <div class="info-row"><label>Ngày nộp</label><div id="det-ngay-nop"></div></div>
+                        <div class="info-row"><label>Vị trí ứng tuyển</label><div id="det-vi-tri"></div></div>
+                        <div class="info-row"><label>Đợt tuyển dụng</label><div id="det-dot-tuyen"></div></div>
+
+                        <div style="margin-top: 30px;">
+                            <label style="font-size: 11px; color: #777; font-weight: 600; text-transform: uppercase; margin-bottom: 10px; display: block;">CV đính kèm</label>
+                            <div class="cv-box">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8A1A22" stroke-width="2" style="margin-bottom: 12px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                <div style="margin-bottom: 15px; font-size: 14px; font-weight: 600; color: #111;">Tệp đính kèm hồ sơ</div>
+                                <a href="#" id="det-cv-link" target="_blank" style="display: inline-block; padding: 10px 24px; border: 1.5px solid #8A1A22; color: #8A1A22; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 13px; transition: 0.2s;">Xem CV</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ĐÁNH GIÁ CV -->
+    <div id="reviewModal" class="modal-overlay">
+        <div class="modal-container modal-review">
+            <div class="modal-header">
+                <h2>Đánh giá hồ sơ</h2>
+                <button class="modal-close" onclick="closeModal('reviewModal')">✕</button>
+            </div>
+
+            <form method="POST" action="{% url 'recruitment:hr_danh_sach_ho_so' %}" style="display: flex; flex-direction: column;">
+                {% csrf_token %}
+                <input type="hidden" name="ma_ho_so" id="input-ma-ho-so">
+
+                <div class="modal-body">
+                    <p style="color: #555; font-size: 14px; margin-bottom: 25px; background: #f9f9f9; padding: 12px; border-radius: 8px; border: 1px solid #eee;">
+                        Ứng viên: <strong id="rev-ho-ten" style="color: #111;"></strong> (<span id="rev-ma-hs"></span>)
+                    </p>
+
+                    <label style="display: block; font-weight: 700; font-size: 14px; margin-bottom: 12px; color: #111;">Kết quả vòng CV <span style="color: red;">*</span></label>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="ket_qua" value="Đạt vòng CV" required> Đạt (Sang phỏng vấn)
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="ket_qua" value="Không đạt vòng CV"> Không đạt
+                        </label>
+                    </div>
+
+                    <label style="display: block; font-weight: 700; font-size: 14px; margin-bottom: 10px; color: #111;">Lý do / Nhận xét chi tiết</label>
+                    <textarea name="ly_do" class="ly-do-box" placeholder="Nhập nhận xét về kinh nghiệm, kỹ năng của ứng viên..."></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('reviewModal')">Hủy</button>
+                    <button type="submit" class="btn-submit-review">Lưu đánh giá & Cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openDetailModal(maUV, hoTen, ngaySinh, gioiTinh, sdt, email, diaChi, maHS, dotTuyen, viTri, ngayNop, trangThai, cvUrl) {
+            document.getElementById('det-ma-uv').innerText = maUV;
+            document.getElementById('det-ho-ten').innerText = hoTen;
+            document.getElementById('det-ngay-sinh').innerText = ngaySinh;
+            document.getElementById('det-gioi-tinh').innerText = gioiTinh;
+            document.getElementById('det-sdt').innerText = sdt;
+            document.getElementById('det-email').innerText = email;
+            document.getElementById('det-dia-chi').innerText = diaChi;
+
+            document.getElementById('det-ma-hs').innerText = maHS;
+            document.getElementById('det-dot-tuyen').innerText = dotTuyen;
+            document.getElementById('det-vi-tri').innerText = viTri;
+            document.getElementById('det-ngay-nop').innerText = ngayNop;
+
+            let badge = document.getElementById('det-trang-thai');
+
+            let displayStatus = trangThai;
+            if(trangThai !== 'Không đạt vòng CV' && trangThai !== 'Chờ xét duyệt') {
+                displayStatus = 'Đạt vòng CV';
+            }
+            badge.innerText = "● " + displayStatus;
+
+            if(displayStatus === 'Đạt vòng CV') {
+                badge.className = "badge datcv";
+            } else if (displayStatus === 'Không đạt vòng CV') {
+                badge.className = "badge khongdat";
+            } else {
+                badge.className = "badge choxacnhan";
+            }
+
+            let cvLink = document.getElementById('det-cv-link');
+            if (cvUrl && cvUrl !== '#') {
+                cvLink.href = cvUrl;
+                cvLink.style.display = 'inline-block';
+            } else {
+                cvLink.style.display = 'none';
+            }
+
+            document.getElementById('detailModal').style.display = 'flex';
+        }
+
+        function openReviewModal(maHS, hoTen) {
+            document.getElementById('rev-ma-hs').innerText = maHS;
+            document.getElementById('rev-ho-ten').innerText = hoTen;
+            document.getElementById('input-ma-ho-so').value = maHS;
+
+            document.querySelectorAll('input[name="ket_qua"]').forEach(radio => radio.checked = false);
+            document.querySelector('.ly-do-box').value = '';
+
+            document.getElementById('reviewModal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+    </script>
+</body>
+</html>

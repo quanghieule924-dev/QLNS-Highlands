@@ -1,0 +1,494 @@
+
+{% extends 'base_internal.html' %}
+{% load static %}
+
+{% block title %}Quản lý lương | Highlands HRM{% endblock %}
+
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/payroll_v4.css' %}">
+<link rel="stylesheet" href="{% static 'css/payroll_color_upgrade.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<div class="hl-payroll" id="hl-payroll" data-page="manager">
+
+    <!-- TIÊU ĐỀ -->
+    <header class="hl-titlebar">
+        <div>
+            <h1>Quản lý lương</h1>
+        </div>
+    </header>
+
+    <!-- CHỌN KỲ LƯƠNG -->
+    <div class="hl-top-controls">
+        <label>
+            Kỳ lương
+            <select id="hl-period">
+                <option value="2026-10">Tháng 10/2026</option>
+                <option value="2026-09">Tháng 09/2026</option>
+            </select>
+        </label>
+
+        <button type="button"
+                class="hl-btn hl-outline"
+                id="hl-reset-demo">
+            Đặt lại dữ liệu
+        </button>
+    </div>
+
+    <!-- QUY TRÌNH QUẢN LÝ LƯƠNG -->
+    <nav class="hl-steps" aria-label="Quy trình quản lý lương">
+
+        <button type="button"
+                class="hl-step active"
+                data-tab="review"
+                aria-current="step">
+            <b>01</b>
+            <strong>Kiểm tra bảng công</strong>
+        </button>
+
+        <button type="button"
+                class="hl-step"
+                data-tab="finalize">
+            <b>02</b>
+            <strong>Chốt công & lập bảng lương</strong>
+        </button>
+
+        <button type="button"
+                class="hl-step"
+                data-tab="payment">
+            <b>03</b>
+            <strong>Phát hành & đối soát chi trả</strong>
+        </button>
+
+    </nav>
+
+    <!-- THẺ THỐNG KÊ -->
+    <div class="hl-kpis"
+         id="hl-kpis"
+         aria-live="polite">
+    </div>
+
+    <!-- TRẠNG THÁI CHƯA CÓ DỮ LIỆU -->
+    <div class="hl-empty-period hl-panel hl-hidden"
+         id="hl-period-empty">
+
+        <h2>Chưa có bảng công cho kỳ này</h2>
+
+        <p>
+            Vui lòng chọn kỳ lương có dữ liệu hoặc
+            kiểm tra thông tin tại module Chấm công.
+        </p>
+
+    </div>
+
+    <!-- ================================= -->
+    <!-- BƯỚC 1: KIỂM TRA BẢNG CÔNG -->
+    <!-- ================================= -->
+
+    <section class="hl-panel"
+             id="hl-panel-review"
+             aria-labelledby="hl-review-heading">
+
+        <div class="hl-panel-head">
+
+            <div>
+                <h2 id="hl-review-heading">Kiểm tra bảng công</h2>
+
+                <p>
+                    Tổng hợp giờ công chuẩn và giờ làm thêm
+                    của nhân viên trong kỳ lương.
+                </p>
+            </div>
+
+            <span id="hl-review-state"
+                  class="hl-state">
+                Chưa chốt
+            </span>
+
+        </div>
+
+        <!-- TÌM KIẾM -->
+        <div class="hl-toolbar">
+
+            <label class="hl-search">
+                Tìm nhân viên
+
+                <input
+                    id="hl-review-search"
+                    type="search"
+                    placeholder="Nhập mã hoặc họ tên nhân viên">
+            </label>
+
+        </div>
+
+        <!-- BẢNG CÔNG -->
+        <div class="hl-table-scroll">
+
+            <table class="hl-table">
+
+                <thead>
+                    <tr>
+                        <th>Mã NV</th>
+                        <th>Họ tên</th>
+                        <th>Giờ công chuẩn</th>
+                        <th>Giờ OT</th>
+                    </tr>
+                </thead>
+
+                <tbody id="hl-review-rows"></tbody>
+
+            </table>
+
+        </div>
+
+        <div class="hl-panel-footer">
+
+            <span id="hl-review-count"></span>
+
+            <div>
+                <button
+                    type="button"
+                    class="hl-btn hl-primary"
+                    id="hl-go-finalize">
+                    Tiếp tục: Chốt bảng công →
+                </button>
+            </div>
+
+        </div>
+
+        <p class="hl-footnote">
+            Nếu có sai sót về giờ làm việc, vui lòng kiểm tra
+            và cập nhật tại module Chấm công trước khi chốt.
+        </p>
+
+    </section>
+
+    <!-- ================================= -->
+    <!-- BƯỚC 2: CHỐT CÔNG & LẬP BẢNG LƯƠNG -->
+    <!-- ================================= -->
+
+    <section class="hl-panel hl-hidden"
+             id="hl-panel-finalize"
+             aria-labelledby="hl-final-heading">
+
+        <div class="hl-panel-head">
+
+            <div>
+                <h2 id="hl-final-heading">
+                    Chốt bảng công và lập bảng lương
+                </h2>
+
+                <p>
+                    Kiểm tra giờ công, đơn giá và các khoản
+                    thu nhập trước khi chốt kỳ lương.
+                </p>
+            </div>
+
+            <span id="hl-final-state"
+                  class="hl-state">
+                Chưa chốt
+            </span>
+
+        </div>
+
+        <div class="hl-alert" id="hl-final-hint">
+            Vui lòng kiểm tra đầy đủ giờ công và đơn giá
+            của nhân viên trước khi xác nhận.
+        </div>
+
+        <!-- BẢNG LƯƠNG -->
+        <div class="hl-table-scroll">
+
+            <table class="hl-table">
+
+                <thead>
+                    <tr>
+                        <th>Mã NV</th>
+                        <th>Nhân viên</th>
+                        <th>Đơn giá/giờ</th>
+                        <th>Giờ chuẩn</th>
+                        <th>Giờ OT</th>
+                        <th>Lương chính</th>
+                        <th>Lương OT</th>
+                        <th>Phụ cấp</th>
+                        <th>Khấu trừ</th>
+                        <th>Thực nhận dự kiến</th>
+                    </tr>
+                </thead>
+
+                <tbody id="hl-final-rows"></tbody>
+
+                <tfoot id="hl-final-total"></tfoot>
+
+            </table>
+
+        </div>
+
+        <p class="hl-footnote">
+            Lương thực nhận được xác định dựa trên lương chính,
+            lương làm thêm giờ, phụ cấp và các khoản khấu trừ.
+        </p>
+
+        <div class="hl-panel-footer">
+
+            <span>
+                Vui lòng kiểm tra thông tin trước khi chốt bảng công.
+            </span>
+
+            <div>
+
+                <button
+                    type="button"
+                    class="hl-btn hl-outline"
+                    id="hl-back-review">
+                    ← Quay lại kiểm tra
+                </button>
+
+                <button
+                    type="button"
+                    class="hl-btn hl-primary"
+                    id="hl-lock-demo">
+                    Chốt bảng công & tiếp tục
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================================= -->
+    <!-- BƯỚC 3: PHÁT HÀNH & CHI TRẢ -->
+    <!-- ================================= -->
+
+    <section class="hl-panel hl-hidden"
+             id="hl-panel-payment"
+             aria-labelledby="hl-payment-heading">
+
+        <div class="hl-panel-head">
+
+            <div>
+                <h2 id="hl-payment-heading">
+                    Phát hành phiếu và đối soát chi trả
+                </h2>
+
+                <p>
+                    Theo dõi tình trạng phát hành phiếu lương,
+                    ghi nhận chi trả và phản hồi của nhân viên.
+                </p>
+            </div>
+
+            <span id="hl-payment-state"
+                  class="hl-state">
+                Chờ chốt công
+            </span>
+
+        </div>
+
+        <!-- BỘ LỌC -->
+        <div class="hl-toolbar">
+
+            <label class="hl-search">
+                Tìm nhân viên
+
+                <input
+                    type="search"
+                    id="hl-payment-search"
+                    placeholder="Nhập mã hoặc họ tên">
+            </label>
+
+            <label>
+                Trạng thái phiếu
+
+                <select id="hl-issued-filter">
+                    <option value="all">Tất cả</option>
+                    <option value="issued">Đã phát hành</option>
+                    <option value="pending">Chưa phát hành</option>
+                </select>
+            </label>
+
+            <label>
+                Trạng thái chi trả
+
+                <select id="hl-paid-filter">
+                    <option value="all">Tất cả</option>
+                    <option value="paid">Đã ghi nhận chi trả</option>
+                    <option value="unpaid">Chưa ghi nhận</option>
+                </select>
+            </label>
+
+            <label>
+                Phản hồi nhân viên
+
+                <select id="hl-feedback-filter">
+                    <option value="all">Tất cả</option>
+                    <option value="none">Chưa phản hồi</option>
+                    <option value="received">Đã nhận lương</option>
+                    <option value="issue">Báo chưa nhận</option>
+                </select>
+            </label>
+
+        </div>
+
+        <!-- DANH SÁCH PHIẾU LƯƠNG -->
+        <div class="hl-table-scroll">
+
+            <table class="hl-table">
+
+                <thead>
+                    <tr>
+                        <th>
+                            <input
+                                type="checkbox"
+                                id="hl-select-all"
+                                aria-label="Chọn tất cả phiếu đang hiển thị">
+                        </th>
+
+                        <th>Mã NV</th>
+                        <th>Nhân viên</th>
+                        <th>Lương thực nhận</th>
+                        <th>Phát hành phiếu</th>
+                        <th>Chi trả</th>
+                        <th>Phản hồi nhân viên</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody id="hl-payment-rows"></tbody>
+
+            </table>
+
+        </div>
+
+        <!-- NÚT THAO TÁC -->
+        <div class="hl-panel-footer">
+
+            <span id="hl-payment-summary">
+                Chưa có phiếu lương
+            </span>
+
+            <div>
+
+                <button
+                    type="button"
+                    class="hl-btn hl-outline"
+                    id="hl-bulk-issue">
+                    Phát hành phiếu đã chọn
+                </button>
+
+                <button
+                    type="button"
+                    class="hl-btn hl-primary"
+                    id="hl-bulk-pay">
+                    Ghi nhận chi trả
+                </button>
+
+            </div>
+
+        </div>
+
+        <p class="hl-footnote">
+            Quản lý ghi nhận chi trả sau khi đã thực hiện
+            thanh toán thực tế. Nhân viên có thể xác nhận
+            tình trạng nhận lương tại mục Phiếu lương cá nhân.
+        </p>
+
+    </section>
+
+    <!-- ================================= -->
+    <!-- HỘP THOẠI XÁC NHẬN -->
+    <!-- ================================= -->
+
+    <div class="hl-modal-back hl-hidden"
+         id="hl-modal"
+         role="presentation">
+
+        <div class="hl-modal"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="hl-modal-title"
+             aria-describedby="hl-modal-body"
+             tabindex="-1">
+
+            <h2 id="hl-modal-title">Xác nhận</h2>
+
+            <p id="hl-modal-body"></p>
+
+            <div
+                class="hl-modal-meta hl-hidden"
+                id="hl-modal-meta">
+            </div>
+
+            <!-- THÔNG TIN CHI TRẢ -->
+            <div class="hl-payment-fields hl-hidden"
+                 id="hl-payment-fields">
+
+                <label>
+                    Phương thức chi trả
+
+                    <select id="hl-method">
+                        <option value="Chuyển khoản">
+                            Chuyển khoản
+                        </option>
+                        <option value="Tiền mặt">
+                            Tiền mặt
+                        </option>
+                    </select>
+                </label>
+
+                <label>
+                    Ngày chi trả
+
+                    <input
+                        id="hl-pay-date"
+                        type="date">
+                </label>
+
+                <label>
+                    Mã tham chiếu giao dịch (không bắt buộc)
+
+                    <input
+                        id="hl-pay-ref"
+                        type="text"
+                        placeholder="Nhập mã giao dịch">
+                </label>
+
+            </div>
+
+            <div class="hl-modal-actions">
+
+                <button
+                    type="button"
+                    id="hl-modal-cancel"
+                    class="hl-btn hl-outline">
+                    Hủy
+                </button>
+
+                <button
+                    type="button"
+                    id="hl-modal-confirm"
+                    class="hl-btn hl-primary">
+                    Xác nhận
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- THÔNG BÁO -->
+    <div class="hl-toast hl-hidden"
+         id="hl-toast"
+         role="status"
+         aria-live="polite">
+    </div>
+
+</div>
+
+<script src="{% static 'js/payroll_v4.js' %}" defer></script>
+
+{% endblock %}

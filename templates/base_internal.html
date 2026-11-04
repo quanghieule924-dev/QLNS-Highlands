@@ -1,4 +1,3 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="vi">
@@ -8,8 +7,194 @@
 
     <title>{% block title %}HRM System | Highlands Coffee{% endblock %}</title>
 
+    <!-- Tích hợp Google Fonts Be Vietnam Pro -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="{% static 'css/common.css' %}">
     <link rel="stylesheet" href="{% static 'css/internal.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/dashboard_shared.css' %}">
+
+    <!-- CSS TÙY CHỈNH: TÁCH BIỆT MÀU SẮC SIDEBAR VÀ NỘI DUNG, XÓA BỎ KHỐI 3 DÒNG THỪA -->
+    <style>
+        :root {
+            --sidebar-width: 210px !important;
+            --header-height: 72px !important;
+        }
+        body {
+            font-family: 'Be Vietnam Pro', Arial, sans-serif !important;
+            background-color: #F8F6F0 !important;
+            margin: 0;
+        }
+
+        /* 1. THANH HEADER NGANG ĐỎ ĐẬM HIGHLANDS */
+        .internal-header {
+            position: fixed !important;
+            top: 0; right: 0; left: 0;
+            z-index: 1000;
+            height: var(--header-height) !important;
+            display: flex;
+            align-items: center;
+            background: #8A1A22 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 0 !important;
+        }
+
+        .internal-brand {
+            width: var(--sidebar-width) !important;
+            min-width: var(--sidebar-width) !important;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 14px !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
+            background: #8A1A22 !important;
+            color: #fff;
+            text-decoration: none;
+        }
+        .brand-logo-img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        .brand-text strong {
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+        }
+        .brand-text small {
+            color: #FFD43B;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .header-search {
+            width: 320px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-left: 25px;
+            padding: 0 14px;
+            border-radius: 20px;
+            background: #ffffff !important;
+        }
+        .header-search input {
+            width: 100%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: #333 !important;
+            font-size: 13px;
+        }
+        .header-account {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-left: auto;
+            padding: 0 25px;
+        }
+        .account-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: #fff;
+            color: #8A1A22;
+            font-weight: 800;
+            font-size: 12px;
+            display: grid;
+            place-items: center;
+        }
+        .logout-button {
+            background-color: #ffffff !important;
+            color: #8A1A22 !important;
+            border: none !important;
+            padding: 8px 20px !important;
+            border-radius: 20px !important;
+            font-weight: 700 !important;
+            font-size: 13px !important;
+            cursor: pointer !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .logout-button:hover {
+            background-color: #FFF0F1 !important;
+        }
+
+        /* 2. THANH SIDEBAR DỌC NỀN TRẮNG TÁCH BIỆT VỚI NỀN TRANG CHÍNH (#F8F6F0) */
+        .internal-sidebar {
+            position: fixed !important;
+            top: var(--header-height) !important;
+            bottom: 0; left: 0;
+            z-index: 900;
+            width: var(--sidebar-width) !important;
+            padding: 20px 10px 14px !important;
+            background: #FFFFFF !important; /* Nền trắng hoàn toàn tách biệt */
+            border-right: 1px solid #E5E0D8 !important;
+            overflow-y: auto;
+            color: #292929 !important;
+        }
+
+        /* Ẩn hoàn toàn khối 3 dòng thông tin chi nhánh cũ */
+        .branch-info {
+            display: none !important;
+        }
+
+        /* Menu sidebar sang trọng, rõ ràng trên nền trắng */
+        .sidebar-menu {
+            padding-top: 5px !important;
+        }
+        .sidebar-menu a {
+            color: #444444 !important;
+            font-size: 12px;
+            border-radius: 6px;
+            padding: 0 10px;
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: background 0.15s ease;
+        }
+        .sidebar-menu a:hover {
+            background: #FFF0F1 !important;
+            color: #8A1A22 !important;
+        }
+        .sidebar-menu a.active {
+            background: #8A1A22 !important;
+            color: #FFFFFF !important;
+            font-weight: 700 !important;
+            border-left: none !important;
+        }
+
+        .sidebar-note {
+            margin-top: auto;
+            padding: 10px;
+            border: 1px solid #EAE5DE;
+            border-radius: 8px;
+            background: #FAFAFA;
+        }
+        .sidebar-note strong {
+            color: #1A1A1A !important;
+            font-size: 10px;
+        }
+        .sidebar-note p {
+            color: #777777 !important;
+        }
+
+        .internal-main {
+            margin-left: var(--sidebar-width) !important;
+            margin-top: var(--header-height) !important;
+            padding: 30px;
+            box-sizing: border-box;
+            min-height: calc(100vh - var(--header-height));
+        }
+    </style>
 
     {% block extra_css %}{% endblock %}
 </head>
@@ -22,7 +207,7 @@
         <header class="internal-header">
 
             <a href="{% url 'home' %}" class="internal-brand">
-                <span class="brand-logo">H</span>
+                <img src="{% static 'images/logo-highlands.png' %}" alt="Highlands Logo" class="brand-logo-img">
 
                 <span class="brand-text">
                     <strong>HRM System</strong>
@@ -34,11 +219,13 @@
                 <span class="search-icon">⌕</span>
 
                 <input
+                    disabled
+                    title="Tìm kiếm toàn hệ thống đang được phát triển"
                     type="search"
                     name="search"
                     placeholder="Tìm nhân viên, hợp đồng..."
                     aria-label="Tìm kiếm"
-                >
+                />
             </div>
 
             <div class="header-account">
@@ -46,14 +233,16 @@
                 <button
                     type="button"
                     class="notification"
+                    disabled
+                    title="Thông báo đang được phát triển"
                     aria-label="Thông báo"
                 >
                     ♧
                 </button>
 
-                <!-- AVATAR THEO VAI TRO -->
+                <!-- AVATAR -->
                 <span class="account-avatar">
-                    {% if request.user.role == 'admin' %}
+                    {% if request.user.role == 'admin' or request.user.is_superuser %}
                         QL
                     {% else %}
                         NV
@@ -61,13 +250,13 @@
                 </span>
 
                 <!-- THONG TIN TAI KHOAN -->
-                <div class="account-info">
+                <div class="account-info" style="color: #fff; font-size: 12px;">
                     <strong>
                         {{ request.user.get_full_name|default:request.user.username }}
                     </strong>
-
-                    <small>
-                        {% if request.user.role == 'admin' %}
+                    <br>
+                    <small style="color: #FFD43B;">
+                        {% if request.user.role == 'admin' or request.user.is_superuser %}
                             QUẢN LÝ
                         {% else %}
                             NHÂN VIÊN
@@ -75,10 +264,9 @@
                     </small>
                 </div>
 
-                <!-- DANG XUAT -->
+                <!-- NÚT ĐĂNG XUẤT -->
                 <form method="post" action="{% url 'accounts:logout' %}">
                     {% csrf_token %}
-
                     <button type="submit" class="logout-button">
                         Đăng xuất
                     </button>
@@ -90,144 +278,89 @@
         <!-- SIDEBAR -->
         <aside class="internal-sidebar">
 
-            <div class="branch-info">
-                <strong>HIGHLANDS COFFEE</strong>
-                <p>Chi nhánh 258 Bạch Đằng</p>
-                <small>● Hệ thống quản lý nhân sự</small>
-            </div>
-
             <nav class="sidebar-menu">
 
                 <!-- MENU QUAN LY: ADMIN -->
-                {% if request.user.role == 'admin' %}
+                {% if request.user.role == 'admin' or request.user.is_superuser or preview_mode %}
 
-                    <a
-                        href="#"
-                        class="{% if active_menu == 'dashboard' %}active{% endif %}"
-                    >
+                    <a href="{% url 'accounts:dashboard' %}" class="{% if active_menu == 'dashboard' %}active{% endif %}">
                         <span class="menu-icon">▦</span>
                         <span>Tổng quan</span>
                     </a>
 
-                    <a
-                        href="#"
-                        class="{% if active_menu == 'employees' %}active{% endif %}"
-                    >
+                    <a href="{% url 'accounts:module' 'employees' %}" class="{% if active_menu == 'employees' %}active{% endif %}">
                         <span class="menu-icon">♙</span>
                         <span>Quản lý nhân viên</span>
                     </a>
 
-                    <a
-                        href="#"
-                        class="{% if active_menu == 'recruitment' %}active{% endif %}"
-                    >
+                    <a href="{% url 'recruitment:quan_ly_tuyen_dung' %}" class="{% if active_menu == 'tuyen_dung' %}active{% endif %}">
                         <span class="menu-icon">♧</span>
                         <span>Tuyển dụng</span>
                     </a>
 
-                    <a
-                        href="#"
-                        class="{% if active_menu == 'contracts' %}active{% endif %}"
-                    >
+                    <a href="{% url 'accounts:module' 'contracts' %}" class="{% if active_menu == 'contracts' %}active{% endif %}">
                         <span class="menu-icon">▤</span>
                         <span>Hợp đồng &amp; Phúc lợi</span>
                     </a>
 
-                    <a
-                        href="#"
-                        class="{% if active_menu == 'scheduling' %}active{% endif %}"
-                    >
+                    <a href="{% url 'accounts:module' 'scheduling' %}" class="{% if active_menu == 'scheduling' %}active{% endif %}">
                         <span class="menu-icon">▦</span>
                         <span>Phân ca làm việc</span>
                     </a>
 
-                    <a
-                        href="#"
-                        class="{% if active_menu == 'attendance' %}active{% endif %}"
-                    >
+                    <a href="{% url 'accounts:module' 'attendance' %}" class="{% if active_menu == 'attendance' %}active{% endif %}">
                         <span class="menu-icon">◷</span>
                         <span>Chấm công</span>
                     </a>
 
-                    <a
-                        href="#"
-                        class="{% if active_menu == 'payroll' %}active{% endif %}"
-                    >
+                    <a href="{% url 'payroll:management' %}" class="{% if active_menu == 'payroll' %}active{% endif %}">
                         <span class="menu-icon">▤</span>
                         <span>Quản lý lương</span>
                     </a>
 
-                    <a
-                        href="#"
-                        class="{% if active_menu == 'training' %}active{% endif %}"
-                    >
+                    <a href="{% url 'accounts:module' 'training' %}" class="{% if active_menu == 'training' %}active{% endif %}">
                         <span class="menu-icon">♧</span>
                         <span>Đào tạo</span>
                     </a>
 
-                    <a
-                        href="#"
-                        class="{% if active_menu == 'reports' %}active{% endif %}"
-                    >
+                    <a href="{% url 'reports:monthly_dashboard' %}" class="{% if active_menu == 'reports' %}active{% endif %}">
                         <span class="menu-icon">▥</span>
                         <span>Báo cáo thống kê</span>
                     </a>
 
-                <!-- MENU NHAN VIEN -->
                 {% elif request.user.role == 'employee' %}
 
-                    <a
-                        href="#"
-                        class="{% if active_menu == 'dashboard' %}active{% endif %}"
-                    >
+                    <a href="{% url 'accounts:dashboard' %}" class="{% if active_menu == 'dashboard' %}active{% endif %}">
                         <span class="menu-icon">▦</span>
                         <span>Tổng quan</span>
                     </a>
 
-                    <a
-                        href="#"
-                        class="{% if active_menu == 'employees' %}active{% endif %}"
-                    >
+                    <a href="{% url 'accounts:module' 'employees' %}" class="{% if active_menu == 'employees' %}active{% endif %}">
                         <span class="menu-icon">♙</span>
                         <span>Hồ sơ của tôi</span>
                     </a>
 
-                    <a
-                        href="#"
-                        class="{% if active_menu == 'contracts' %}active{% endif %}"
-                    >
+                    <a href="{% url 'accounts:module' 'contracts' %}" class="{% if active_menu == 'contracts' %}active{% endif %}">
                         <span class="menu-icon">▤</span>
                         <span>Hợp đồng &amp; Phúc lợi</span>
                     </a>
 
-                    <a
-                        href="#"
-                        class="{% if active_menu == 'scheduling' %}active{% endif %}"
-                    >
+                    <a href="{% url 'accounts:module' 'scheduling' %}" class="{% if active_menu == 'scheduling' %}active{% endif %}">
                         <span class="menu-icon">▦</span>
                         <span>Lịch làm việc</span>
                     </a>
 
-                    <a
-                        href="#"
-                        class="{% if active_menu == 'attendance' %}active{% endif %}"
-                    >
+                    <a href="{% url 'accounts:module' 'attendance' %}" class="{% if active_menu == 'attendance' %}active{% endif %}">
                         <span class="menu-icon">◷</span>
                         <span>Chấm công</span>
                     </a>
 
-                    <a
-                        href="#"
-                        class="{% if active_menu == 'payroll' %}active{% endif %}"
-                    >
+                    <a href="{% url 'payroll:my_payslip' %}" class="{% if active_menu == 'payroll' %}active{% endif %}">
                         <span class="menu-icon">▤</span>
                         <span>Phiếu lương</span>
                     </a>
 
-                    <a
-                        href="#"
-                        class="{% if active_menu == 'training' %}active{% endif %}"
-                    >
+                    <a href="{% url 'accounts:module' 'training' %}" class="{% if active_menu == 'training' %}active{% endif %}">
                         <span class="menu-icon">♧</span>
                         <span>Đào tạo</span>
                     </a>
@@ -243,14 +376,13 @@
 
         </aside>
 
-        <!-- NOI DUNG RIENG CUA TUNG APP -->
+        <!-- NỘI DUNG CHÍNH -->
         <main class="internal-main">
             {% block content %}{% endblock %}
         </main>
 
     {% else %}
 
-        <!-- KHONG CO QUYEN TRUY CAP -->
         <main class="internal-access-denied">
             <h2>Bạn không có quyền truy cập</h2>
             <p>Vui lòng đăng nhập bằng tài khoản nội bộ.</p>

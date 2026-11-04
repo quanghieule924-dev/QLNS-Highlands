@@ -1,16 +1,17 @@
 /* ========================================
-   HRM HIGHLANDS COFFEE - GIAO DIEN CHUNG
+   HRM HIGHLANDS COFFEE - GIAO DIEN CHUNG (GIỮ NGUYÊN CODE CŨ + BỔ SUNG ACTIVE)
    ======================================== */
 
 :root {
-    --sidebar-width: 230px;
-    --header-height: 62px;
-    --primary: #c8102e;
-    --primary-light: #fff0f2;
+    --sidebar-width: 210px; /* Thu nhỏ độ rộng sidebar bên trái cho thanh thoát */
+    --header-height: 72px;
+    --primary: #8A1A22;
+    --primary-hover: #701319;
+    --primary-light: #FFF0F1;
     --text: #292929;
     --muted: #777777;
-    --border: #e8e8e8;
-    --page-bg: #f6f6f6;
+    --border: #EBE7DF;
+    --page-bg: #F8F6F0;
     --white: #ffffff;
 }
 
@@ -27,14 +28,14 @@ body {
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Be Vietnam Pro', Arial, Helvetica, sans-serif;
     font-size: 13px;
     line-height: 1.5;
     color: var(--text);
     background: var(--page-bg);
 }
 
-/* ===== THANH NGANG ===== */
+/* ===== THANH NGANG (HEADER ĐỎ ĐẬM) ===== */
 
 .internal-header {
     position: fixed;
@@ -47,8 +48,9 @@ body {
     display: flex;
     align-items: center;
 
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
+    background: var(--primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 0;
 }
 
 .internal-brand {
@@ -58,70 +60,79 @@ body {
 
     display: flex;
     align-items: center;
-    gap: 11px;
+    gap: 10px;
 
-    padding: 0 18px;
-    border-right: 1px solid var(--border);
+    padding: 0 14px;
+    /* ĐƯỜNG KẺ MÀU TRẮNG DÀY DẶN, LIỀN MẠCH VÀ SẮC NÉT */
+    border-right: 1.5px solid rgba(255, 255, 255, 0.25);
 
-    color: var(--text);
+    color: var(--white);
     text-decoration: none;
 }
 
-.brand-logo {
-    width: 34px;
-    height: 34px;
+.brand-logo-img {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    border-radius: 8px;
     flex-shrink: 0;
+}
 
+.brand-logo {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
     display: grid;
     place-items: center;
-
     border-radius: 8px;
-    background: var(--primary);
-    color: var(--white);
-
-    font-size: 17px;
-    font-weight: 700;
+    background: var(--white);
+    color: var(--primary);
+    font-size: 15px;
+    font-weight: 800;
 }
 
 .brand-text {
     display: flex;
     flex-direction: column;
     gap: 1px;
-    line-height: 1.35;
+    line-height: 1.3;
 }
 
 .brand-text strong {
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.2px;
 }
 
 .brand-text small {
-    color: var(--muted);
+    color: #FFD43B;
     font-size: 9px;
-    letter-spacing: 0.6px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
 .header-search {
-    width: 300px;
-    height: 36px;
+    width: 320px;
+    height: 38px;
     flex-shrink: 1;
 
     display: flex;
     align-items: center;
     gap: 9px;
 
-    margin-left: 20px;
-    padding: 0 12px;
+    margin-left: 25px;
+    padding: 0 14px;
 
-    border: 1px solid #eeeeee;
-    border-radius: 8px;
-    background: #f7f7f7;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    background: #ffffff;
 }
 
 .search-icon {
     flex-shrink: 0;
-    color: #777;
-    font-size: 17px;
+    color: #666;
+    font-size: 16px;
 }
 
 .header-search input {
@@ -135,7 +146,7 @@ body {
 
     color: var(--text);
     font-family: inherit;
-    font-size: 12px;
+    font-size: 13px;
 }
 
 .header-search input::placeholder {
@@ -146,66 +157,90 @@ body {
     height: 100%;
     display: flex;
     align-items: center;
-    gap: 11px;
+    gap: 14px;
 
     margin-left: auto;
-    padding: 0 20px;
+    padding: 0 25px;
 }
 
 .notification {
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
 
     display: grid;
     place-items: center;
 
     border: 0;
-    border-radius: 8px;
-    background: transparent;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
 
-    color: #555;
-    font-size: 17px;
+    color: var(--white);
+    font-size: 16px;
     cursor: pointer;
 }
 
 .notification:hover {
-    background: #f5f5f5;
+    background: rgba(255, 255, 255, 0.25);
 }
 
 .account-avatar {
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
     flex-shrink: 0;
 
     display: grid;
     place-items: center;
 
     border-radius: 50%;
-    background: var(--primary-light);
+    background: var(--white);
     color: var(--primary);
 
-    font-size: 10px;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 800;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .account-info {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 1px;
     line-height: 1.4;
 }
 
 .account-info strong {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--white);
 }
 
 .account-info small {
-    color: var(--muted);
+    color: #FFD43B;
     font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
-/* ===== THANH DOC ===== */
+/* NÚT ĐĂNG XUẤT TRẮNG BO TRÒN NỔI BẬT */
+.logout-button {
+    background-color: var(--white) !important;
+    color: var(--primary) !important;
+    border: none !important;
+    padding: 8px 20px !important;
+    border-radius: 20px !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: all 0.2s ease !important;
+}
+
+.logout-button:hover {
+    background-color: var(--primary-light) !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
+}
+
+
+/* ===== THANH DỌC (SIDEBAR GỌN GÀNG, THANH THOÁT) ===== */
 
 .internal-sidebar {
     position: fixed;
@@ -222,37 +257,38 @@ body {
     overflow-x: hidden;
     overflow-y: auto;
 
-    padding: 18px 12px 14px;
+    padding: 16px 10px 14px;
 
-    background: var(--white);
+    background: #FAF8F5;
     border-right: 1px solid var(--border);
 }
 
 .branch-info {
-    padding: 0 10px 16px;
-    border-bottom: 1px solid #eeeeee;
+    padding: 0 8px 14px;
+    border-bottom: 1px solid #EBE7DF;
 }
 
 .branch-info > strong {
     display: block;
     color: var(--primary);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.4px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
 }
 
 .branch-info p {
-    margin: 8px 0 5px;
-    font-size: 12px;
-    line-height: 1.5;
-    font-weight: 600;
+    margin: 6px 0 4px;
+    font-size: 11px;
+    line-height: 1.4;
+    font-weight: 700;
+    color: #1A1A1A;
 }
 
 .branch-info small {
     display: block;
     color: var(--muted);
-    font-size: 10px;
-    line-height: 1.5;
+    font-size: 9px;
+    line-height: 1.4;
 }
 
 /* ===== MENU ===== */
@@ -262,11 +298,11 @@ body {
     flex-direction: column;
     gap: 4px;
 
-    padding-top: 14px;
+    padding-top: 12px;
 }
 
 .sidebar-menu a {
-    min-height: 39px;
+    min-height: 38px;
     width: 100%;
 
     display: flex;
@@ -282,6 +318,7 @@ body {
     text-decoration: none;
     font-size: 12px;
     line-height: 1.4;
+    font-weight: 500;
 
     transition:
         background 0.15s ease,
@@ -289,14 +326,15 @@ body {
 }
 
 .sidebar-menu a:hover {
-    background: #f7f7f7;
+    background: #F4F0EA;
     color: var(--primary);
 }
 
+/* KHI CHUYỂN QUA TRANG KHÁC, CẬP NHẬT TRẠNG THÁI ACTIVE THÀNH MÀU ĐỎ NỔI BẬT */
 .sidebar-menu a.active {
+    background: var(--primary) !important;
+    color: var(--white) !important;
     border-left-color: var(--primary);
-    background: var(--primary-light);
-    color: var(--primary);
     font-weight: 700;
 }
 
@@ -310,31 +348,32 @@ body {
     line-height: 1;
 }
 
-/* ===== KHUNG THONG TIN CUOI MENU ===== */
+/* ===== KHUNG THÔNG TIN CUỐI MENU ===== */
 
 .sidebar-note {
     margin-top: auto;
-    padding: 12px 11px;
+    padding: 10px 10px;
 
-    border: 1px solid #eeeeee;
+    border: 1px solid #EAE5DE;
     border-radius: 8px;
-    background: #f8f8f8;
+    background: #FFFFFF;
 }
 
 .sidebar-note strong {
     display: block;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
+    color: #1A1A1A;
 }
 
 .sidebar-note p {
-    margin: 6px 0 0;
+    margin: 4px 0 0;
     color: var(--muted);
-    font-size: 10px;
-    line-height: 1.6;
+    font-size: 9px;
+    line-height: 1.5;
 }
 
-/* ===== VUNG NOI DUNG CHINH ===== */
+/* ===== VÙNG NỘI DUNG CHÍNH ===== */
 
 .internal-main {
     margin-left: var(--sidebar-width);
@@ -344,43 +383,57 @@ body {
     box-sizing: border-box;
 }
 
-/* Khoảng cách cho nội dung bên trong */
-.internal-main > * {
-    max-width: 1440px;
-    margin-left: auto;
-    margin-right: auto;
+/* ===== TRANG KHÔNG CÓ QUYỀN TRUY CẬP ===== */
+.internal-access-denied {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    text-align: center;
+    background: var(--page-bg);
 }
 
-/* ===== MAN HINH VUA ===== */
+.internal-access-denied h2 {
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.internal-access-denied a {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 24px;
+    background: var(--primary);
+    color: var(--white);
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+/* ===== MÀN HÌNH VỪA & NHỎ ===== */
 
 @media (max-width: 1000px) {
     .header-search {
         width: 240px;
         margin-left: 14px;
     }
-
-    .header-account {
-        gap: 8px;
-        padding: 0 12px;
-    }
 }
-
-/* ===== MAN HINH NHO ===== */
 
 @media (max-width: 760px) {
     :root {
-        --sidebar-width: 190px;
-        --header-height: 58px;
+        --sidebar-width: 170px;
+        --header-height: 64px;
     }
 
     .internal-brand {
-        padding: 0 12px;
+        padding: 0 10px;
         gap: 8px;
     }
 
-    .brand-logo {
-        width: 30px;
-        height: 30px;
+    .brand-logo-img {
+        width: 32px;
+        height: 32px;
     }
 
     .brand-text strong {
@@ -391,23 +444,15 @@ body {
         display: none;
     }
 
-    .header-account {
-        padding: 0 10px;
-    }
-
-    .account-info {
-        display: none;
-    }
-
     .internal-sidebar {
-        padding-right: 9px;
-        padding-left: 9px;
+        padding-right: 8px;
+        padding-left: 8px;
     }
 
     .sidebar-menu a {
         gap: 8px;
-        padding-right: 7px;
-        padding-left: 8px;
+        padding-right: 6px;
+        padding-left: 6px;
         font-size: 11px;
     }
 }

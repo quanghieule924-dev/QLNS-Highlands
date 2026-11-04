@@ -1,4 +1,23 @@
 from django.db import models
+import os
+import unicodedata
+import re
+
+# Hàm hỗ trợ làm sạch tên file tiếng Việt và khoảng trắng để tránh lỗi 404 khi xem file
+def custom_upload_to(instance, filename):
+    # Lấy phần tên file và phần mở rộng (ví dụ: .pdf, .docx)
+    name, ext = os.path.splitext(filename)
+
+    # Chuyển đổi tiếng Việt có dấu thành không dấu
+    nfkd_form = unicodedata.normalize('NFKD', name)
+    only_ascii = "".join([c for c in nfkd_form if not unicodedata.combining(c)])
+
+    # Thay thế khoảng trắng và ký tự đặc biệt bằng dấu gạch ngang
+    clean_name = re.sub(r'[^a-zA-Z0-9-_]', '_', only_ascii)
+    clean_name = re.sub(r'_+', '_', clean_name).strip('_')
+
+    # Trả về đường dẫn lưu file an toàn trong thư mục cv_ung_vien/
+    return os.path.join('cv_ung_vien/', f"{clean_name}{ext.lower()}")
 
 class ViTriTuyenDung(models.Model):
     ma_vi_tri = models.CharField(max_length=20, primary_key=True, verbose_name="Mã vị trí")
@@ -13,6 +32,7 @@ class DotTuyenDung(models.Model):
     ma_dot = models.CharField(max_length=20, primary_key=True, verbose_name="Mã đợt tuyển dụng")
     ten_dot = models.CharField(max_length=255, verbose_name="Tên đợt tuyển dụng")
     so_luong_can_tuyen = models.IntegerField(verbose_name="Số lượng cần tuyển")
+    muc_luong = models.CharField(max_length=100, default="Thỏa thuận", verbose_name="Mức lương")  # <--- Thêm dòng này vào
     ngay_bat_dau = models.DateField(verbose_name="Ngày bắt đầu")
     ngay_ket_thuc = models.DateField(verbose_name="Ngày kết thúc")
     ma_vi_tri = models.ForeignKey(ViTriTuyenDung, on_delete=models.CASCADE, verbose_name="Vị trí tuyển dụng")
@@ -42,6 +62,10 @@ class HoSoUngTuyen(models.Model):
     ma_ung_vien = models.ForeignKey(UngVien, on_delete=models.CASCADE, verbose_name="Ứng viên")
     ma_vi_tri = models.ForeignKey(ViTriTuyenDung, on_delete=models.CASCADE, verbose_name="Vị trí")
     ma_dot = models.ForeignKey(DotTuyenDung, on_delete=models.CASCADE, verbose_name="Đợt tuyển dụng")
+    ngay_phong_van = models.DateField(null=True, blank=True)
+    gio_phong_van = models.TimeField(null=True, blank=True)
+    hinh_thuc_pv = models.CharField(max_length=50, null=True, blank=True)
+    dia_diem_pv = models.CharField(max_length=255, null=True, blank=True)
 
 class DanhGiaCV(models.Model):
     ma_danh_gia_cv = models.CharField(max_length=20, primary_key=True, verbose_name="Mã đánh giá CV")
@@ -63,3 +87,5 @@ class DanhGiaPhongVan(models.Model):
     ngay_danh_gia = models.DateField(verbose_name="Ngày đánh giá")
     ma_lich_pv = models.ForeignKey(LichPhongVan, on_delete=models.CASCADE, verbose_name="Lịch phỏng vấn")
     ma_ho_so = models.ForeignKey(HoSoUngTuyen, on_delete=models.CASCADE, verbose_name="Hồ sơ")
+
+

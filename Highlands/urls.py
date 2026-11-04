@@ -2,7 +2,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.shortcuts import render
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 def home(request):
     return render(request, 'home.html')
@@ -44,6 +45,9 @@ urlpatterns = [
     # Đăng nhập, đăng ký, dashboard, đăng xuất
     path('accounts/', include('accounts.urls')),
 
+    # Kết nối app recruitment (đảm bảo căn lề thẳng hàng với các path bên trên)
+    path('recruitment/', include('recruitment.urls')),
+
     # Trang xem thử giao diện quản lý
     path(
         'internal-preview/',
@@ -57,5 +61,9 @@ urlpatterns = [
         employee_preview,
         name='employee_preview',
     ),
+    path('payroll/', include('payroll.urls')),
+    path('reports/', include('reports.urls')),
 ]
 
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
