@@ -8,23 +8,12 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.http import JsonResponse
-from django.shortcuts import (
-    render,
-    redirect,
-    get_object_or_404,
-)
+from django.shortcuts import (render,redirect,get_object_or_404,)
 from django.utils import timezone
 from django.views.decorators.http import require_POST
-
 from employees.models import NhanVien
 
-from .models import (
-    ChuongTrinhTapSu,
-    BaiHoc,
-    TienDoTapSu,
-    LichThi,
-    DeThi,
-    CauHoi,
+from .models import (ChuongTrinhTapSu,BaiHoc,TienDoTapSu,LichThi,DeThi,CauHoi,
     KetQuaThi,
 )
 

@@ -24,5 +24,6 @@ urlpatterns = [
     path('luu-dap-an/<str:ma_lt>/',exam_student.luu_dap_an_thi,name='luu_dap_an_thi'),
     path('ket-qua-bai-thi/<str:ma_lt>/',exam_student.ket_qua_bai_thi,name='ket_qua_bai_thi'),
     path('trang-thai-ho-so/<str:ma_nv>/',manager_result.trang_thai_ho_so,name='trang_thai_ho_so'),
+    path('chuyen-ho-so/<str:ma_nv>/',manager_result.chuyen_ho_so_tap_su,name='chuyen_ho_so_tap_su'),
 ]
 

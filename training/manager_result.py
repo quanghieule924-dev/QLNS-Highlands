@@ -1,20 +1,12 @@
-
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, get_object_or_404
-
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.db import transaction
 from employees.models import NhanVien
-
-from .models import (
-    ChuongTrinhTapSu,
-    BaiHoc,
-    TienDoTapSu,
-    LichThi,
-    DeThi,
-    CauHoi,
-    KetQuaThi,
-)
-
+from .models import (ChuongTrinhTapSu, BaiHoc,TienDoTapSu,LichThi,DeThi,CauHoi,KetQuaThi,)
+from .exam_flow import lay_trang_thai_thi
+from django.views.decorators.http import require_POST
 
 @login_required
 def trang_thai_ho_so(request, ma_nv):
@@ -219,3 +211,136 @@ def trang_thai_ho_so(request, ma_nv):
                 du_dieu_kien_xet_duyet,
         }
     )
+
+
+@login_required
+@require_POST
+def chuyen_ho_so_tap_su(request, ma_nv):
+    """
+    Quản lý xác nhận bàn giao hồ sơ sau khi
+    nhân viên hoàn thành OJT và thi đạt.
+
+    Lưu trạng thái bàn giao bên training.
+    Chưa tạo bản ghi hợp đồng ở app khác.
+    """
+
+    if not (
+        request.user.is_superuser
+        or getattr(request.user, "role", None) == "admin"
+    ):
+        raise PermissionDenied
+
+    nhan_vien = get_object_or_404(
+        NhanVien,
+        manv=ma_nv
+    )
+
+    try:
+        with transaction.atomic():
+
+            # Khóa nhân viên và chương trình
+            # trong khi xử lý chuyển hồ sơ.
+            nv_khoa = (
+                NhanVien.objects
+                .select_for_update()
+                .get(pk=nhan_vien.pk)
+            )
+
+            chuong_trinh = (
+                ChuongTrinhTapSu.objects
+                .select_for_update()
+                .filter(
+                    ma_nv=nv_khoa
+                )
+                .order_by("-ma_ct")
+                .first()
+            )
+
+            if chuong_trinh is None:
+                raise ValueError(
+                    "Nhân viên chưa có chương trình tập sự."
+                )
+
+            if nv_khoa.trang_thai:
+                raise ValueError(
+                    "Hồ sơ này đã được xác nhận bàn giao."
+                )
+
+            if chuong_trinh.trang_thai_duyet != "Đã duyệt":
+                raise ValueError(
+                    "Lộ trình chưa được phê duyệt."
+                )
+
+            # Kiểm tra lại OJT từ checklist thực tế.
+            ds_bai = list(
+                BaiHoc.objects.filter(
+                    ma_ct=chuong_trinh
+                )
+            )
+
+            if not ds_bai:
+                raise ValueError(
+                    "Chương trình chưa có bài học OJT."
+                )
+
+            danh_gia_theo_bai = {}
+
+            for td in (
+                TienDoTapSu.objects
+                .filter(
+                    ma_nv=nv_khoa,
+                    ma_bh__in=ds_bai
+                )
+                .order_by("ngay_danh_gia", "ma_td")
+            ):
+                danh_gia_theo_bai[td.ma_bh_id] = td
+
+            hoan_thanh_ojt = all(
+                bai.ma_bh in danh_gia_theo_bai
+                and (
+                    danh_gia_theo_bai[bai.ma_bh]
+                    .trang_thai_danh_gia or ""
+                ).strip().casefold() == "đạt"
+                for bai in ds_bai
+            )
+
+            if not hoan_thanh_ojt:
+                raise ValueError(
+                    "Nhân viên chưa hoàn thành 100% OJT."
+                )
+
+            # Kiểm tra kết quả máy chấm đã lưu.
+            trang_thai = lay_trang_thai_thi(
+                nv_khoa
+            )
+
+            if trang_thai["trang_thai"] not in ("thi_dat", "Dat"):
+                raise ValueError(
+                    "Nhân viên chưa thi đạt tổng kết."
+                )
+
+            # Chỉ đánh dấu sau khi toàn bộ
+            # điều kiện được kiểm tra thành công.
+            nv_khoa.trang_thai = "Chính thức"
+            nv_khoa.save(update_fields=["trang_thai"])
+
+    except ValueError as error:
+        messages.error(request, str(error))
+
+        return redirect(
+            "training:trang_thai_ho_so",
+            ma_nv=ma_nv
+        )
+
+    messages.success(
+        request,
+        "Đã xác nhận bàn giao hồ sơ tập sự "
+        f"của {nhan_vien.ho_ten}. "
+        "Hồ sơ không còn trong danh sách OJT "
+        "đang xử lý."
+    )
+
+    return redirect(
+        "training:dashboard_quan_ly_tap_su"
+    )
+

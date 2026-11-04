@@ -32,6 +32,7 @@ class ChuongTrinhTapSu(models.Model):
     ten_ct = models.CharField(max_length=255, verbose_name="Tên chương trình")
     trang_thai_duyet = models.CharField(max_length=50, null=True, blank=True, verbose_name="Trạng thái duyệt")
     tong_tien_do = models.FloatField(default=0, verbose_name="Tổng tiến độ (%)")
+    nhan_xet_chung = models.TextField(blank=True,default="",verbose_name="Nhận xét chung")
 
     def __str__(self):
         return f"{self.ma_ct} - {self.ten_ct}"

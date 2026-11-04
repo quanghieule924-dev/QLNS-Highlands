@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.utils import timezone
 from .exam_utils import tao_de_random
+from .exam_flow import lay_trang_thai_thi
 
 # ----------------------------------------------------
 # 1. HÀM HIỂN THỊ MAIN DASHBOARD & BỘ LỌC
@@ -76,45 +77,337 @@ def xac_dinh_trang_thai_thi(lich_thi, de_thi):
 
     return 'duoc_lam_bai', True
 
+
+
 @login_required
 def dashboard_quan_ly_tap_su(request):
-    # 1.1 Tính toán chỉ số cho 4 thẻ Thống kê (Metric Cards)
-    tong_so_tap_su = NhanVien.objects.filter(trang_thai='Tap_su').count()
-    cho_duyet_lo_trinh = ChuongTrinhTapSu.objects.filter(trang_thai_duyet='Chờ duyệt').count()
-    dang_thuc_hanh_ojt = ChuongTrinhTapSu.objects.filter(trang_thai_duyet='Đã duyệt', tong_tien_do__lt=100).count()
-    du_dieu_kien_thi = ChuongTrinhTapSu.objects.filter(tong_tien_do=100).count()
 
-    # 1.2 Xử lý Lọc & Tìm kiếm
-    search_query = request.GET.get('search', '')
-    vi_tri = request.GET.get('vi_tri', '')
-    hinh_thuc = request.GET.get('hinh_thuc', '')
-    trang_thai_filter = request.GET.get('trang_thai', '')
+    # ==========================================
+    # 1. PHÂN QUYỀN QUẢN LÝ
+    # ==========================================
 
-    chuong_trinh_qs = ChuongTrinhTapSu.objects.select_related('ma_nv').all()
-
-    if request.user.role != 'admin':
+    if not (
+        request.user.is_superuser
+        or getattr(request.user, 'role', None) == 'admin'
+    ):
         raise PermissionDenied
 
-    if search_query:
-        chuong_trinh_qs = chuong_trinh_qs.filter(
-            Q(ma_nv__ho_ten__icontains=search_query) | Q(ma_nv__ma_nv__icontains=search_query)
+    # ==========================================
+    # 2. LẤY DANH SÁCH NHÂN VIÊN TẬP SỰ
+    # ==========================================
+
+    base_qs = (
+        ChuongTrinhTapSu.objects
+        .select_related('ma_nv', 'ma_khung')
+        .filter(
+            ma_nv__trang_thai__in=[
+                'Tập sự',
+                'Tap_su'
+            ]
         )
+        .order_by('ma_nv__ho_ten', 'ma_ct')
+    )
+
+    danh_sach_goc = []
+
+    # ==========================================
+    # 3. XÁC ĐỊNH TRẠNG THÁI TỪNG NHÂN VIÊN
+    # ==========================================
+
+    for ct in base_qs:
+
+        nhan_vien = ct.ma_nv
+
+        # Lấy trạng thái thi từ kết quả đã lưu
+        thong_tin_thi = lay_trang_thai_thi(
+            nhan_vien
+        )
+        # Chuẩn hóa trạng thái trả về từ exam_flow.py
+        trang_thai_goc = str(
+            thong_tin_thi.get('trang_thai') or ''
+        ).strip().casefold()
+
+        if trang_thai_goc in ('dat', 'thi_dat'):
+            ct.trang_thai_thi = 'thi_dat'
+
+        elif trang_thai_goc in (
+                'khongdat',
+                'khong_dat',
+                'thi_khong_dat'
+        ):
+            ct.trang_thai_thi = 'thi_khong_dat'
+
+        elif trang_thai_goc in ('daxeplich', 'da_xep_lich'):
+            ct.trang_thai_thi = 'da_xep_lich'
+
+        else:
+            ct.trang_thai_thi = trang_thai_goc
+
+        ct.lich_thi_hien_tai = thong_tin_thi[
+            'lich_thi'
+        ]
+
+        ct.ket_qua_thi = thong_tin_thi.get(
+            'ket_qua'
+        )
+
+        # ------------------------------
+        # Chờ duyệt chương trình
+        # ------------------------------
+
+        # ======================================
+        # XÁC ĐỊNH GIAI ĐOẠN ĐÀO TẠO
+        # ======================================
+
+        ket_qua_thi = thong_tin_thi.get('ket_qua')
+
+        trang_thai_thi = str(
+            thong_tin_thi.get('trang_thai') or ''
+        ).strip().casefold()
+
+        # Đã thi đạt: ưu tiên chuyển hồ sơ
+        da_thi_dat = (
+            trang_thai_thi in ('dat', 'thi_dat')
+            or (
+                isinstance(ket_qua_thi, dict)
+                and ket_qua_thi.get('dat') is True
+            )
+        )
+
+        if ct.trang_thai_duyet == 'Chờ duyệt':
+            ct.giai_doan = 'cho_duyet'
+
+        elif ct.trang_thai_duyet != 'Đã duyệt':
+            ct.giai_doan = 'khac'
+
+        elif ct.tong_tien_do < 100:
+            ct.giai_doan = 'dang_ojt'
+
+        elif da_thi_dat:
+            ct.giai_doan = 'cho_chuyen_ho_so'
+
+        elif (
+            trang_thai_thi in (
+                'khongdat',
+                'khong_dat',
+                'thi_khong_dat',
+            )
+            or (
+                isinstance(ket_qua_thi, dict)
+                and ket_qua_thi.get('dat') is False
+            )
+        ):
+            ct.giai_doan = 'thi_lai'
+
+        elif not thong_tin_thi.get(
+            'duoc_bo_tri_thi', True
+        ):
+            ct.giai_doan = 'da_xep_lich'
+
+        else:
+            ct.giai_doan = 'du_dieu_kien'
+
+        danh_sach_goc.append(ct)
+
+    # ==========================================
+    # 4. THỐNG KÊ DASHBOARD
+    # ==========================================
+
+    def dem_nhan_vien(ds):
+        return len({
+            ct.ma_nv_id
+            for ct in ds
+        })
+
+    # Tổng nhân viên đang trong quy trình tập sự
+    tong_so_tap_su = dem_nhan_vien(
+        danh_sach_goc
+    )
+
+    # Chưa duyệt chương trình
+    cho_duyet_lo_trinh = dem_nhan_vien([
+        ct for ct in danh_sach_goc
+        if ct.giai_doan == 'cho_duyet'
+    ])
+
+    # Đang học OJT
+    dang_thuc_hanh_ojt = dem_nhan_vien([
+        ct for ct in danh_sach_goc
+        if ct.giai_doan == 'dang_ojt'
+    ])
+
+    # Đủ điều kiện bố trí thi hoặc thi lại
+    du_dieu_kien_thi = dem_nhan_vien([
+        ct for ct in danh_sach_goc
+        if ct.giai_doan in (
+            'du_dieu_kien',
+            'thi_lai'
+        )
+    ])
+
+    # Đã đạt và chờ chuyển hồ sơ
+    cho_chuyen_ho_so = dem_nhan_vien([
+        ct for ct in danh_sach_goc
+        if ct.giai_doan == 'cho_chuyen_ho_so'
+    ])
+
+    # ==========================================
+    # 5. LẤY THÔNG TIN BỘ LỌC
+    # ==========================================
+
+    search_query = request.GET.get(
+        'search', ''
+    ).strip()
+
+    vi_tri = request.GET.get(
+        'vi_tri', ''
+    ).strip()
+
+    trang_thai_filter = request.GET.get(
+        'trang_thai', ''
+    ).strip()
+
+    stat = request.GET.get(
+        'stat', ''
+    ).strip()
+
+    danh_sach = danh_sach_goc
+
+    # ==========================================
+    # 6. TÌM KIẾM THEO TÊN / MÃ NHÂN VIÊN
+    # ==========================================
+
+    if search_query:
+
+        tu_khoa = search_query.casefold()
+
+        danh_sach = [
+            ct for ct in danh_sach
+            if (
+                tu_khoa in (
+                    ct.ma_nv.ho_ten or ''
+                ).casefold()
+
+                or tu_khoa in (
+                    ct.ma_nv.manv or ''
+                ).casefold()
+            )
+        ]
+
+    # ==========================================
+    # 7. LỌC THEO VỊ TRÍ
+    # ==========================================
+
     if vi_tri:
-        chuong_trinh_qs = chuong_trinh_qs.filter(ma_nv__vitri=vi_tri)
-    if hinh_thuc:
-        chuong_trinh_qs = chuong_trinh_qs.filter(ma_nv__hinh_thuc=hinh_thuc)
-    if trang_thai_filter:
-        chuong_trinh_qs = chuong_trinh_qs.filter(trang_thai_duyet=trang_thai_filter)
+
+        danh_sach = [
+            ct for ct in danh_sach
+            if ct.ma_nv.vi_tri == vi_tri
+        ]
+
+    # ==========================================
+    # 8. LỌC THEO TRẠNG THÁI
+    # ==========================================
+
+    trang_thai_map = {
+        'Chờ duyệt': 'cho_duyet',
+        'Đang OJT': 'dang_ojt',
+        'Đã xếp lịch thi': 'da_xep_lich',
+        'Đã xếp lịch': 'da_xep_lich',
+        'Thi không đạt': 'thi_lai',
+        'Chờ chuyển hồ sơ': 'cho_chuyen_ho_so',
+    }
+
+    if trang_thai_filter == 'Đủ điều kiện thi':
+
+        danh_sach = [
+            ct for ct in danh_sach
+            if ct.giai_doan in (
+                'du_dieu_kien',
+                'thi_lai'
+            )
+        ]
+
+    elif trang_thai_filter in trang_thai_map:
+
+        giai_doan = trang_thai_map[
+            trang_thai_filter
+        ]
+
+        danh_sach = [
+            ct for ct in danh_sach
+            if ct.giai_doan == giai_doan
+        ]
+
+    # ==========================================
+    # 9. LỌC KHI BẤM VÀO THẺ THỐNG KÊ
+    # ==========================================
+
+    if stat == 'cho_duyet':
+
+        danh_sach = [
+            ct for ct in danh_sach
+            if ct.giai_doan == 'cho_duyet'
+        ]
+
+    elif stat == 'dang_ojt':
+
+        danh_sach = [
+            ct for ct in danh_sach
+            if ct.giai_doan == 'dang_ojt'
+        ]
+
+    elif stat == 'du_dieu_kien':
+
+        danh_sach = [
+            ct for ct in danh_sach
+            if ct.giai_doan in (
+                'du_dieu_kien',
+                'thi_lai'
+            )
+        ]
+
+    elif stat == 'cho_chuyen_ho_so':
+
+        danh_sach = [
+            ct for ct in danh_sach
+            if ct.giai_doan == 'cho_chuyen_ho_so'
+        ]
+
+    # ==========================================
+    # 10. TRUYỀN DỮ LIỆU CHO TEMPLATE
+    # ==========================================
 
     context = {
-        'active_menu': 'training',  # Active thanh menu bên trái
+        'active_menu': 'training',
+
         'tong_so_tap_su': tong_so_tap_su,
+
         'cho_duyet_lo_trinh': cho_duyet_lo_trinh,
+
         'dang_thuc_hanh_ojt': dang_thuc_hanh_ojt,
+
         'du_dieu_kien_thi': du_dieu_kien_thi,
-        'danh_sach_tap_su': chuong_trinh_qs,
+
+        'cho_chuyen_ho_so': cho_chuyen_ho_so,
+
+        'danh_sach_tap_su': danh_sach,
+
+        'search_query': search_query,
+
+        'vi_tri_selected': vi_tri,
+
+        'trang_thai_selected': trang_thai_filter,
+
+        'current_stat': stat,
     }
-    return render(request, 'training/dashboard.html', context)
+
+    return render(
+        request,
+        'training/dashboard.html',
+        context
+    )
+
 
 @login_required
 def tao_ho_so_tap_su(request):
@@ -753,48 +1046,53 @@ def cap_nhat_tien_do_ojt(request, ma_nv):
 # 6. HÀM THAO TÁC: BỐ TRÍ THI TỔNG KẾT
 # ----------------------------------------------------
 
+
 @login_required
 def bo_tri_thi(request, ma_nv):
 
-    # Chỉ quản lý được bố trí thi
-    if request.user.role != 'admin':
+    if not (
+        request.user.is_superuser
+        or getattr(request.user, "role", None) == "admin"
+    ):
         raise PermissionDenied
 
-    # Các ca thi mà cửa hàng tổ chức
     CA_THI = {
-        'Sang': 'Ca Sáng (09:00 - 10:00)',
-        'Chieu': 'Ca Chiều (14:00 - 15:00)',
-        'Toi': 'Ca Tối (19:00 - 20:00)',
+        "Sang": "Ca Sáng (09:00 - 10:00)",
+        "Chieu": "Ca Chiều (14:00 - 15:00)",
+        "Toi": "Ca Tối (19:00 - 20:00)",
     }
 
-    # 1. Lấy chương trình đã duyệt của nhân viên
     chuong_trinh = (
         ChuongTrinhTapSu.objects
-        .select_related('ma_nv', 'ma_khung')
+        .select_related("ma_nv", "ma_khung")
         .filter(
             ma_nv__manv=ma_nv,
-            trang_thai_duyet='Đã duyệt'
+            trang_thai_duyet="Đã duyệt",
+            ma_nv__trang_thai__in=["Tập sự", "Tap_su"],
         )
-        .order_by('-ma_ct')
+        .order_by("-ma_ct")
         .first()
     )
 
     if chuong_trinh is None:
         messages.error(
             request,
-            'Nhân viên chưa có chương trình được duyệt.'
+            "Không tìm thấy chương trình OJT đang xử lý."
         )
         return redirect(
-            'training:dashboard_quan_ly_tap_su'
+            "training:dashboard_quan_ly_tap_su"
         )
 
     nhan_vien = chuong_trinh.ma_nv
 
-    # 2. Tính lại tiến độ bằng kết quả đánh giá thật
+    # ===============================
+    # KIỂM TRA OJT 100%
+    # ===============================
+
     ds_bai_hoc = list(
         BaiHoc.objects.filter(
             ma_ct=chuong_trinh
-        ).order_by('buoi_hoc', 'ma_bh')
+        ).order_by("buoi_hoc", "ma_bh")
     )
 
     tong_bai = len(ds_bai_hoc)
@@ -807,11 +1105,11 @@ def bo_tri_thi(request, ma_nv):
             ma_nv=nhan_vien,
             ma_bh__in=ds_bai_hoc
         )
-        .order_by('ngay_danh_gia', 'ma_td')
+        .order_by("ngay_danh_gia", "ma_td")
     )
 
-    for danh_gia in ds_danh_gia:
-        tien_do_theo_bai[danh_gia.ma_bh_id] = danh_gia
+    for item in ds_danh_gia:
+        tien_do_theo_bai[item.ma_bh_id] = item
 
     so_bai_dat = sum(
         1
@@ -820,8 +1118,8 @@ def bo_tri_thi(request, ma_nv):
             bai.ma_bh in tien_do_theo_bai
             and (
                 tien_do_theo_bai[bai.ma_bh]
-                .trang_thai_danh_gia or ''
-            ).strip().lower() == 'đạt'
+                .trang_thai_danh_gia or ""
+            ).strip().casefold() == "đạt"
         )
     )
 
@@ -830,60 +1128,67 @@ def bo_tri_thi(request, ma_nv):
         if tong_bai else 0
     )
 
-    # Chưa hoàn thành 100% thì không được bố trí thi
     if tong_bai == 0 or so_bai_dat != tong_bai:
         messages.error(
             request,
-            'Nhân viên chưa hoàn thành 100% bài học OJT.'
+            "Nhân viên chưa hoàn thành 100% OJT."
         )
         return redirect(
-            'training:dashboard_quan_ly_tap_su'
+            "training:dashboard_quan_ly_tap_su"
         )
 
-    # Ngày hoàn thành OJT:
-    # lấy ngày đánh giá muộn nhất của các bài đã đạt
     ngay_hoan_thanh = max(
         (
-            danh_gia.ngay_danh_gia
-            for danh_gia in tien_do_theo_bai.values()
-            if danh_gia.ngay_danh_gia is not None
+            td.ngay_danh_gia
+            for td in tien_do_theo_bai.values()
+            if td.ngay_danh_gia is not None
         ),
         default=None
     )
 
-    # 3. Các đề thi đã có câu hỏi trong database
-    # được dùng làm nguồn để tạo đề cho lịch mới
+    # ===============================
+    # KIỂM TRA TRẠNG THÁI THI
+    # ===============================
+
+    thong_tin = lay_trang_thai_thi(nhan_vien)
+
+    if not thong_tin["duoc_bo_tri_thi"]:
+        messages.warning(
+            request,
+            "Nhân viên đã có lịch thi hoặc đã thi đạt."
+        )
+        return redirect(
+            "training:dashboard_quan_ly_tap_su"
+        )
+
+    lich_thi_da_co = (
+        LichThi.objects
+        .filter(ma_nv=nhan_vien)
+        .exclude(ma_lt__startswith="BANKLT")
+        .order_by("-ngay_thi", "-ma_lt")
+    )
+
     ds_de_thi = (
         DeThi.objects
         .filter(cauhoi__isnull=False)
         .distinct()
-        .order_by('ten_de_thi', 'ma_dt')
+        .order_by("ten_de_thi", "ma_dt")
     )
 
-    # 4. Những lịch thi đã đăng ký của nhân viên
-    lich_thi_da_co = (LichThi.objects.filter(ma_nv=nhan_vien).exclude(ma_lt__startswith='BANKLT').order_by('-ngay_thi', '-ma_lt'))
+    # ===============================
+    # QUẢN LÝ XÁC NHẬN LỊCH
+    # ===============================
 
-    # =========================================
-    # XỬ LÝ KHI QUẢN LÝ XÁC NHẬN LỊCH
-    # =========================================
-
-    if request.method == 'POST':
+    if request.method == "POST":
 
         ngay_thi_text = request.POST.get(
-            'ngay_thi', ''
+            "ngay_thi", ""
         ).strip()
 
         ca_thi = request.POST.get(
-            'ca_thi', ''
+            "ca_thi", ""
         ).strip()
 
-        ghi_chu = request.POST.get(
-            'ghi_chu', ''
-        ).strip()
-
-        so_cau = 10
-
-        # Kiểm tra ngày thi
         try:
             ngay_thi = date.fromisoformat(
                 ngay_thi_text
@@ -891,113 +1196,193 @@ def bo_tri_thi(request, ma_nv):
         except ValueError:
             messages.error(
                 request,
-                'Ngày thi không hợp lệ.'
+                "Ngày thi không hợp lệ."
             )
             return redirect(
-                'training:bo_tri_thi',
+                "training:bo_tri_thi",
                 ma_nv=ma_nv
             )
 
-        if ngay_thi < date.today():
+        if ngay_thi < timezone.localdate():
             messages.error(
                 request,
-                'Không thể bố trí ngày thi trong quá khứ.'
+                "Không được xếp lịch thi trong quá khứ."
             )
             return redirect(
-                'training:bo_tri_thi',
+                "training:bo_tri_thi",
                 ma_nv=ma_nv
             )
 
         if ca_thi not in CA_THI:
             messages.error(
                 request,
-                'Vui lòng chọn ca thi hợp lệ.'
+                "Ca thi không hợp lệ."
             )
             return redirect(
-                'training:bo_tri_thi',
+                "training:bo_tri_thi",
                 ma_nv=ma_nv
             )
 
-        # Kiểm tra trùng lịch thi
+        # ===============================
+        # TẠO LỊCH TRONG TRANSACTION
+        # ===============================
 
-        da_trung = (
-            LichThi.objects.filter(
-                ma_nv=nhan_vien,
-                ngay_thi=ngay_thi,
-                ca_thi=CA_THI[ca_thi]
-            )
-            .exclude(ma_lt__startswith='BANKLT')
-            .exists()
-        )
-
-        # 5. Lưu lịch thi, đề thi và câu hỏi
         try:
             with transaction.atomic():
 
+                nv_khoa = (
+                    NhanVien.objects
+                    .select_for_update()
+                    .get(pk=nhan_vien.pk)
+                )
+
+                ct_khoa = (
+                    ChuongTrinhTapSu.objects
+                    .select_for_update()
+                    .get(pk=chuong_trinh.pk)
+                )
+
+                if (
+                    nv_khoa.trang_thai not in ("Tập sự", "Tap_su")
+                    or ct_khoa.trang_thai_duyet != "Đã duyệt"
+                ):
+                    raise ValueError(
+                        "Chương trình không còn đủ điều kiện."
+                    )
+
+                # Kiểm tra lại tiến độ đã lưu.
+                bai_ids = [b.ma_bh for b in ds_bai_hoc]
+
+                danh_gia_moi = {}
+                for td in (
+                    TienDoTapSu.objects
+                    .filter(
+                        ma_nv=nv_khoa,
+                        ma_bh_id__in=bai_ids
+                    )
+                    .order_by("ngay_danh_gia", "ma_td")
+                ):
+                    danh_gia_moi[td.ma_bh_id] = td
+
+                if any(
+                    bai_id not in danh_gia_moi
+                    or (
+                        danh_gia_moi[bai_id]
+                        .trang_thai_danh_gia or ""
+                    ).strip().casefold() != "đạt"
+                    for bai_id in bai_ids
+                ):
+                    raise ValueError(
+                        "OJT chưa hoàn thành 100%."
+                    )
+
+                # Kiểm tra lần nữa trước khi lưu.
+                trang_thai_moi = lay_trang_thai_thi(
+                    nv_khoa
+                )
+
+                if not trang_thai_moi["duoc_bo_tri_thi"]:
+                    raise ValueError(
+                        "Đã có lịch thi hoặc đã thi đạt."
+                    )
+
+                lich_truoc = trang_thai_moi["lich_thi"]
+
+                # Thi lại phải sau lần thi trước.
+                if (
+                    trang_thai_moi["la_thi_lai"]
+                    and lich_truoc is not None
+                    and ngay_thi <= lich_truoc.ngay_thi
+                ):
+                    raise ValueError(
+                        "Lịch thi lại phải sau ngày thi trước."
+                    )
+
+                da_trung = (
+                    LichThi.objects
+                    .filter(
+                        ma_nv=nv_khoa,
+                        ngay_thi=ngay_thi,
+                        ca_thi=CA_THI[ca_thi]
+                    )
+                    .exclude(
+                        ma_lt__startswith="BANKLT"
+                    )
+                    .exists()
+                )
+
+                if da_trung:
+                    raise ValueError(
+                        "Nhân viên đã có lịch thi "
+                        "trùng ngày và ca."
+                    )
+
                 lich_moi = LichThi.objects.create(
-                    ma_lt='LT' + uuid.uuid4().hex[:16],
-                    ma_nv=nhan_vien,
+                    ma_lt="LT" + uuid.uuid4().hex[:16],
+                    ma_nv=nv_khoa,
                     ngay_thi=ngay_thi,
                     ca_thi=CA_THI[ca_thi]
                 )
 
+                # Giữ nguyên hàm tạo đề hiện tại.
                 de_moi = tao_de_random(
                     lich_thi=lich_moi,
-                    vi_tri=nhan_vien.vi_tri,
+                    vi_tri=nv_khoa.vi_tri,
                     so_cau=10
                 )
 
-        except ValueError as e:
-            messages.error(request, str(e))
+                if not CauHoi.objects.filter(
+                    ma_dt=de_moi
+                ).exists():
+                    raise ValueError(
+                        "Không tạo được câu hỏi cho đề thi."
+                    )
+
+        except ValueError as error:
+            messages.error(
+                request,
+                str(error)
+            )
             return redirect(
-                'training:bo_tri_thi',
+                "training:bo_tri_thi",
                 ma_nv=ma_nv
             )
 
-            # Sao chép câu hỏi sang đề vừa được gán
-            for cau_hoi in ds_cau_hoi:
-
-                CauHoi.objects.create(
-                    ma_ch='CH' + uuid.uuid4().hex[:16],
-                    ma_dt=de_moi,
-                    noi_dung_ch=cau_hoi.noi_dung_ch,
-                    dap_an_dung=cau_hoi.dap_an_dung,
-                    diem=cau_hoi.diem
-                )
-
         messages.success(
             request,
-            f'Đã bố trí lịch thi tổng kết cho '
-            f'{nhan_vien.ho_ten} thành công!'
+            f"Đã bố trí lịch thi cho "
+            f"{nhan_vien.ho_ten} thành công!"
         )
 
         return redirect(
-            'training:bo_tri_thi',
-            ma_nv=ma_nv
+            "training:dashboard_quan_ly_tap_su"
         )
 
-    # =========================================
-    # HIỂN THỊ GIAO DIỆN
-    # =========================================
+    # ===============================
+    # HIỂN THỊ FORM
+    # ===============================
+
     context = {
-        'active_menu': 'training',
-        'nhan_vien': nhan_vien,
-        'chuong_trinh': chuong_trinh,
-        'tong_bai': tong_bai,
-        'so_bai_dat': so_bai_dat,
-        'phan_tram': phan_tram,
-        'ngay_hoan_thanh': ngay_hoan_thanh,
-        'ds_de_thi': ds_de_thi,
-        'lich_thi_da_co': lich_thi_da_co,
-        'ca_thi_choices': CA_THI,
-        'ngay_hom_nay': date.today(),
+        "active_menu": "training",
+        "nhan_vien": nhan_vien,
+        "chuong_trinh": chuong_trinh,
+        "tong_bai": tong_bai,
+        "so_bai_dat": so_bai_dat,
+        "phan_tram": phan_tram,
+        "ngay_hoan_thanh": ngay_hoan_thanh,
+        "ds_de_thi": ds_de_thi,
+        "lich_thi_da_co": lich_thi_da_co,
+        "ca_thi_choices": CA_THI,
+        "ngay_hom_nay": timezone.localdate(),
+        "la_thi_lai": thong_tin["la_thi_lai"],
     }
 
     return render(
         request,
-        'training/bo_tri_thi.html',
+        "training/bo_tri_thi.html",
         context
     )
+
 
 @login_required
 def dao_tao(request):
