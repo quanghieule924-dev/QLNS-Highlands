@@ -1,0 +1,613 @@
+{% extends 'base_internal.html' %}
+
+{% block title %}
+Bố trí bài thi tổng kết | Highlands Coffee
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.exam-page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 12px 0 35px;
+    color: #252525;
+}
+.exam-breadcrumb {
+    font-size: 12px;
+    color: #8d96a0;
+    margin-bottom: 18px;
+}
+.exam-breadcrumb a {
+    text-decoration: none;
+    color: #8d96a0;
+}
+.exam-page h1 {
+    font-size: 25px;
+    font-weight: 750;
+    margin-bottom: 6px;
+}
+.exam-subtitle {
+    font-size: 13px;
+    color: #8d96a0;
+    margin-bottom: 22px;
+}
+.exam-card {
+    background: #fff;
+    border: 1px solid #e4e8ec;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    overflow: hidden;
+}
+.exam-employee {
+    padding: 22px;
+}
+.exam-employee-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+.exam-identity {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+.exam-avatar {
+    width: 46px;
+    height: 46px;
+    background: #f1f2f4;
+    color: #65717c;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 750;
+}
+.exam-name {
+    font-size: 17px;
+    font-weight: 750;
+}
+.exam-small {
+    color: #8e97a0;
+    font-size: 12px;
+}
+.exam-success {
+    background: #e9f7ef;
+    color: #198754;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+}
+.exam-employee-details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 22px;
+    padding-top: 17px;
+    border-top: 1px solid #edf0f2;
+}
+.exam-field-label {
+    color: #8d96a0;
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+.exam-field-value {
+    font-size: 13px;
+    font-weight: 650;
+}
+.exam-card-body {
+    padding: 20px;
+}
+.exam-heading {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 20px;
+    font-size: 15px;
+    font-weight: 700;
+}
+.exam-heading i {
+    color: #c8102e;
+}
+.exam-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 2fr;
+    gap: 15px;
+}
+.exam-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 650;
+    margin-bottom: 8px;
+}
+.exam-required {
+    color: #c8102e;
+}
+.exam-input {
+    width: 100%;
+    min-height: 41px;
+    background: white;
+    border: 1px solid #dce1e6;
+    border-radius: 6px;
+    padding: 10px 11px;
+    font-size: 12px;
+    color: #30343a;
+}
+.exam-input:focus {
+    outline: none;
+    border-color: #c8102e;
+    box-shadow: 0 0 0 2px #ffe4e9;
+}
+.exam-hint {
+    font-size: 11px;
+    color: #8e97a0;
+    margin-top: 7px;
+}
+.exam-mode-title {
+    display: block;
+    margin: 20px 0 10px;
+    font-size: 13px;
+    font-weight: 650;
+}
+.exam-mode-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.exam-mode {
+    display: flex;
+    gap: 9px;
+    align-items: center;
+    padding: 13px;
+    border: 1px solid #e0e4e8;
+    border-radius: 6px;
+    font-size: 12px;
+}
+.exam-mode.selected {
+    border-color: #f0bac4;
+    background: #fff3f5;
+}
+.exam-mode input {
+    accent-color: #c8102e;
+}
+.exam-mode.disabled {
+    color: #9aa2aa;
+    background: #fafafa;
+}
+.exam-notes {
+    margin-top: 18px;
+}
+.exam-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+.exam-table th {
+    padding: 13px;
+    background: #f7f8f9;
+    color: #87919c;
+    text-align: left;
+    font-weight: 600;
+}
+.exam-table td {
+    padding: 15px 13px;
+    border-top: 1px solid #e9edf0;
+}
+.exam-empty {
+    text-align: center;
+    color: #89929b;
+    padding: 25px;
+}
+.exam-bottom {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 22px;
+}
+.exam-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.exam-btn {
+    display: inline-block;
+    padding: 12px 17px;
+    border-radius: 6px;
+    border: 1px solid #dce1e5;
+    background: #fff;
+    color: #454b52;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+}
+.exam-btn-red {
+    color: #fff;
+    background: #c8102e;
+    border-color: #c8102e;
+}
+.exam-btn-red:hover {
+    background: #a90c27;
+}
+.exam-warning {
+    padding: 12px;
+    border-radius: 6px;
+    background: #fff7e9;
+    color: #9d6b12;
+    font-size: 12px;
+    margin-bottom: 15px;
+}
+.exam-confirm-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    background: #c8102e;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    padding: 13px 24px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.exam-confirm-btn:hover {
+    background: #a70e28;
+}
+
+.exam-message-list {
+    margin-bottom: 18px;
+}
+
+.exam-message {
+    padding: 14px 18px;
+    border-radius: 7px;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.exam-message-success {
+    background: #e8f7ee;
+    border: 1px solid #bfe5cc;
+    color: #187345;
+}
+
+.exam-message-error {
+    background: #fff0f2;
+    border: 1px solid #f1c4cd;
+    color: #bd1533;
+}
+@media (max-width: 800px) {
+    .exam-form-grid,
+    .exam-employee-details,
+    .exam-mode-grid {
+        grid-template-columns: 1fr;
+    }
+    .exam-employee-top {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="exam-page">
+    <!-- THÔNG BÁO KẾT QUẢ LƯU LỊCH THI -->
+    {% if messages %}
+        <div class="exam-message-list">
+            {% for message in messages %}
+                <div class="exam-message
+                    {% if 'success' in message.tags %}
+                        exam-message-success
+                    {% else %}
+                        exam-message-error
+                    {% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div class="exam-breadcrumb">
+        <a href="{% url 'training:dashboard_quan_ly_tap_su' %}">
+            Đào tạo
+        </a>
+        / Quản lý Tập sự / Bố trí bài thi tổng kết
+    </div>
+
+    <h1>Bố trí bài thi tổng kết</h1>
+
+    <div class="exam-subtitle">
+        Thêm lịch thi, chọn ca thi và gán đề kiểm tra
+        cho nhân viên đã hoàn thành 100% OJT
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- THÔNG TIN NHÂN VIÊN -->
+    <div class="exam-card exam-employee">
+
+        <div class="exam-employee-top">
+
+            <div class="exam-identity">
+                <div class="exam-avatar">
+                    {{ nhan_vien.ho_ten|slice:":2"|upper }}
+                </div>
+
+                <div>
+                    <div class="exam-small">Họ tên</div>
+
+                    <div class="exam-name">
+                        {{ nhan_vien.ho_ten }}
+                    </div>
+
+                    <div class="exam-small">
+                        Mã NV: {{ nhan_vien.manv }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="exam-success">
+                <i class="bi bi-check-circle"></i>
+                Đã hoàn thành {{ phan_tram }}% OJT
+                ({{ so_bai_dat }}/{{ tong_bai }} bài học)
+            </div>
+
+        </div>
+
+        <div class="exam-employee-details">
+
+            <div>
+                <div class="exam-field-label">Vị trí</div>
+                <div class="exam-field-value">
+                    {{ nhan_vien.vi_tri }}
+                </div>
+            </div>
+
+            <div>
+                <div class="exam-field-label">
+                    Ngày hoàn thành OJT
+                </div>
+                <div class="exam-field-value">
+                    {% if ngay_hoan_thanh %}
+                        {{ ngay_hoan_thanh|date:"d/m/Y" }}
+                    {% else %}
+                        Chưa ghi nhận ngày
+                    {% endif %}
+                </div>
+            </div>
+
+            <div>
+                <div class="exam-field-label">
+                    Khung đào tạo
+                </div>
+                <div class="exam-field-value">
+                    {{ chuong_trinh.ma_khung.ten_khung }}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FORM BỐ TRÍ THI -->
+    <form method="POST" id="examForm">
+        {% csrf_token %}
+
+        <div class="exam-card">
+            <div class="exam-card-body">
+
+                <div class="exam-heading">
+                    <i class="bi bi-calendar-event"></i>
+                    Thông tin sắp xếp lịch thi
+                </div>
+
+                {% if not ds_de_thi %}
+                    <div class="exam-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Chưa có đề thi kèm câu hỏi trong database.
+                        Vui lòng tạo đề thi trước khi bố trí.
+                    </div>
+                {% endif %}
+
+                <div class="exam-form-grid">
+
+                    <!-- NGÀY THI -->
+                    <div>
+                        <label class="exam-label" for="ngayThi">
+                            Chọn ngày thi
+                            <span class="exam-required">*</span>
+                        </label>
+
+                        <input type="date"
+                               id="ngayThi"
+                               name="ngay_thi"
+                               class="exam-input"
+                               min="{{ ngay_hom_nay|date:'Y-m-d' }}"
+                               required>
+
+                        <div class="exam-hint">
+                            Chọn ngày dự kiến tổ chức thi
+                        </div>
+                    </div>
+
+                    <!-- CA THI -->
+                    <div>
+                        <label class="exam-label" for="caThi">
+                            Chọn ca thi
+                            <span class="exam-required">*</span>
+                        </label>
+
+                        <select id="caThi"
+                                name="ca_thi"
+                                class="exam-input"
+                                required>
+                            <option value="">-- Chọn ca --</option>
+                            {% for key, label in ca_thi_choices.items %}
+                                <option value="{{ key }}">
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- ĐỀ THI -->
+                    <div>
+                        <label class="exam-label" for="deThi">
+                            Bộ đề thi áp dụng
+                            <span class="exam-required">*</span>
+                        </label>
+                        <div class="exam-auto-bank">
+                            <div class="exam-auto-bank-icon">
+                                <i class="bi bi-shuffle"></i>
+                            </div>
+                            <div>
+                                <strong>
+                                    Đề thi tổng kết {{ nhan_vien.vi_tri }}
+                                </strong>
+                                <p>
+                                    Hệ thống tự động lựa chọn 10 câu hỏi ngẫu nhiên từ ngân hàng phù hợp với vị trí của nhân viên.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TRẠNG THÁI MỞ ĐỀ -->
+                <div class="exam-mode-title">
+                    Trạng thái mở đề thi
+                </div>
+
+                <div class="exam-mode-grid">
+
+                    <label class="exam-mode selected">
+                        <input type="radio"
+                               name="che_do"
+                               value="lap_lich"
+                               checked>
+                        Đăng ký lịch thi
+                    </label>
+
+                    <label class="exam-mode disabled">
+                        <input type="radio"
+                               name="che_do"
+                               value="hen_gio"
+                               disabled>
+                        Hẹn giờ tự động mở đề
+                        (chưa triển khai)
+                    </label>
+
+                </div>
+
+                <p class="exam-hint">
+                    <i class="bi bi-info-circle"></i>
+                    Bước này lưu lịch thi và gán đề thi.
+                    Chức năng mở đề cho nhân viên sẽ được
+                    kết nối khi xây dựng trang làm bài thi.
+                </p>
+
+                <!-- GHI CHÚ -->
+                <div class="exam-notes">
+                    <label class="exam-label" for="ghiChu">
+                        Ghi chú dặn dò thí sinh
+                    </label>
+
+                    <textarea id="ghiChu"
+                              name="ghi_chu"
+                              class="exam-input"
+                              rows="3"
+                              placeholder="Nhập hướng dẫn dành cho nhân viên..."></textarea>
+
+                    <div class="exam-hint">
+                        Ghi chú hiện chưa được lưu trong
+                        bảng LichThi.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- LỊCH THI ĐÃ ĐĂNG KÝ -->
+        <div class="exam-card">
+
+            <div class="exam-card-body">
+                <div class="exam-heading">
+                    <i class="bi bi-calendar-check"></i>
+                    Lịch thi đã đăng ký
+                </div>
+            </div>
+
+            <div style="overflow-x:auto;">
+                <table class="exam-table">
+                    <thead>
+                        <tr>
+                            <th>Mã lịch thi</th>
+                            <th>Ngày thi</th>
+                            <th>Ca thi</th>
+                            <th>Đề thi</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for lich in lich_thi_da_co %}
+                            <tr>
+                                <td>{{ lich.ma_lt }}</td>
+
+                                <td>
+                                    {{ lich.ngay_thi|date:"d/m/Y" }}
+                                </td>
+
+                                <td>{{ lich.ca_thi }}</td>
+
+                                <td>
+                                    {% for de in lich.dethi_set.all %}
+                                        {{ de.ten_de_thi }}
+                                    {% empty %}
+                                        Chưa gán đề
+                                    {% endfor %}
+                                </td>
+                            </tr>
+
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="exam-empty">
+                                    Nhân viên chưa có lịch thi.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <!-- NÚT CUỐI TRANG -->
+        <div class="exam-bottom">
+
+            <a href="{% url 'training:dashboard_quan_ly_tap_su' %}"
+               class="exam-btn">
+                Hủy / Quay lại
+            </a>
+
+            <div class="exam-buttons">
+                <button type="submit"
+                        form="examForm"
+                        class="exam-confirm-btn">
+                    <i class="bi bi-check-circle"></i>
+                    Xác nhận bố trí thi
+                </button>
+            </div>
+
+        </div>
+
+    </form>
+</div>
+{% endblock %}

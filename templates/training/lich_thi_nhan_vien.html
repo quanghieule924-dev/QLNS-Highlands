@@ -1,0 +1,524 @@
+{% extends 'base_internal.html' %}
+
+{% block title %}
+Lịch thi tổng kết | Highlands Coffee
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.exam-student-page {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 14px 0 35px;
+    color: #252525;
+}
+
+.exam-student-breadcrumb {
+    font-size: 12px;
+    color: #8a939d;
+    margin-bottom: 22px;
+}
+
+.exam-student-breadcrumb a {
+    color: #8a939d;
+    text-decoration: none;
+}
+
+.exam-student-page h1 {
+    font-size: 25px;
+    font-weight: 750;
+    margin-bottom: 6px;
+}
+
+.exam-student-subtitle {
+    font-size: 13px;
+    color: #87919b;
+    margin-bottom: 21px;
+}
+
+.exam-student-alert {
+    background: #eaf8ef;
+    border: 1px solid #cfe9d7;
+    border-radius: 7px;
+    padding: 17px;
+    color: #21844f;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.exam-student-alert.waiting {
+    background: #fff8e8;
+    border-color: #f3e3b9;
+    color: #966a14;
+}
+
+.exam-student-alert i {
+    margin-right: 8px;
+}
+
+.exam-student-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.exam-student-card {
+    background: white;
+    border: 1px solid #e3e7eb;
+    border-radius: 9px;
+    overflow: hidden;
+}
+
+.exam-student-card-header {
+    padding: 18px;
+    border-bottom: 1px solid #e8ebee;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.exam-student-card-header i {
+    color: #c8102e;
+    margin-right: 9px;
+}
+
+.exam-student-card-body {
+    padding: 15px 20px;
+}
+
+.exam-student-info-row {
+    display: grid;
+    grid-template-columns: 155px 1fr;
+    gap: 14px;
+    align-items: start;
+    padding: 13px 0;
+    border-bottom: 1px solid #edf0f2;
+    font-size: 13px;
+}
+
+.exam-student-info-row:last-child {
+    border-bottom: none;
+}
+
+.exam-student-info-label {
+    color: #8a939d;
+}
+
+.exam-student-info-value {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.exam-student-highlight {
+    color: #c8102e;
+    font-weight: 750;
+}
+
+.exam-student-rule {
+    display: flex;
+    gap: 13px;
+    padding: 17px 0;
+    border-bottom: 1px solid #edf0f2;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.exam-student-rule:last-child {
+    border-bottom: none;
+}
+
+.exam-student-rule-number {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    background: #fff0f2;
+    color: #c8102e;
+    font-weight: 700;
+}
+
+.exam-student-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.exam-student-back {
+    border: 1px solid #e0e4e8;
+    background: white;
+    color: #666f78;
+    border-radius: 6px;
+    padding: 12px 19px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.exam-student-start {
+    background: #c8102e;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 23px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.exam-student-start:disabled {
+    background: #aeb5bc;
+    cursor: not-allowed;
+}
+
+.exam-student-empty {
+    background: white;
+    border: 1px solid #e5e8eb;
+    border-radius: 9px;
+    padding: 35px 20px;
+    text-align: center;
+    color: #87919b;
+    font-size: 13px;
+}
+
+.exam-student-empty i {
+    display: block;
+    color: #c8102e;
+    font-size: 30px;
+    margin-bottom: 12px;
+}
+
+@media (max-width: 800px) {
+    .exam-student-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .exam-student-info-row {
+        grid-template-columns: 115px 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="exam-student-page">
+
+    <!-- ĐƯỜNG DẪN -->
+    <div class="exam-student-breadcrumb">
+        <a href="{% url 'training:dao_tao_nhan_vien' %}">
+            Đào tạo
+        </a>
+        /
+        <a href="{% url 'training:dao_tao_nhan_vien' %}">
+            Lộ trình tập sự
+        </a>
+        / Lịch thi tổng kết
+    </div>
+
+    <h1>Lịch thi tổng kết</h1>
+
+    <p class="exam-student-subtitle">
+        Kiểm tra thông tin ca thi, quy chế làm bài
+        và lịch kiểm tra năng lực tổng kết.
+    </p>
+
+    {% if not nhan_vien %}
+
+        <div class="exam-student-empty">
+            <i class="bi bi-person-exclamation"></i>
+
+            Tài khoản của bạn chưa được liên kết
+            với hồ sơ nhân viên.
+        </div>
+
+    {% elif not chuong_trinh or tien_do < 100 %}
+
+        <div class="exam-student-alert waiting">
+            <i class="bi bi-hourglass-split"></i>
+            Bạn cần hoàn thành 100% chương trình OJT
+            trước khi xem lịch thi tổng kết.
+        </div>
+
+    {% elif not lich_thi %}
+
+        <div class="exam-student-alert waiting">
+            <i class="bi bi-clock-history"></i>
+            Bạn đã hoàn thành 100% OJT.
+            Hiện quản lý chưa bố trí lịch thi tổng kết.
+        </div>
+
+        <div class="exam-student-card">
+            <div class="exam-student-card-header">
+                <i class="bi bi-person-badge"></i>
+                Thông tin nhân viên
+            </div>
+
+            <div class="exam-student-card-body">
+
+                <div class="exam-student-info-row">
+                    <span class="exam-student-info-label">
+                        Họ tên
+                    </span>
+                    <span class="exam-student-info-value">
+                        {{ nhan_vien.ho_ten }}
+                    </span>
+                </div>
+
+                <div class="exam-student-info-row">
+                    <span class="exam-student-info-label">
+                        Mã nhân viên
+                    </span>
+                    <span class="exam-student-info-value">
+                        {{ nhan_vien.manv }}
+                    </span>
+                </div>
+
+                <div class="exam-student-info-row">
+                    <span class="exam-student-info-label">
+                        Vị trí
+                    </span>
+                    <span class="exam-student-info-value">
+                        {{ nhan_vien.vi_tri }}
+                    </span>
+                </div>
+
+                <div class="exam-student-info-row">
+                    <span class="exam-student-info-label">
+                        Tiến độ OJT
+                    </span>
+                    <span class="exam-student-highlight">
+                        {{ tien_do }}%
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+    {% else %}
+
+        <!-- THÔNG BÁO -->
+    {% if trang_thai_lich == 'chua_den_gio' %}
+    <div class="exam-student-alert waiting">
+        <i class="bi bi-lock"></i>
+        Đề thi hiện đang khóa.
+        Hệ thống sẽ tự động mở đề khi đến ca thi được quản lý bố trí.
+    </div>
+
+    {% elif trang_thai_lich == 'duoc_lam_bai' %}
+    <div class="exam-student-alert">
+        <i class="bi bi-check-circle"></i>
+        Đã đến giờ thi tổng kết.
+        Bạn có thể bắt đầu làm bài ngay.
+    </div>
+
+    {% elif trang_thai_lich == 'het_ca_thi' %}
+    <div class="exam-student-alert waiting">
+        <i class="bi bi-clock-history"></i>
+        Ca thi đã kết thúc.
+        Vui lòng liên hệ quản lý để được hỗ trợ.
+    </div>
+
+    {% else %}
+    <div class="exam-student-alert waiting">
+        <i class="bi bi-info-circle"></i>
+        Lịch thi hoặc đề thi chưa được cấu hình đầy đủ.
+    </div>
+    {% endif %}
+
+        <div class="exam-student-grid">
+
+            <!-- CỘT TRÁI: THÔNG TIN THI -->
+            <div class="exam-student-card">
+
+                <div class="exam-student-card-header">
+                    <i class="bi bi-card-checklist"></i>
+                    Thông tin ca thi & Thí sinh
+                </div>
+
+                <div class="exam-student-card-body">
+
+                    <div class="exam-student-info-row">
+                        <span class="exam-student-info-label">
+                            Mã thí sinh
+                        </span>
+
+                        <span class="exam-student-highlight">
+                            {{ nhan_vien.manv }} -
+                            {{ nhan_vien.ho_ten }}
+                        </span>
+                    </div>
+
+                    <div class="exam-student-info-row">
+                        <span class="exam-student-info-label">
+                            Vị trí
+                        </span>
+
+                        <span class="exam-student-info-value">
+                            {{ nhan_vien.vi_tri }}
+                        </span>
+                    </div>
+
+                    <div class="exam-student-info-row">
+                        <span class="exam-student-info-label">
+                            Bài thi áp dụng
+                        </span>
+
+                        <span class="exam-student-info-value">
+                            {% if de_thi %}
+                                {{ de_thi.ten_de_thi }}
+                            {% else %}
+                                Chưa gán đề thi
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <div class="exam-student-info-row">
+                        <span class="exam-student-info-label">
+                            Ngày thi
+                        </span>
+
+                        <span class="exam-student-highlight">
+                            {{ lich_thi.ngay_thi|date:"d/m/Y" }}
+                        </span>
+                    </div>
+
+                    <div class="exam-student-info-row">
+                        <span class="exam-student-info-label">
+                            Ca thi
+                        </span>
+
+                        <span class="exam-student-info-value">
+                            {{ lich_thi.ca_thi }}
+                        </span>
+                    </div>
+
+                    <div class="exam-student-info-row">
+                        <span class="exam-student-info-label">
+                            Thời gian làm bài
+                        </span>
+
+                        <span class="exam-student-info-value">
+                            {% if de_thi %}
+                                {{ de_thi.thoi_luong }} phút
+                                ({{ tong_cau_hoi }} câu hỏi)
+                            {% else %}
+                                Chưa có thông tin
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <div class="exam-student-info-row">
+                        <span class="exam-student-info-label">
+                            Ngày hoàn thành OJT
+                        </span>
+
+                        <span class="exam-student-info-value">
+                            {% if ngay_hoan_thanh %}
+                                {{ ngay_hoan_thanh|date:"d/m/Y" }}
+                            {% else %}
+                                Chưa ghi nhận
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <div class="exam-student-info-row">
+                        <span class="exam-student-info-label">
+                            Mã lịch thi
+                        </span>
+
+                        <span class="exam-student-info-value">
+                            {{ lich_thi.ma_lt }}
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CỘT PHẢI: QUY CHẾ -->
+            <div class="exam-student-card">
+
+                <div class="exam-student-card-header">
+                    <i class="bi bi-clipboard-check"></i>
+                    Quy chế & Nội quy phòng thi
+                </div>
+
+                <div class="exam-student-card-body">
+
+                    <div class="exam-student-rule">
+                        <div class="exam-student-rule-number">1.</div>
+
+                        <div>
+                            Thí sinh thực hiện bài thi theo lịch được quản lý phân công và không được nhờ người khác làm bài thay.
+                        </div>
+                    </div>
+
+                    <div class="exam-student-rule">
+                        <div class="exam-student-rule-number">2.</div>
+
+                        <div>
+                            Thời gian làm bài được tính theo thời lượng của đề thi đã phân công.
+                            Thí sinh cần nộp bài trước khi hết giờ.
+                        </div>
+                    </div>
+
+                    <div class="exam-student-rule">
+                        <div class="exam-student-rule-number">3.</div>
+
+                        <div>
+                            Không tự ý tải lại trang hoặc đóng trình duyệt trong quá trình làm bài nếu chưa có chức năng lưu bài tự động.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    {% endif %}
+
+    <!-- NÚT CUỐI TRANG -->
+    <div class="exam-student-actions">
+
+        <a href="{% url 'training:dao_tao_nhan_vien' %}"
+           class="exam-student-back">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại lộ trình học
+        </a>
+
+        {% if lich_thi and de_thi and tien_do >= 100 %}
+        {% if duoc_bat_dau %}
+        <a href="{% url 'training:lam_bai_thi' lich_thi.ma_lt %}"
+           class="exam-student-start"
+           style="display:inline-flex;
+           align-items:center;
+           justify-content:center;
+           gap:8px;
+           text-decoration:none;">
+            <i class="bi bi-play-fill"></i>
+            Bắt đầu làm bài thi ngay
+        </a>
+
+        </div>
+
+    {% else %}
+
+        <button type="button"
+                class="exam-student-start"
+                disabled>
+            <i class="bi bi-lock"></i>
+            Chưa đến giờ làm bài
+        </button>
+
+    {% endif %}
+
+{% endif %}
+
+
+    </div>
+
+</div>
+{% endblock %}

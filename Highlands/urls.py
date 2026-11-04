@@ -48,6 +48,10 @@ urlpatterns = [
     # Kết nối app recruitment (đảm bảo căn lề thẳng hàng với các path bên trên)
     path('recruitment/', include('recruitment.urls')),
 
+    path('training/', include('training.urls')),
+
+    path('employees/', include('employees.urls')),
+
     # Trang xem thử giao diện quản lý
     path(
         'internal-preview/',
