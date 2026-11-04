@@ -183,13 +183,13 @@ NGAN_HANG = {
     },
 
     # ======================================
-    # 2. NGÂN HÀNG BARISTA - 20 CÂU
+    # 2. NGÂN HÀNG PHA CHẾ - 20 CÂU
     # ======================================
 
-    'Barista': {
+    'Pha chế': {
         'ma_lich': 'BANKLT002',
-        'ma_de': 'BANKBA001',
-        'tien_to': 'BANKBAQ',
+        'ma_de': 'BANKPC001',
+        'tien_to': 'BANKPCQ',
         'cau_hoi': [
             (
                 'Trước khi pha chế, thao tác quan trọng là?',

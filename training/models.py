@@ -2,10 +2,33 @@ from django.db import models
 from employees.models import NhanVien  # Import bảng NhanVien từ app employees
 
 
-# 1. Bảng Chương trình tập sự
+class KhungChuongTrinh(models.Model):
+    ma_khung = models.CharField(primary_key=True, max_length=20, verbose_name="Mã khung chương trình")
+    ten_khung = models.CharField(max_length=100, verbose_name="Tên khung chương trình")
+    vi_tri = models.CharField(max_length=255, verbose_name="Vị trí", blank=True)
+    mo_ta = models.CharField(max_length=255, verbose_name="Mô tả", blank=True)
+    danh_sach_bai_hoc = models.JSONField(default=list, blank=True)
+
+    def __str__(self):
+        return f"{self.ma_khung} - {self.ten_khung}"
+
+
+class BaiHocKhungMau(models.Model):
+    ma_bhk = models.CharField(primary_key=True, max_length=20, verbose_name="Mã bài học khung mẫu")
+    ma_khung = models.ForeignKey(KhungChuongTrinh, on_delete=models.CASCADE, verbose_name="Mã bài học khung mẫu")
+    buoi_hoc = models.CharField(max_length=20, verbose_name="Buổi học")
+    ten_bai_hoc = models.CharField(max_length=255, verbose_name="Tên bài học khung mẫu")
+    hinh_thuc = models.CharField(max_length=255, verbose_name="Hình thức")
+    thoi_luong = models.IntegerField(default=60, verbose_name="Thời lượng bài học")
+
+    def __str__(self):
+        return f"{self.ma_bhk} - {self.ten_bai_hoc}"
+
+
 class ChuongTrinhTapSu(models.Model):
     ma_ct = models.CharField(primary_key=True, max_length=20, verbose_name="Mã chương trình")
     ma_nv = models.ForeignKey(NhanVien, on_delete=models.CASCADE, verbose_name="Mã nhân viên")
+    ma_khung = models.ForeignKey(KhungChuongTrinh, on_delete=models.CASCADE, verbose_name="Mã khung chương trình")
     ten_ct = models.CharField(max_length=255, verbose_name="Tên chương trình")
     trang_thai_duyet = models.CharField(max_length=50, null=True, blank=True, verbose_name="Trạng thái duyệt")
     tong_tien_do = models.FloatField(default=0, verbose_name="Tổng tiến độ (%)")
@@ -34,6 +57,7 @@ class TienDoTapSu(models.Model):
     ma_bh = models.ForeignKey(BaiHoc, on_delete=models.CASCADE, verbose_name="Mã bài học")
     trang_thai_danh_gia = models.CharField(max_length=50, null=True, blank=True, verbose_name="Trạng thái đánh giá")
     ngay_danh_gia = models.DateField(null=True, blank=True, verbose_name="Ngày đánh giá")
+    nhan_xet = models.TextField(null=True, blank=True, verbose_name="Nhận xét đánh giá OJT")
 
     def __str__(self):
         return f"{self.ma_td} - {self.ma_nv.ho_ten}"

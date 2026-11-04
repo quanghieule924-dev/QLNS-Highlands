@@ -11,7 +11,7 @@ from .models import LichThi, DeThi, CauHoi
 # Mỗi nhóm vị trí ứng với một đề nguồn
 MA_DE_NGUON = {
     'phuc vu': 'BANKPV001',
-    'barista': 'BANKBA001',
+    'pha chế': 'BANKPC001',
     'thu ngan': 'BANKTN001',
 }
 
@@ -38,7 +38,7 @@ def lay_ma_de_nguon(vi_tri):
     Hỗ trợ các tên như:
     - Phục vụ
     - Phục vụ Part-time
-    - Barista (Part-time)
+    - Pha chế (Part-time)
     - Thu ngân Full-time
     """
     vi_tri_chuan = chuan_hoa_vi_tri(vi_tri)

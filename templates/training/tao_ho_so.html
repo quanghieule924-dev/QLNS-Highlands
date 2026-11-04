@@ -1,0 +1,260 @@
+{% extends 'base_internal.html' %}
+
+{% block content %}
+<style>
+    /* Active menu Đào tạo */
+    .sidebar a[href*="training"], 
+    .nav-link[href*="training"],
+    aside a[href*="training"] {
+        background-color: #fef0f2 !important;
+        color: #b81c24 !important;
+        border-left: 4px solid #b81c24 !important;
+        font-weight: 600 !important;
+    }
+
+    .form-container {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background-color: #f8f9fa;
+        padding: 24px;
+        color: #333;
+    }
+    .card-form {
+        background: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #eaecf0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        padding: 24px;
+        margin-bottom: 20px;
+    }
+    .section-title {
+        font-weight: 700;
+        font-size: 16px;
+        color: #101828;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .form-label-custom {
+        font-weight: 600;
+        font-size: 13px;
+        color: #344054;
+        margin-bottom: 6px;
+    }
+    .text-required { color: #b81c24; }
+    .form-control-custom, .form-select-custom {
+        border-radius: 8px;
+        border: 1px solid #d0d5dd;
+        padding: 10px 14px;
+        font-size: 14px;
+        width: 100%;
+    }
+    .form-control-custom:focus, .form-select-custom:focus {
+        border-color: #b81c24;
+        box-shadow: 0 0 0 3px rgba(184, 28, 36, 0.1);
+        outline: none;
+    }
+    .form-control-readonly {
+        background-color: #f2f4f7;
+        color: #667085;
+        cursor: not-allowed;
+    }
+    .btn-submit-highlands {
+        background-color: #b81c24 !important;
+        color: white !important;
+        border: none;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 10px 20px;
+    }
+    .btn-submit-highlands:hover { background-color: #96151c !important; }
+    
+    .auto-assign-box {
+        background-color: #fef0f2;
+        border: 1px dashed #fecdca;
+        border-radius: 10px;
+        padding: 16px;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const trainingLinks = document.querySelectorAll('a[href*="training"]');
+        trainingLinks.forEach(link => link.classList.add('active'));
+    });
+</script>
+
+<div class="form-container">
+    <!-- Breadcrumb & Header -->
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 fs-7">
+                    <li class="breadcrumb-item text-muted">Đào tạo</li>
+                    <li class="breadcrumb-item text-muted">Quản lý tập sự</li>
+                    <li class="breadcrumb-item active text-dark fw-semibold">Tạo hồ sơ nhân viên mới</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold text-dark mb-1 fs-3">Tạo hồ sơ nhân viên mới</h2>
+            <p class="text-muted small mb-0 fs-7">Nhập thông tin cá nhân và gán vị trí làm việc ban đầu cho nhân sự thử việc</p>
+        </div>
+        <div class="text-muted fs-7"><span class="text-required">*</span> Thông tin bắt buộc</div>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <!-- CARD 1: THÔNG TIN CÁ NHÂN -->
+        <div class="card-form">
+            <div class="section-title">
+                <i class="bi bi-person text-danger"></i> Thông tin cá nhân
+            </div>
+            
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label class="form-label-custom">Họ và tên <span class="text-required">*</span></label>
+                    <input type="text" name="ho_ten" class="form-control-custom" placeholder="Nguyễn Minh Anh" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-custom">Ngày sinh <span class="text-required">*</span></label>
+                    <input type="date" name="ngay_sinh" class="form-control-custom" value="2002-05-15" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-custom">Số điện thoại <span class="text-required">*</span></label>
+                    <input type="text" name="sdt" class="form-control-custom" placeholder="0905123456" required>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label class="form-label-custom">Email cá nhân <span class="text-required">*</span></label>
+                    <input type="email" name="email" class="form-control-custom" placeholder="minhanh.nguyen@gmail.com" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-custom">Số CCCD/CMND <span class="text-required">*</span></label>
+                    <input type="text" name="cccd" class="form-control-custom" placeholder="048202001234" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-custom">Giới tính</label>
+                    <div class="d-flex gap-4 mt-2">
+                        <label class="form-check-label"><input type="radio" name="gioi_tinh" value="Nam" class="form-check-input"> Nam</label>
+                        <label class="form-check-label"><input type="radio" name="gioi_tinh" value="Nữ" class="form-check-input" checked> Nữ</label>
+                        <label class="form-check-label"><input type="radio" name="gioi_tinh" value="Khác" class="form-check-input"> Khác</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <label class="form-label-custom">Địa chỉ thường trú</label>
+                    <input type="text" name="dia_chi" class="form-control-custom" placeholder="123 Nguyễn Văn Linh, Hải Châu, Đà Nẵng">
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 2: THÔNG TIN CÔNG VIỆC & ĐÀO TẠO BAN ĐẦU -->
+        <div class="card-form">
+            <div class="section-title">
+                <i class="bi bi-briefcase text-danger"></i> Thông tin công việc & Đào tạo ban đầu
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <label class="form-label-custom">Mã nhân viên</label>
+                        <span class="text-muted fs-8">Tự động tạo</span>
+                    </div>
+                    <input type="text" class="form-control-custom form-control-readonly" value="{{ ma_nv_du_kien }}" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-custom">Vị trí làm việc <span class="text-required">*</span></label>
+                    <select name="vi_tri"
+                            id="viTriSelect"
+                            class="form-select-custom"
+                            required>
+                        <option value="">-- Chọn vị trí làm việc --</option>
+
+                        {% for khung in ds_khung %}
+                        <option
+                                value="{{ khung.vi_tri }}"
+                                data-khung="{{ khung.ten_khung }}">
+                            {{ khung.vi_tri }}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-custom">Hình thức làm việc <span class="text-required">*</span></label>
+                    <select name="hinh_thuc" class="form-select-custom" required>
+                        <option value="Part-time">Part-time</option>
+                        <option value="Full-time">Full-time</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label class="form-label-custom">Chi nhánh / Cửa hàng</label>
+                    <input type="text" class="form-control-custom form-control-readonly" value="Highlands Coffee - 258 Bạch Đằng, Hải Châu, Đà Nẵng" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label-custom">Quản lý hướng dẫn / Buddy</label>
+                    <select name="quan_ly" class="form-select-custom">
+                        <option value="Nguyễn Mai Linh">Nguyễn Mai Linh (Quản lý cửa hàng)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- TỰ ĐỘNG GÁN CHƯƠNG TRÌNH TẬP SỰ -->
+            <div class="auto-assign-box d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <input type="checkbox" class="form-check-input" checked disabled style="width: 20px; height: 20px;">
+                    <div>
+                        <div class="fw-bold text-dark fs-7">Tự động gán Chương trình tập sự</div>
+                        <div class="text-muted fs-8">Gán khung lộ trình đào tạo tập sự tiêu chuẩn theo vị trí</div>
+                    </div>
+                </div>
+                <div class="badge bg-white text-danger px-3 py-2 rounded-3 border border-danger-subtle fw-semibold">
+                    <i class="bi bi-mortarboard me-1"></i> <span id="khungTen">Lộ trình Pha chế Mới 2026</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM BUTTON BAR -->
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div>
+                <div class="fw-bold text-dark fs-7">Tiếp theo: Duyệt lộ trình đào tạo</div>
+                <div class="text-muted fs-8">Hồ sơ và chương trình tập sự sẽ được tạo cùng lúc.</div>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'training:dashboard_quan_ly_tap_su' %}" class="btn btn-outline-secondary px-4 py-2 rounded-3 fw-semibold">Hủy</a>
+                <button type="submit" class="btn btn-submit-highlands">Lưu hồ sơ & Chuyển sang duyệt lộ trình</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const viTriSelect = document.getElementById('viTriSelect');
+        const khungTen = document.getElementById('khungTen');
+
+        if (!viTriSelect || !khungTen) return;
+
+        function capNhatKhung() {
+            const selectedOption =
+                viTriSelect.options[viTriSelect.selectedIndex];
+
+            khungTen.textContent =
+                selectedOption.dataset.khung ||
+                'Chọn vị trí để xem khung đào tạo';
+        }
+
+        viTriSelect.addEventListener('change', capNhatKhung);
+        capNhatKhung();
+    });
+</script>
+
+{% endblock %}
