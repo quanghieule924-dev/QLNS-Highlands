@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
 
@@ -13,6 +14,7 @@ class NhanVien(models.Model):
     dia_chi = models.TextField(verbose_name="Địa chỉ", null=True, blank=True)
     trang_thai = models.CharField(max_length=50, verbose_name="Trạng thái", null=True, blank=True)
     ngay_vao_lam = models.DateField(verbose_name="Ngày vào làm", null=True, blank=True)
+    tai_khoan = models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name='ho_so_nhan_vien')
 
     def __str__(self):
         return self.ho_ten
