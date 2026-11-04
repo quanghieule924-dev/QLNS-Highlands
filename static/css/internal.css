@@ -163,6 +163,7 @@ body {
     padding: 0 25px;
 }
 
+#Thông báo
 .notification {
     width: 36px;
     height: 36px;
@@ -182,6 +183,7 @@ body {
 .notification:hover {
     background: rgba(255, 255, 255, 0.25);
 }
+
 
 .account-avatar {
     width: 36px;
@@ -455,4 +457,35 @@ body {
         padding-left: 6px;
         font-size: 11px;
     }
+}
+
+
+/* SỬA LỖI LỚP PHỦ POPUP PHÚC LỢI */
+.internal-main > .benefit-modal-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+
+    width: 100vw !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 20px !important;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 99999 !important;
+}
+/* ===== TYPOGRAPHY: THONG NHAT MONTSERRAT ===== */
+body,
+button,
+input,
+select,
+textarea {
+    font-family: 'Montserrat', sans-serif;
 }

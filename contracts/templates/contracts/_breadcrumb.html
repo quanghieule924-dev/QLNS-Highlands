@@ -1,0 +1,12 @@
+{% load static %}
+<nav class="contract-breadcrumb" aria-label="Điều hướng">
+    <a href="{% url 'contracts:tong_quan_hop_dong' %}">Hợp đồng &amp; Phúc lợi</a>
+    <span class="breadcrumb-separator">›</span>
+    {% if breadcrumb_parent_url %}
+        <a href="{{ breadcrumb_parent_url }}">{{ breadcrumb_parent_label }}</a>
+        <span class="breadcrumb-separator">›</span>
+    {% endif %}
+    {% if breadcrumb_current %}
+        <span class="breadcrumb-current" aria-current="page">{{ breadcrumb_current }}</span>
+    {% endif %}
+</nav>

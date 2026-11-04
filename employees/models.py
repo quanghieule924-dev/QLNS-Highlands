@@ -1,8 +1,20 @@
 from django.db import models
 
+from django.conf import settings # Huyền thêm
+
 # Create your models here.
 
 class NhanVien(models.Model):
+    #Huyền
+    tai_khoan = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='nhan_vien',
+        verbose_name='Tài khoản'
+    ) #huyền
+
     manv = models.CharField(max_length=20, primary_key=True, verbose_name="Mã nhân viên")
     ho_ten = models.CharField(max_length=255, verbose_name="Họ tên")
     ngay_sinh = models.DateField(verbose_name="Ngày sinh", null=True, blank=True)

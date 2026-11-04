@@ -1,0 +1,649 @@
+
+{% extends 'base_internal.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+/* ==============================
+   TỔNG QUAN HỢP ĐỒNG
+============================== */
+
+.contract-dashboard {
+    padding: 24px;
+    background: #f8f9fb;
+    min-height: calc(100vh - 70px);
+    color: #252525;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.dashboard-header h2 {
+    font-size: 25px;
+    font-weight: 700;
+    margin: 0 0 6px;
+}
+
+.dashboard-header p {
+    color: #777;
+    font-size: 13px;
+    margin: 0;
+}
+
+/* THỐNG KÊ */
+
+.contract-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 25px;
+}
+
+.contract-stat-card {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 11px;
+    padding: 17px 19px;
+    min-height: 112px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.stat-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.stat-icon {
+    width: 31px;
+    height: 31px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.stat-icon.total {
+    background: #f1f1f1;
+    color: #555;
+}
+
+.stat-icon.pending {
+    background: #fff3df;
+    color: #e99a20;
+}
+
+.stat-icon.active {
+    background: #e5f6ec;
+    color: #209653;
+}
+
+.stat-icon.expiring {
+    background: #fff0df;
+    color: #e58a18;
+}
+
+.stat-number {
+    font-size: 29px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 5px;
+}
+
+.stat-description {
+    font-size: 11px;
+    color: #999;
+}
+
+/* THAO TÁC NHANH */
+
+.dashboard-section-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 13px;
+}
+
+.quick-action-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 25px;
+}
+
+.quick-action-card {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 10px;
+    padding: 12px;
+    min-height: 91px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: 0.2s;
+}
+
+.quick-action-card:hover {
+    border-color: #ef9aa6;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+.quick-action-icon {
+    color: #d20b2e;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.quick-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 37px;
+    padding: 8px 10px;
+    border: 1px solid #e5e5e5;
+    border-radius: 7px;
+    background: #fff;
+    color: #333;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    transition: 0.2s;
+}
+
+.quick-action-btn:hover {
+    background: #fff4f5;
+    border-color: #d20b2e;
+    color: #d20b2e;
+}
+
+.quick-action-btn.primary {
+    background: #d20b2e;
+    color: #fff;
+    border-color: #d20b2e;
+}
+
+.quick-action-btn.primary:hover {
+    background: #b90827;
+    color: #fff;
+}
+
+/* DANH SÁCH */
+
+.contract-list-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.contract-list-card {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 11px;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.contract-list-header {
+    padding: 15px 16px 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.contract-list-header h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 5px;
+}
+
+.contract-list-header p {
+    font-size: 11px;
+    color: #999;
+    margin: 0;
+}
+
+.contract-list-header .count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 21px;
+    height: 21px;
+    padding: 0 6px;
+    border-radius: 20px;
+    background: #f1f1f1;
+    color: #555;
+    font-size: 11px;
+    margin-left: 5px;
+}
+
+.contract-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    text-decoration: none;
+    color: inherit;
+    transition: 0.2s;
+}
+
+.contract-row:hover {
+    background: #fafafa;
+    color: inherit;
+}
+
+.contract-info {
+    min-width: 0;
+}
+
+.contract-employee {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.contract-meta {
+    font-size: 10px;
+    color: #999;
+}
+
+.contract-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+
+
+.contract-arrow {
+    color: #aaa;
+    font-size: 17px;
+}
+
+.contract-list-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    font-size: 10px;
+    color: #999;
+}
+
+.contract-list-footer a {
+    color: #d20b2e;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.contract-list-footer a:hover {
+    text-decoration: underline;
+}
+
+.contract-empty {
+    text-align: center;
+    padding: 28px 12px;
+    color: #999;
+    font-size: 12px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1000px) {
+    .contract-stat-grid,
+    .quick-action-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .contract-dashboard {
+        padding: 15px;
+    }
+
+    .contract-list-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-header h2 {
+        font-size: 21px;
+    }
+}
+
+@media (max-width: 420px) {
+    .contract-stat-grid,
+    .quick-action-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* Nhãn trạng thái hợp đồng - dùng chung toàn module */
+.contract-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Chờ ký */
+.status-cho-ky {
+    background: #fff3df;
+    color: #d97706;
+}
+
+/* Đã ký - Chờ hiệu lực */
+.status-cho-hieu-luc {
+    background: #eaf2ff;
+    color: #2563eb;
+}
+
+/* Đang hiệu lực */
+.status-dang-hieu-luc {
+    background: #e7f6ec;
+    color: #16803c;
+}
+
+/* Đã hết hạn */
+.status-da-het-han {
+    background: #feecec;
+    color: #dc2626;
+}
+
+/* Đã chấm dứt */
+.status-da-cham-dut {
+    background: #f0f0f0;
+    color: #666;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    line-height: 1.5;
+}
+</style>
+
+
+<div class="contract-dashboard">
+
+    <!-- TIÊU ĐỀ -->
+    <div class="dashboard-header">
+        <div>
+            <h2>Tổng quan Hợp đồng & Phúc lợi</h2>
+        </div>
+    </div>
+
+
+    <!-- 1. THỐNG KÊ -->
+    <div class="contract-stat-grid">
+
+        <div class="contract-stat-card">
+            <div class="stat-top">
+                <span>Tổng số hợp đồng</span>
+                <span class="stat-icon total">▣</span>
+            </div>
+            <div class="stat-number">
+                {{ tong_so_hop_dong }}
+            </div>
+            <div class="stat-description">
+                Tổng số hợp đồng trong hệ thống
+            </div>
+        </div>
+
+        <div class="contract-stat-card">
+            <div class="stat-top">
+                <span>Hợp đồng chờ ký</span>
+                <span class="stat-icon pending">◷</span>
+            </div>
+            <div class="stat-number">
+                {{ hop_dong_cho_ky }}
+            </div>
+            <div class="stat-description">
+                Hợp đồng đang chờ nhân viên ký
+            </div>
+        </div>
+
+        <div class="contract-stat-card">
+            <div class="stat-top">
+                <span>Hợp đồng đang hiệu lực</span>
+                <span class="stat-icon active">▣</span>
+            </div>
+            <div class="stat-number">
+                {{ hop_dong_dang_hieu_luc }}
+            </div>
+            <div class="stat-description">
+                Hợp đồng có trạng thái đang hiệu lực
+            </div>
+        </div>
+
+        <div class="contract-stat-card">
+            <div class="stat-top">
+                <span>Hợp đồng sắp hết hạn</span>
+                <span class="stat-icon expiring">◷</span>
+            </div>
+            <div class="stat-number">
+                {{ tong_hop_dong_sap_het_han }}
+            </div>
+            <div class="stat-description">
+                Trong vòng 30 ngày tới
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- 2. THAO TÁC NHANH -->
+    <h3 class="dashboard-section-title">Thao tác nhanh</h3>
+
+    <div class="quick-action-grid">
+
+        <div class="quick-action-card">
+            <div class="quick-action-icon">＋</div>
+            <a href="{% url 'contracts:them_hop_dong' %}"
+               class="quick-action-btn primary">
+                + Tạo hợp đồng
+            </a>
+        </div>
+
+        <div class="quick-action-card">
+            <div class="quick-action-icon">▤</div>
+            <a href="{% url 'contracts:danh_sach_hop_dong' %}"
+               class="quick-action-btn">
+                Quản lý hợp đồng
+            </a>
+        </div>
+
+        <div class="quick-action-card">
+            <div class="quick-action-icon">♧</div>
+            <a href="{% url 'contracts:danh_sach_che_do_phuc_loi' %}"
+               class="quick-action-btn">
+                Quản lý chế độ phúc lợi
+            </a>
+        </div>
+
+        <div class="quick-action-card">
+            <div class="quick-action-icon">◷</div>
+            <a href="{% url 'contracts:hop_dong_sap_het_han' %}"
+               class="quick-action-btn">
+                Hợp đồng sắp hết hạn
+            </a>
+        </div>
+
+    </div>
+
+
+    <!-- 3. HAI DANH SÁCH -->
+    <div class="contract-list-grid">
+
+        <!-- DANH SÁCH HỢP ĐỒNG -->
+        <div class="contract-list-card">
+
+            <div class="contract-list-header">
+                <h3>
+                    Danh sách hợp đồng
+                    <span class="count">{{ tong_so_hop_dong }}</span>
+                </h3>
+                <p>Các hợp đồng mới được tạo gần đây</p>
+            </div>
+
+            {% for hd in danh_sach_hop_dong %}
+
+                <a href="{% url 'contracts:chi_tiet_hop_dong' hd.mahd %}"
+                   class="contract-row">
+
+                    <div class="contract-info">
+                        <div class="contract-employee">
+                            {{ hd.nhan_vien.ho_ten }}
+                        </div>
+
+                        <div class="contract-meta">
+                            {{ hd.mahd }} · Ngày bắt đầu:
+                            {{ hd.ngay_bat_dau|date:"d/m/Y" }}
+                        </div>
+                    </div>
+
+                    <div class="contract-right">
+
+                        {% if hd.trang_thai_hd == 'cho_ky' %}
+                            <span class="status-badge status-cho-ky">
+                                {{ hd.get_trang_thai_hd_display }}
+                            </span>
+
+                        {% elif hd.trang_thai_hd == 'da_ky_cho_hieu_luc' %}
+                            <span class="status-badge status-cho-hieu-luc">
+                                {{ hd.get_trang_thai_hd_display }}
+                            </span>
+
+                        {% elif hd.trang_thai_hd == 'dang_hieu_luc' %}
+                            <span class="status-badge status-dang-hieu-luc">
+                                {{ hd.get_trang_thai_hd_display }}
+                            </span>
+
+                        {% elif hd.trang_thai_hd == 'da_het_han' %}
+                            <span class="status-badge status-da-het-han">
+                                {{ hd.get_trang_thai_hd_display }}
+                            </span>
+
+                        {% elif hd.trang_thai_hd == 'da_cham_dut' %}
+                            <span class="status-badge status-da-cham-dut">
+                                {{ hd.get_trang_thai_hd_display }}
+                            </span>
+
+                        {% else %}
+                            <span class="status-badge">
+                                {{ hd.get_trang_thai_hd_display }}
+                            </span>
+                        {% endif %}
+
+                        <span class="contract-arrow">›</span>
+
+                    </div>
+
+                </a>
+
+            {% empty %}
+
+                <div class="contract-empty">
+                    Chưa có hợp đồng nào.
+                </div>
+
+            {% endfor %}
+
+            <div class="contract-list-footer">
+                <span>
+                    Hiển thị {{ danh_sach_hop_dong|length }} hợp đồng
+                </span>
+
+                <a href="{% url 'contracts:danh_sach_hop_dong' %}">
+                    Xem tất cả →
+                </a>
+            </div>
+
+        </div>
+
+
+        <!-- DANH SÁCH HỢP ĐỒNG SẮP HẾT HẠN -->
+        <div class="contract-list-card">
+
+            <div class="contract-list-header">
+                <h3>
+                    Hợp đồng sắp hết hạn
+                    <span class="count">
+                        {{ tong_hop_dong_sap_het_han }}
+                    </span>
+                </h3>
+                <p>Các hợp đồng sẽ hết hạn trong 30 ngày tới</p>
+            </div>
+
+            {% for hd in danh_sach_hop_dong_sap_het_han %}
+
+                <a href="{% url 'contracts:chi_tiet_hop_dong' hd.mahd %}"
+                   class="contract-row">
+
+                    <div class="contract-info">
+                        <div class="contract-employee">
+                            {{ hd.nhan_vien.ho_ten }}
+                        </div>
+
+                        <div class="contract-meta">
+                            {{ hd.mahd }} · Ngày hết hạn:
+                            {{ hd.ngay_ket_thuc|date:"d/m/Y" }}
+                        </div>
+                    </div>
+
+                    <div class="contract-right">
+                        <span class="contract-status status-expiring">
+                            Còn {{ hd.so_ngay_con_lai }} ngày
+                        </span>
+
+                        <span class="contract-arrow">›</span>
+                    </div>
+
+                </a>
+
+            {% empty %}
+
+                <div class="contract-empty">
+                    Không có hợp đồng nào sắp hết hạn.
+                </div>
+
+            {% endfor %}
+
+            <div class="contract-list-footer">
+                <span>
+                    Hiển thị {{ danh_sach_hop_dong_sap_het_han|length }}
+                    hợp đồng
+                </span>
+
+                <a href="{% url 'contracts:hop_dong_sap_het_han' %}">
+                    Xem tất cả →
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+l>

@@ -1,0 +1,384 @@
+
+{% extends 'base_internal.html' %}
+{% load static %}
+
+{% block title %}
+    Chi tiết hợp đồng | HRM System
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/contracts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="contract-page">
+
+    <!-- TIÊU ĐỀ -->
+    <div class="contract-page-header">
+        <div>
+            <div class="contract-breadcrumb">
+                <a href="{% url 'contracts:tong_quan_hop_dong' %}">Hợp đồng &amp; Phúc lợi</a>
+                <span>›</span>
+                <a href="{% url 'contracts:danh_sach_hop_dong' %}">Danh sách hợp đồng</a>
+                <span>›</span>
+                <span class="breadcrumb-current">Chi tiết hợp đồng</span>
+            </div>
+            <h1>Chi tiết hợp đồng lao động</h1>
+        </div>
+
+        <a href="{% url 'contracts:danh_sach_hop_dong' %}"
+           class="btn-cancel">
+            ← Quay lại
+        </a>
+    </div>
+
+    <!-- THÔNG TIN NHÂN VIÊN -->
+    <section class="contract-card">
+        <div class="contract-card-heading">
+            <h2>Thông tin nhân viên</h2>
+            <span>Thông tin nhân viên thuộc hợp đồng</span>
+        </div>
+
+        <div class="detail-info-grid">
+            <div class="detail-info-item">
+                <span>Nhân viên</span>
+                <strong>{{ hop_dong.nhan_vien }}</strong>
+            </div>
+        </div>
+    </section>
+
+    <!-- THÔNG TIN HỢP ĐỒNG -->
+    <section class="contract-card">
+        <div class="contract-card-heading">
+            <h2>Thông tin hợp đồng</h2>
+            <span>Mã hợp đồng: {{ hop_dong.mahd }}</span>
+        </div>
+
+        <div class="detail-info-grid">
+
+            <div class="detail-info-item">
+                <span>Số hợp đồng</span>
+                <strong>{{ hop_dong.so_hd }}</strong>
+            </div>
+
+            <div class="detail-info-item">
+                <span>Loại hợp đồng</span>
+                <strong>{{ hop_dong.get_loai_hd_display }}</strong>
+            </div>
+
+            <div class="detail-info-item">
+                <span>Ngày ký</span>
+                <strong>
+                    {% if hop_dong.ngay_ky %}
+                        {{ hop_dong.ngay_ky|date:"d/m/Y" }}
+                    {% else %}
+                        Chưa ký
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="detail-info-item">
+                <span>Ngày bắt đầu</span>
+                <strong>{{ hop_dong.ngay_bat_dau|date:"d/m/Y" }}</strong>
+            </div>
+
+            <div class="detail-info-item">
+                <span>Ngày kết thúc</span>
+                <strong>
+                    {% if hop_dong.ngay_ket_thuc %}
+                        {{ hop_dong.ngay_ket_thuc|date:"d/m/Y" }}
+                    {% else %}
+                        Không xác định
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="detail-info-item">
+                <span>Hợp đồng trước</span>
+                <strong>
+                    {% if hop_dong.hop_dong_truoc %}
+                        {{ hop_dong.hop_dong_truoc.mahd }}
+                    {% else %}
+                        Không có
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="detail-info-item">
+                <span>Trạng thái hợp đồng</span>
+                <strong>
+                    <span class="detail-status
+                        {% if hop_dong.trang_thai_hd == 'cho_ky' %}
+                            status-cho-ky
+                        {% elif hop_dong.trang_thai_hd == 'da_ky_cho_hieu_luc' %}
+                            status-cho-hieu-luc
+                        {% elif hop_dong.trang_thai_hd == 'dang_hieu_luc' %}
+                            status-dang-hieu-luc
+                        {% elif hop_dong.trang_thai_hd == 'da_het_han' %}
+                            status-da-het-han
+                        {% elif hop_dong.trang_thai_hd == 'da_cham_dut' %}
+                            status-da-cham-dut
+                        {% endif %}">
+                        {{ hop_dong.get_trang_thai_hd_display }}
+                    </span>
+                </strong>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- THÔNG TIN TIỀN LƯƠNG -->
+    <section class="contract-card">
+        <div class="contract-card-heading">
+            <h2>Thông tin tiền lương</h2>
+        </div>
+
+        <div class="detail-info-grid">
+
+            <div class="detail-info-item">
+                <span>Hình thức trả lương</span>
+                <strong>
+                    {{ hop_dong.get_hinh_thuc_luong_display }}
+                </strong>
+            </div>
+
+            <div class="detail-info-item">
+                <span>Mức lương cơ bản</span>
+                <strong class="detail-money">
+                    {{ hop_dong.muc_luong|floatformat:0 }} VNĐ
+                </strong>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- PHỤ CẤP VÀ PHÚC LỢI -->
+    <section class="contract-card">
+        <div class="contract-card-heading">
+            <h2>Phụ cấp & phúc lợi</h2>
+        </div>
+
+        <!-- DANH SÁCH PHỤ CẤP -->
+        <div class="detail-subsection">
+            <h3>Danh sách phụ cấp</h3>
+
+            {% if danh_sach_phu_cap %}
+                <div class="detail-table-wrapper">
+                    <table class="detail-table">
+                        <thead>
+                            <tr>
+                                <th>Loại phụ cấp</th>
+                                <th>Giá trị</th>
+                                <th>Tháng áp dụng</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for pc in danh_sach_phu_cap %}
+                                <tr>
+                                    <td>{{ pc.loai_pc }}</td>
+                                    <td>
+                                        {{ pc.gia_tri|floatformat:0 }} VNĐ
+                                    </td>
+                                    <td>{{ pc.thang_ap_dung }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="detail-empty">
+                    Hợp đồng chưa có phụ cấp.
+                </p>
+            {% endif %}
+        </div>
+
+        <!-- DANH SÁCH PHÚC LỢI -->
+        <div class="detail-subsection">
+            <h3>Chế độ phúc lợi được áp dụng</h3>
+
+            {% if danh_sach_phuc_loi %}
+                <div class="detail-benefit-list">
+                    {% for pl in danh_sach_phuc_loi %}
+                        <div class="detail-benefit-item">
+                            <span class="benefit-check">✓</span>
+                            {{ pl.che_do.ten_pl }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="detail-empty">
+                    Hợp đồng chưa áp dụng chế độ phúc lợi.
+                </p>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- THÔNG TIN BHXH -->
+    <section class="contract-card">
+        <div class="contract-card-heading">
+            <h2>Bảo hiểm xã hội (BHXH)</h2>
+            {% if bhxh %}
+                <span class="detail-status">
+                    {{ bhxh.get_trang_thai_display }}
+                </span>
+            {% endif %}
+        </div>
+
+        {% if bhxh %}
+            <div class="detail-info-grid">
+
+                <div class="detail-info-item">
+                    <span>Số sổ BHXH</span>
+                    <strong>{{ bhxh.ma_so_bh }}</strong>
+                </div>
+
+                <div class="detail-info-item">
+                    <span>Mức đóng</span>
+                    <strong class="detail-money">
+                        {{ bhxh.muc_dong|floatformat:0 }} VNĐ/tháng
+                    </strong>
+                </div>
+
+                <div class="detail-info-item">
+                    <span>Ngày tham gia</span>
+                    <strong>
+                        {{ bhxh.ngay_tham_gia|date:"d/m/Y" }}
+                    </strong>
+                </div>
+
+                <div class="detail-info-item">
+                    <span>Trạng thái</span>
+                    <strong>{{ bhxh.get_trang_thai_display }}</strong>
+                </div>
+
+            </div>
+        {% else %}
+            <p class="detail-empty">
+                Hợp đồng chưa đăng ký tham gia BHXH.
+            </p>
+        {% endif %}
+    </section>
+
+    <!-- THÔNG TIN CHẤM DỨT -->
+    {% if hop_dong.trang_thai_hd == 'da_cham_dut' %}
+        <section class="contract-card">
+            <div class="contract-card-heading">
+                <h2>Thông tin chấm dứt hợp đồng</h2>
+            </div>
+
+            <div class="detail-info-grid">
+
+                <div class="detail-info-item">
+                    <span>Ngày chấm dứt</span>
+                    <strong>
+                        {% if hop_dong.ngay_cham_dut %}
+                            {{ hop_dong.ngay_cham_dut|date:"d/m/Y" }}
+                        {% else %}
+                            Chưa cập nhật
+                        {% endif %}
+                    </strong>
+                </div>
+
+                <div class="detail-info-item">
+                    <span>Lý do chấm dứt</span>
+                    <strong>
+                        {% if hop_dong.ly_do_cham_dut %}
+                            {{ hop_dong.ly_do_cham_dut|linebreaksbr }}
+                        {% else %}
+                            Chưa cập nhật
+                        {% endif %}
+                    </strong>
+                </div>
+
+            </div>
+        </section>
+    {% endif %}
+
+    <!-- NÚT THAO TÁC -->
+    <div class="contract-bottom">
+
+        <div class="contract-note">
+            <span class="note-icon">ⓘ</span>
+            <div>
+                <strong>Thông tin hợp đồng</strong>
+                <p>
+                    {% if hop_dong.trang_thai_hd == 'cho_ky' %}
+                        Hợp đồng đang chờ nhân viên ký.
+                    {% elif hop_dong.trang_thai_hd == 'dang_hieu_luc' %}
+                        Hợp đồng đang có hiệu lực.
+                    {% else %}
+                        Xem trạng thái và thông tin hợp đồng ở phía trên.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <div class="contract-actions">
+
+            <a href="{% url 'contracts:danh_sach_hop_dong' %}"
+               class="btn-cancel">
+                Quay lại danh sách
+            </a>
+
+            <!-- NHÂN VIÊN -->
+            {% if request.user.role == 'employee' %}
+
+                {% if hop_dong.trang_thai_hd == 'cho_ky' %}
+                    <form method="post"
+                          action="{% url 'contracts:ky_hop_dong' hop_dong.mahd %}"
+                          onsubmit="return confirm('Bạn đã đọc và đồng ý với các điều khoản trong hợp đồng này chưa? Xác nhận ký hợp đồng?');">
+
+                        {% csrf_token %}
+
+                        <button type="submit" class="btn-save">
+                            Xác nhận ký hợp đồng
+                        </button>
+                    </form>
+                {% endif %}
+
+            {% endif %}
+
+            <!-- QUẢN LÝ -->
+            {% if request.user.role == 'admin' %}
+
+                {% if hop_dong.trang_thai_hd == 'cho_ky' %}
+                    <a href="{% url 'contracts:sua_hop_dong' hop_dong.mahd %}"
+                       class="btn-save">
+                        Chỉnh sửa
+                    </a>
+
+                    <form method="post"
+                          action="{% url 'contracts:xoa_hop_dong' hop_dong.mahd %}"
+                          onsubmit="return confirm('Bạn có chắc chắn muốn xóa hợp đồng này không?');">
+
+                        {% csrf_token %}
+
+                        <button type="submit" class="btn-delete">
+                            Xóa hợp đồng
+                        </button>
+                    </form>
+                {% endif %}
+
+                {% if hop_dong.trang_thai_hd == 'dang_hieu_luc' %}
+                    <a href="{% url 'contracts:cham_dut_hop_dong' hop_dong.mahd %}"
+                       class="btn-delete">
+                        Chấm dứt hợp đồng
+                    </a>
+                {% endif %}
+
+                {% if hop_dong.trang_thai_hd == 'dang_hieu_luc' and hop_dong.loai_hd == 'co_thoi_han' and hop_dong.sap_het_han %}
+                    <a href="{% url 'contracts:gia_han_hop_dong' hop_dong.mahd %}"
+                       class="btn-save">
+                        Gia hạn hợp đồng
+                    </a>
+                {% endif %}
+
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
