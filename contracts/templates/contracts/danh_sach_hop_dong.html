@@ -18,8 +18,11 @@
     <div class="contract-breadcrumb"><a href="{% url 'contracts:tong_quan_hop_dong' %}">Hợp đồng &amp; Phúc lợi</a><span>›</span><span class="breadcrumb-current">Danh sách hợp đồng</span></div>
     <div class="page-header">
       <div>
-        <h1>Quản lý hợp đồng</h1>
-        <p>Theo dõi và quản lý thông tin hợp đồng nhân viên.</p>
+        {% if request.user.role == 'admin' %}
+            <h1>Quản lý hợp đồng</h1>
+        {% else %}
+            <h1>Hợp đồng của tôi</h1>
+        {% endif %}
       </div>
 
       {% if request.user.role == 'admin' %}
@@ -165,7 +168,18 @@
                             </td>
 
                             <td>
-                                <span class="status-badge">
+                                <span class="status-badge
+                                    {% if hop_dong.trang_thai_hd == 'cho_ky' %}
+                                        status-cho-ky
+                                    {% elif hop_dong.trang_thai_hd == 'da_ky_cho_hieu_luc' %}
+                                        status-cho-hieu-luc
+                                    {% elif hop_dong.trang_thai_hd == 'dang_hieu_luc' %}
+                                        status-dang-hieu-luc
+                                    {% elif hop_dong.trang_thai_hd == 'da_het_han' %}
+                                        status-da-het-han
+                                    {% elif hop_dong.trang_thai_hd == 'da_cham_dut' %}
+                                        status-da-cham-dut
+                                    {% endif %}">
                                     {{ hop_dong.get_trang_thai_hd_display }}
                                 </span>
                             </td>

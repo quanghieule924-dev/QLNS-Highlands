@@ -512,10 +512,8 @@
                         <span>Hồ sơ của tôi</span>
                     </a>
 
-                    <a
-                        href="#"
-                        class="{% if active_menu == 'contracts' %}active{% endif %}"
-                    >
+                    <a href="{% url 'contracts:danh_sach_hop_dong' %}"
+                       class="{% if active_menu == 'contracts' %}active{% endif %}">
                         <span class="menu-icon">▤</span>
                         <span>Hợp đồng &amp; Phúc lợi</span>
                     </a>

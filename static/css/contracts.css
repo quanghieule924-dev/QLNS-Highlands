@@ -801,16 +801,47 @@
     overflow-wrap: anywhere;
 }
 
+/* Trạng thái hợp đồng trong trang chi tiết */
 .detail-status {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     width: fit-content;
-    padding: 5px 10px;
+    padding: 5px 12px;
     border-radius: 20px;
-    background: #fff1f3;
-    color: #ce1234;
     font-size: 11px;
     font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Chờ ký */
+.detail-status.status-cho-ky {
+    background: #fff4d6;
+    color: #a66b00;
+}
+
+/* Đã ký - chờ hiệu lực */
+.detail-status.status-cho-hieu-luc {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+/* Đang hiệu lực */
+.detail-status.status-dang-hieu-luc {
+    background: #e5f5eb;
+    color: #21804a;
+}
+
+/* Đã hết hạn */
+.detail-status.status-da-het-han {
+    background: #eeeeee;
+    color: #616161;
+}
+
+/* Đã chấm dứt */
+.detail-status.status-da-cham-dut {
+    background: #fde8e8;
+    color: #c62828;
 }
 
 .detail-money {
@@ -1249,27 +1280,43 @@ a.btn-renewal:hover {
 /* =========================================
    POPUP THÊM / SỬA PHÚC LỢI
 ========================================= */
+/* =========================================
+   POPUP THÊM CHẾ ĐỘ PHÚC LỢI
+========================================= */
 
 .benefit-modal-overlay {
     position: fixed;
     inset: 0;
     z-index: 2000;
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
+
+    display: none;
     justify-content: center;
     align-items: center;
+
     padding: 20px;
+    background: rgba(0, 0, 0, 0.4);
     overflow-y: auto;
+    box-sizing: border-box;
+}
+
+/* Chỉ hiện popup khi được mở */
+.benefit-modal-overlay.is-open {
+    display: flex;
 }
 
 .benefit-modal {
     width: 100%;
     max-width: 620px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+
     padding: 28px;
     margin: auto;
+    box-sizing: border-box;
 }
 
 .benefit-modal-header {
@@ -1294,10 +1341,12 @@ a.btn-renewal:hover {
 }
 
 .benefit-modal-close {
+    border: none;
+    background: transparent;
     color: #888;
     font-size: 27px;
-    text-decoration: none;
     line-height: 1;
+    cursor: pointer;
 }
 
 .benefit-modal-close:hover {
@@ -1354,7 +1403,6 @@ a.btn-renewal:hover {
     font-size: 12px;
 }
 
-/* Nút popup */
 .benefit-modal-actions {
     display: flex;
     justify-content: flex-end;
@@ -1364,22 +1412,11 @@ a.btn-renewal:hover {
     border-top: 1px solid #eee;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .benefit-modal {
         padding: 22px 18px;
     }
-
-    .benefit-pagination {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .benefit-table-header {
-        padding: 16px;
-    }
 }
-
 
 /* Nút thao tác trang chấm dứt hợp đồng */
 .contract-bottom {
@@ -1700,4 +1737,161 @@ a.btn-renewal:hover {
     .contract-stat-grid { grid-template-columns: 1fr; }
     .contract-actions { width: 100%; flex-wrap: wrap; }
     .contract-actions > * { flex: 1 1 auto; }
+}
+
+
+
+
+/* =========================================
+   NÚT HỦY VÀ LƯU TRONG POPUP PHÚC LỢI
+========================================= */
+
+.benefit-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #eeeeee;
+}
+
+/* Thiết lập chung */
+.benefit-modal-actions .btn {
+    min-width: 90px;
+    height: 40px;
+    padding: 0 20px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+/* Nút Hủy */
+.benefit-modal-actions .btn-secondary {
+    background: #ffffff;
+    color: #555555;
+    border: 1px solid #d9dce2;
+}
+
+.benefit-modal-actions .btn-secondary:hover {
+    background: #f5f5f5;
+    border-color: #bfc3ca;
+    color: #333333;
+}
+
+/* Nút Lưu */
+.benefit-modal-actions .btn-primary {
+    background: #c8102e;
+    color: #ffffff;
+    border: 1px solid #c8102e;
+    box-shadow: 0 2px 5px rgba(200, 16, 46, 0.15);
+}
+
+.benefit-modal-actions .btn-primary:hover {
+    background: #a90d26;
+    border-color: #a90d26;
+    box-shadow: 0 4px 10px rgba(200, 16, 46, 0.2);
+    transform: translateY(-1px);
+}
+
+.benefit-modal-actions .btn:active {
+    transform: translateY(0);
+}
+
+
+
+/* Trạng thái hợp đồng */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Chờ ký */
+.status-cho-ky {
+    background: #fff4d6;
+    color: #a66b00;
+}
+
+/* Đã ký - chờ hiệu lực */
+.status-cho-hieu-luc {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+/* Đang hiệu lực */
+.status-dang-hieu-luc {
+    background: #e5f5eb;
+    color: #21834a;
+}
+
+/* Đã hết hạn */
+.status-da-het-han {
+    background: #eeeeee;
+    color: #616161;
+}
+
+/* Đã chấm dứt */
+.status-da-cham-dut {
+    background: #fde8e8;
+    color: #c62828;
+}
+
+
+/* Nhãn trạng thái hợp đồng - dùng chung toàn module */
+.contract-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Chờ ký */
+.status-cho-ky {
+    background: #fff3df;
+    color: #d97706;
+}
+
+/* Đã ký - Chờ hiệu lực */
+.status-cho-hieu-luc {
+    background: #eaf2ff;
+    color: #2563eb;
+}
+
+/* Đang hiệu lực */
+.status-dang-hieu-luc {
+    background: #e7f6ec;
+    color: #16803c;
+}
+
+/* Đã hết hạn */
+.status-da-het-han {
+    background: #feecec;
+    color: #dc2626;
+}
+
+/* Đã chấm dứt */
+.status-da-cham-dut {
+    background: #f0f0f0;
+    color: #666;
 }

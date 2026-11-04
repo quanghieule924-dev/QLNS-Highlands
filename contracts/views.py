@@ -255,6 +255,7 @@ def danh_sach_hop_dong(request):
         'loai_hd': loai_hd,
         'trang_thai_choices': HopDong.TRANG_THAI_CHOICES,
         'loai_hd_choices': HopDong.LOAI_HD_CHOICES,
+        'active_menu': 'contracts',
     }
 
     return render(

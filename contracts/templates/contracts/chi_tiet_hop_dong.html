@@ -107,7 +107,18 @@
             <div class="detail-info-item">
                 <span>Trạng thái hợp đồng</span>
                 <strong>
-                    <span class="detail-status">
+                    <span class="detail-status
+                        {% if hop_dong.trang_thai_hd == 'cho_ky' %}
+                            status-cho-ky
+                        {% elif hop_dong.trang_thai_hd == 'da_ky_cho_hieu_luc' %}
+                            status-cho-hieu-luc
+                        {% elif hop_dong.trang_thai_hd == 'dang_hieu_luc' %}
+                            status-dang-hieu-luc
+                        {% elif hop_dong.trang_thai_hd == 'da_het_han' %}
+                            status-da-het-han
+                        {% elif hop_dong.trang_thai_hd == 'da_cham_dut' %}
+                            status-da-cham-dut
+                        {% endif %}">
                         {{ hop_dong.get_trang_thai_hd_display }}
                     </span>
                 </strong>

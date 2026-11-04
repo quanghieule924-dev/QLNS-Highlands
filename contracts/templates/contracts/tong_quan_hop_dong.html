@@ -263,34 +263,7 @@
     flex-shrink: 0;
 }
 
-.contract-status {
-    display: inline-block;
-    padding: 4px 9px;
-    border-radius: 20px;
-    font-size: 10px;
-    font-weight: 600;
-    white-space: nowrap;
-}
 
-.status-pending {
-    background: #fff3df;
-    color: #c98518;
-}
-
-.status-active {
-    background: #e5f6ec;
-    color: #209653;
-}
-
-.status-expiring {
-    background: #fff0df;
-    color: #d47b12;
-}
-
-.status-other {
-    background: #f0f0f0;
-    color: #777;
-}
 
 .contract-arrow {
     color: #aaa;
@@ -352,6 +325,61 @@
         grid-template-columns: 1fr;
     }
 }
+
+
+/* Nhãn trạng thái hợp đồng - dùng chung toàn module */
+.contract-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Chờ ký */
+.status-cho-ky {
+    background: #fff3df;
+    color: #d97706;
+}
+
+/* Đã ký - Chờ hiệu lực */
+.status-cho-hieu-luc {
+    background: #eaf2ff;
+    color: #2563eb;
+}
+
+/* Đang hiệu lực */
+.status-dang-hieu-luc {
+    background: #e7f6ec;
+    color: #16803c;
+}
+
+/* Đã hết hạn */
+.status-da-het-han {
+    background: #feecec;
+    color: #dc2626;
+}
+
+/* Đã chấm dứt */
+.status-da-cham-dut {
+    background: #f0f0f0;
+    color: #666;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    line-height: 1.5;
+}
 </style>
 
 
@@ -361,7 +389,6 @@
     <div class="dashboard-header">
         <div>
             <h2>Tổng quan Hợp đồng & Phúc lợi</h2>
-            <p>Theo dõi tình trạng hợp đồng và quản lý chế độ phúc lợi nhân viên.</p>
         </div>
     </div>
 
@@ -497,20 +524,38 @@
                     <div class="contract-right">
 
                         {% if hd.trang_thai_hd == 'cho_ky' %}
-                            <span class="contract-status status-pending">
-                                Chờ ký
+                            <span class="status-badge status-cho-ky">
+                                {{ hd.get_trang_thai_hd_display }}
                             </span>
+
+                        {% elif hd.trang_thai_hd == 'da_ky_cho_hieu_luc' %}
+                            <span class="status-badge status-cho-hieu-luc">
+                                {{ hd.get_trang_thai_hd_display }}
+                            </span>
+
                         {% elif hd.trang_thai_hd == 'dang_hieu_luc' %}
-                            <span class="contract-status status-active">
-                                Đang hiệu lực
+                            <span class="status-badge status-dang-hieu-luc">
+                                {{ hd.get_trang_thai_hd_display }}
                             </span>
+
+                        {% elif hd.trang_thai_hd == 'da_het_han' %}
+                            <span class="status-badge status-da-het-han">
+                                {{ hd.get_trang_thai_hd_display }}
+                            </span>
+
+                        {% elif hd.trang_thai_hd == 'da_cham_dut' %}
+                            <span class="status-badge status-da-cham-dut">
+                                {{ hd.get_trang_thai_hd_display }}
+                            </span>
+
                         {% else %}
-                            <span class="contract-status status-other">
+                            <span class="status-badge">
                                 {{ hd.get_trang_thai_hd_display }}
                             </span>
                         {% endif %}
 
                         <span class="contract-arrow">›</span>
+
                     </div>
 
                 </a>
