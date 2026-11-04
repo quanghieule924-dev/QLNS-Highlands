@@ -4,7 +4,7 @@
 {% block extra_css %}<link rel="stylesheet" href="{% static 'css/dashboard_new.css' %}">{% endblock %}
 {% block content %}
 <div class="dash-page">
-  <div class="dash-head"><div><div class="dash-kicker">KHÔNG GIAN QUẢN LÝ</div><h1>Tổng quan quản lý</h1><p>Thông tin nhân sự và các hoạt động cần theo dõi trong hệ thống.</p></div><div class="dash-date">{{ today|date:"l, d/m/Y" }}</div></div>
+  <div class="dash-head"><div><div class="dash-kicker"></div><h1>Tổng quan quản lý</h1><p></p></div><div class="dash-date">{{ today|date:"l, d/m/Y" }}</div></div>
   <section class="dash-metrics" aria-label="Chỉ số nhân sự">
     <a class="dash-metric metric-red" href="{% url 'accounts:module' 'employees' %}"><span class="metric-icon">♙</span><small>Nhân viên</small><strong>{{ employee_count }}</strong><span>Hồ sơ nhân viên <b>↗</b></span></a>
     <a class="dash-metric metric-blue" href="{% url 'accounts:module' 'recruitment' %}"><span class="metric-icon">▤</span><small>Hồ sơ ứng tuyển</small><strong>{{ application_count }}</strong><span>Hồ sơ đã ghi nhận <b>↗</b></span></a>
