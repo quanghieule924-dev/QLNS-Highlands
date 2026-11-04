@@ -1,0 +1,394 @@
+
+{% extends 'base_internal.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/contracts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="contract-page">
+
+    <!-- Tiêu đề -->
+    <div class="contract-breadcrumb"><a href="{% url 'contracts:tong_quan_hop_dong' %}">Hợp đồng &amp; Phúc lợi</a><span>›</span><span class="breadcrumb-current">Hợp đồng sắp hết hạn</span></div>
+    <div class="page-header">
+        <div>
+            <h2>Hợp đồng sắp hết hạn</h2>
+            <p>Theo dõi các hợp đồng lao động sắp đến ngày kết thúc.</p>
+        </div>
+
+        <a href="{% url 'contracts:danh_sach_hop_dong' %}"
+           class="btn-back">
+            <i class="fas fa-arrow-left"></i>
+            Quay lại
+        </a>
+    </div>
+
+    <!-- Bộ lọc -->
+    <div class="filter-card">
+        <form method="GET" class="filter-form">
+
+            <div class="filter-group">
+                <label>Tìm kiếm</label>
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ request.GET.q }}"
+                    placeholder="Nhập mã hoặc số hợp đồng..."
+                >
+            </div>
+
+            <button type="submit" class="btn-search">
+                Tìm kiếm
+            </button>
+
+            <a href="{% url 'contracts:hop_dong_sap_het_han' %}"
+               class="btn-reset">
+                Đặt lại
+            </a>
+
+        </form>
+    </div>
+
+    <!-- Bảng danh sách -->
+    <div class="table-card">
+
+        <div class="table-header">
+            <h3>Danh sách hợp đồng sắp hết hạn</h3>
+            <span>
+                Tổng số: {{ hop_dongs|length }} hợp đồng
+            </span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="contract-table">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã hợp đồng</th>
+                        <th>Số hợp đồng</th>
+                        <th>Nhân viên</th>
+                        <th>Loại hợp đồng</th>
+                        <th>Ngày bắt đầu</th>
+                        <th>Ngày kết thúc</th>
+                        <th>Còn lại</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for hd in hop_dongs %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+
+                        <td class="contract-code">
+                            {{ hd.mahd }}
+                        </td>
+
+                        <td>{{ hd.so_hd }}</td>
+
+                        <td>{{ hd.nhan_vien }}</td>
+
+                        <td>{{ hd.get_loai_hd_display }}</td>
+
+                        <td>
+                            {{ hd.ngay_bat_dau|date:"d/m/Y" }}
+                        </td>
+
+                        <td>
+                            {{ hd.ngay_ket_thuc|date:"d/m/Y" }}
+                        </td>
+
+                        <td>
+                            <span class="days-badge">
+                                {{ hd.so_ngay_con_lai }} ngày
+                            </span>
+                        </td>
+
+                        <td>
+                            <a href="{% url 'contracts:chi_tiet_hop_dong' hd.mahd %}"
+                               class="btn-detail">
+                                Chi tiết
+                            </a>
+                        </td>
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="empty-state">
+                            <i class="fas fa-check-circle"></i>
+                            <p>Không có hợp đồng nào sắp hết hạn.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<style>
+.contract-page {
+    padding: 26px 32px;
+    background: #f7f7f7;
+    min-height: calc(100vh - 70px);
+    color: #263445;
+}
+
+/* Tiêu đề */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.page-header h2 {
+    margin: 0 0 8px;
+    font-size: 26px;
+    font-weight: 700;
+    color: #202b38;
+}
+
+.page-header p {
+    margin: 0;
+    color: #718096;
+    font-size: 14px;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    color: #263445;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.btn-back:hover {
+    background: #f8f8f8;
+}
+
+/* Bộ lọc */
+.filter-card {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 11px;
+    padding: 20px 22px;
+    margin-bottom: 22px;
+}
+
+.filter-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 0;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #263445;
+}
+
+.filter-group input {
+    width: 100%;
+    height: 42px;
+    padding: 0 13px;
+    border: 1px solid #d9d9d9;
+    border-radius: 7px;
+    outline: none;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.filter-group input:focus {
+    border-color: #ce1235;
+}
+
+.filter-group input::placeholder {
+    color: #a0a0a0;
+}
+
+.btn-search,
+.btn-reset {
+    height: 42px;
+    padding: 0 20px;
+    border-radius: 7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+.btn-search {
+    background: #ce1235;
+    color: white;
+    border: 1px solid #ce1235;
+}
+
+.btn-search:hover {
+    background: #b50e2d;
+}
+
+.btn-reset {
+    background: white;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+/* Bảng */
+.table-card {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 11px;
+    overflow: hidden;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 19px 20px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.table-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #263445;
+}
+
+.table-header span {
+    font-size: 13px;
+    color: #718096;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.contract-table {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
+}
+
+.contract-table thead {
+    background: #fafafa;
+}
+
+.contract-table th {
+    padding: 15px 13px;
+    text-align: left;
+    color: #344054;
+    font-size: 12px;
+    font-weight: 600;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.contract-table td {
+    padding: 15px 13px;
+    font-size: 13px;
+    color: #344054;
+    border-bottom: 1px solid #ededed;
+}
+
+.contract-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.contract-table tbody tr:hover {
+    background: #fdfdfd;
+}
+
+.contract-code {
+    font-weight: 700;
+    color: #202b38 !important;
+}
+
+.days-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: #fff0f0;
+    color: #ce1235;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.btn-detail {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 12px;
+    border: 1px solid #f2b8c3;
+    border-radius: 6px;
+    color: #ce1235;
+    background: white;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.btn-detail:hover {
+    background: #ce1235;
+    color: white;
+}
+
+.empty-state {
+    text-align: center !important;
+    padding: 45px 15px !important;
+    color: #718096 !important;
+}
+
+.empty-state i {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 28px;
+    color: #22a06b;
+}
+
+.empty-state p {
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .contract-page {
+        padding: 18px;
+    }
+
+    .filter-form {
+        flex-wrap: wrap;
+    }
+
+    .filter-group {
+        flex-basis: 100%;
+    }
+
+    .page-header {
+        gap: 12px;
+    }
+}
+</style>
+{% endblock %}

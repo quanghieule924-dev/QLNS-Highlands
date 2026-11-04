@@ -7,30 +7,269 @@
 
     <title>{% block title %}HRM System | Highlands Coffee{% endblock %}</title>
 
-    <!-- Tích hợp Google Fonts Be Vietnam Pro -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="{% static 'css/font.css' %}">
-    <link rel="stylesheet" href="{% static 'css/common.css' %}">
-    <link rel="stylesheet" href="{% static 'css/internal.css' %}">
+    <!-- Font Montserrat -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS chung -->
+    <link rel="stylesheet" href="{% static 'css/font.css' %}">
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <link rel="stylesheet" href="{% static 'css/internal.css' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard_shared.css' %}">
 
-    <!-- CSS TÙY CHỈNH: TÁCH BIỆT MÀU SẮC SIDEBAR VÀ NỘI DUNG, XÓA BỎ KHỐI 3 DÒNG THỪA -->
     <style>
-        :root {
+                .notification-wrapper {
+            position: relative !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        /* Nút chuông */
+        .notification-wrapper .notification {
+            position: relative !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 40px !important;
+            height: 40px !important;
+            padding: 0 !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 50% !important;
+            background: #fff !important;
+            font-size: 18px !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .notification-wrapper .notification:hover {
+            background: #fff7ed !important;
+            border-color: #f5c28b !important;
+        }
+
+        /* Số thông báo chưa đọc */
+        .notification-count {
+            position: absolute !important;
+            top: -4px !important;
+            right: -4px !important;
+            min-width: 17px !important;
+            height: 17px !important;
+            padding: 0 4px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: #dc2626 !important;
+            color: #fff !important;
+            border: 2px solid #fff !important;
+            border-radius: 20px !important;
+            font-size: 10px !important;
+            font-weight: 700 !important;
+        }
+
+        /* Khung dropdown */
+        .notification-dropdown {
+            display: none !important;
+            position: absolute !important;
+            top: calc(100% + 12px) !important;
+            right: 0 !important;
+            width: 370px !important;
+            max-height: 430px !important;
+            overflow: hidden !important;
+            background: #fff !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 12px !important;
+            box-shadow: 0 10px 35px rgba(15, 23, 42, 0.14) !important;
+            z-index: 99999 !important;
+        }
+
+        .notification-dropdown.show {
+            display: block !important;
+        }
+
+        /* Tiêu đề */
+        .notification-header {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 17px 18px !important;
+            border-bottom: 1px solid #f0f0f0 !important;
+            background: #fff !important;
+        }
+
+        .notification-header h3 {
+            margin: 0 0 5px !important;
+            color: #1f2937 !important;
+            font-size: 16px !important;
+            font-weight: 700 !important;
+        }
+
+        .notification-header span {
+            color: #6b7280 !important;
+            font-size: 12px !important;
+        }
+
+        .notification-header .notification-bell {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            background: #fff7ed !important;
+            color: #c46a16 !important;
+            font-size: 17px !important;
+        }
+
+        /* Danh sách thông báo */
+        .notification-list {
+            max-height: 320px !important;
+            overflow-y: auto !important;
+            padding: 5px 0 !important;
+        }
+
+        /* Từng thông báo */
+        .notification-item {
+            display: flex !important;
+            align-items: flex-start !important;
+            gap: 11px !important;
+            padding: 14px 16px !important;
+            color: #374151 !important;
+            text-decoration: none !important;
+            border-bottom: 1px solid #f1f2f4 !important;
+            transition: background 0.2s ease !important;
+        }
+
+        .notification-item:hover {
+            background: #f9fafb !important;
+        }
+
+        .notification-item.unread {
+            background: #fffaf3 !important;
+        }
+
+        .notification-item.unread:hover {
+            background: #fff4e5 !important;
+        }
+
+        /* Icon từng thông báo */
+        .notification-icon {
+            flex-shrink: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 10px !important;
+            background: #fff0db !important;
+            font-size: 17px !important;
+        }
+
+        /* Nội dung */
+        .notification-content {
+            flex: 1 !important;
+            min-width: 0 !important;
+        }
+
+        .notification-content strong {
+            display: block !important;
+            margin-bottom: 5px !important;
+            color: #263449 !important;
+            font-size: 13px !important;
+            font-weight: 700 !important;
+        }
+
+        .notification-content p {
+            margin: 0 0 6px !important;
+            color: #4b5563 !important;
+            font-size: 12px !important;
+            line-height: 1.6 !important;
+            overflow-wrap: anywhere !important;
+        }
+
+        .notification-content small {
+            display: block !important;
+            color: #9ca3af !important;
+            font-size: 11px !important;
+        }
+
+        .notification-status {
+            display: inline-block !important;
+            margin-top: 7px !important;
+            color: #9ca3af !important;
+            font-size: 10px !important;
+        }
+
+        .notification-item.unread .notification-status {
+            color: #c46a16 !important;
+            font-weight: 600 !important;
+        }
+
+        .unread-dot {
+            flex-shrink: 0 !important;
+            width: 8px !important;
+            height: 8px !important;
+            margin-top: 6px !important;
+            border-radius: 50% !important;
+            background: #e68a24 !important;
+        }
+
+        /* Khi không có thông báo */
+        .notification-empty {
+            padding: 30px 18px !important;
+            text-align: center !important;
+            color: #6b7280 !important;
+        }
+
+        .notification-empty span {
+            display: block !important;
+            margin-bottom: 10px !important;
+            font-size: 28px !important;
+        }
+
+        .notification-empty strong {
+            display: block !important;
+            margin-bottom: 6px !important;
+            color: #374151 !important;
+            font-size: 14px !important;
+        }
+
+        .notification-empty p {
+            margin: 0 !important;
+            font-size: 12px !important;
+        }
+
+        /* Chân khung */
+        .notification-footer {
+            padding: 11px 16px !important;
+            text-align: center !important;
+            background: #fafafa !important;
+            border-top: 1px solid #eeeeee !important;
+            color: #9ca3af !important;
+            font-size: 11px !important;
+        }
+
+        /* Thanh cuộn */
+        .notification-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .notification-list::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .notification-dropdown {
+                width: min(350px, calc(100vw - 30px)) !important;
+                right: -55px !important;
+            }
+        }
+
+                :root {
             --sidebar-width: 210px !important;
             --header-height: 72px !important;
         }
-        body {
-            font-family: 'Be Vietnam Pro', Arial, sans-serif !important;
-            background-color: #F8F6F0 !important;
-            margin: 0;
-        }
+     
 
         /* 1. THANH HEADER NGANG ĐỎ ĐẬM HIGHLANDS */
         .internal-header {
@@ -195,10 +434,18 @@
             box-sizing: border-box;
             min-height: calc(100vh - var(--header-height));
         }
+
+        /* Trong CSS của main, đổi font body thành: */
+        body {
+            font-family: 'Montserrat', Arial, sans-serif !important;
+            background-color: #F8F6F0 !important;
+            margin: 0;
+        }
     </style>
 
     {% block extra_css %}{% endblock %}
 </head>
+
 
 <body>
 
@@ -231,15 +478,86 @@
 
             <div class="header-account">
 
-                <button
-                    type="button"
-                    class="notification"
-                    disabled
-                    title="Thông báo đang được phát triển"
-                    aria-label="Thông báo"
-                >
-                    ♧
-                </button>
+
+                {% if request.user.role == 'admin' %}
+                    <div class="notification-wrapper">
+
+                        <button
+                            type="button"
+                            class="notification"
+                            id="notificationButton"
+                            aria-label="Thông báo"
+                        >
+                            🔔
+
+                            {% if so_thong_bao_chua_doc > 0 %}
+                                <span class="notification-count">
+                                    {{ so_thong_bao_chua_doc }}
+                                </span>
+                            {% endif %}
+                        </button>
+
+                        <div class="notification-dropdown" id="notificationDropdown">
+
+                            <div class="notification-header">
+                                <div>
+                                    <h3>Thông báo</h3>
+                                    <span>{{ so_thong_bao_chua_doc }} thông báo chưa đọc</span>
+                                </div>
+                                <span class="notification-bell">🔔</span>
+                            </div>
+
+                            <div class="notification-list">
+
+                                {% for tb in thong_bao_moi_nhat %}
+                                    <a
+                                        href="{% url 'contracts:mo_thong_bao' tb.matb %}"
+                                        class="notification-item {% if tb.trang_thai == 'chua_doc' %}unread{% endif %}"
+                                    >
+                                        <span class="notification-icon">📄</span>
+
+                                        <div class="notification-content">
+                                            <strong>Hợp đồng sắp hết hạn</strong>
+
+                                            <p>{{ tb.noi_dung }}</p>
+
+                                            <small>
+                                                Mã hợp đồng: {{ tb.hop_dong.mahd }}
+                                            </small>
+
+                                            <span class="notification-status">
+                                                {% if tb.trang_thai == 'chua_doc' %}
+                                                    Chưa đọc
+                                                {% else %}
+                                                    Đã đọc
+                                                {% endif %}
+                                            </span>
+                                        </div>
+
+                                        {% if tb.trang_thai == 'chua_doc' %}
+                                            <span class="unread-dot"></span>
+                                        {% endif %}
+                                    </a>
+
+                                {% empty %}
+                                    <div class="notification-empty">
+                                        <span>♧</span>
+                                        <strong>Chưa có thông báo</strong>
+                                        <p>Các thông báo mới sẽ xuất hiện tại đây.</p>
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+
+                            <div class="notification-footer">
+                                <span>Hiển thị 10 thông báo gần nhất</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+                {% endif %}
+
 
                 <!-- AVATAR -->
                 <span class="account-avatar">
@@ -299,7 +617,12 @@
                         <span>Tuyển dụng</span>
                     </a>
 
-                    <a href="{% url 'accounts:module' 'contracts' %}" class="{% if active_menu == 'contracts' %}active{% endif %}">
+
+                    <a
+                        href="{% url 'contracts:tong_quan_hop_dong' %}"
+                        class="{% if active_menu == 'contracts' %}active{% endif %}"
+                    >
+
                         <span class="menu-icon">▤</span>
                         <span>Hợp đồng &amp; Phúc lợi</span>
                     </a>
@@ -347,7 +670,9 @@
                         <span>Hồ sơ của tôi</span>
                     </a>
 
-                    <a href="{% url 'accounts:module' 'contracts' %}" class="{% if active_menu == 'contracts' %}active{% endif %}">
+                    <a href="{% url 'contracts:danh_sach_hop_dong' %}"
+                       class="{% if active_menu == 'contracts' %}active{% endif %}">
+
                         <span class="menu-icon">▤</span>
                         <span>Hợp đồng &amp; Phúc lợi</span>
                     </a>
@@ -405,6 +730,27 @@
         </main>
 
     {% endif %}
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const button = document.getElementById('notificationButton');
+        const dropdown = document.getElementById('notificationDropdown');
+
+        if (button && dropdown) {
+            button.addEventListener('click', function (event) {
+                event.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+
+            document.addEventListener('click', function (event) {
+                if (!dropdown.contains(event.target) &&
+                    !button.contains(event.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        }
+    });
+    </script>
 
     {% block extra_js %}{% endblock %}
 

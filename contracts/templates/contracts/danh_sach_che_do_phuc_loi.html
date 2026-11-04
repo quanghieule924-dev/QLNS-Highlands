@@ -1,0 +1,137 @@
+{% extends 'base_internal.html' %}
+{% load static %}
+
+{% block title %}Quản lý chế độ phúc lợi | HRM System{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/contracts.css' %}">
+{% endblock %}
+
+
+
+{% block content %}
+<div class="page-container benefit-page">
+
+    <!-- Tiêu đề trang -->
+    <div class="contract-breadcrumb"><a href="{% url 'contracts:tong_quan_hop_dong' %}">Hợp đồng &amp; Phúc lợi</a><span>›</span><span class="breadcrumb-current">Quản lý chế độ phúc lợi</span></div>
+    <div class="page-header">
+        <div>
+            <h1>Quản lý chế độ phúc lợi</h1>
+        </div>
+
+        <a href="{% url 'contracts:them_che_do_phuc_loi' %}"
+           class="btn btn-primary">
+            + Thêm chế độ mới
+        </a>
+    </div>
+
+    <!-- Bảng danh sách -->
+    <div class="benefit-table-container">
+
+        <div class="benefit-table-header">
+            <strong>
+                Danh sách chế độ phúc lợi · {{ page_obj.paginator.count }}
+            </strong>
+
+            <span>Danh mục phúc lợi</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="benefit-table">
+
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên phúc lợi</th>
+                        <th>Mô tả</th>
+                        <th>Điều kiện hưởng</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for che_do in page_obj %}
+                    <tr>
+                        <td>
+                            {{ page_obj.start_index|add:forloop.counter0 }}
+                        </td>
+
+                        <td class="benefit-name">
+                            {{ che_do.ten_pl }}
+                        </td>
+
+                        <td class="benefit-description">
+                            {{ che_do.mo_ta|default:"Chưa có mô tả" }}
+                        </td>
+
+                        <td class="benefit-condition">
+                            {{ che_do.dieu_kien_huong|default:"Chưa thiết lập điều kiện" }}
+                        </td>
+
+                        <td>
+                            <a href="{% url 'contracts:sua_che_do_phuc_loi' che_do.mapl %}"
+                               class="benefit-edit-link">
+                                Sửa
+                            </a>
+                        </td>
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="benefit-empty">
+                            Chưa có chế độ phúc lợi nào.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+        <!-- Phân trang -->
+        {% if page_obj.paginator.num_pages > 0 %}
+        <div class="benefit-pagination">
+
+            <span>
+                Hiển thị
+                {{ page_obj.start_index }}–{{ page_obj.end_index }}
+                trong tổng số {{ page_obj.paginator.count }} chế độ phúc lợi
+            </span>
+
+            <div class="pagination-controls">
+
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}"
+                       class="pagination-arrow">
+                        ‹
+                    </a>
+                {% else %}
+                    <span class="pagination-arrow disabled">‹</span>
+                {% endif %}
+
+                <span class="pagination-current">
+                    {{ page_obj.number }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}"
+                       class="pagination-arrow">
+                        ›
+                    </a>
+                {% else %}
+                    <span class="pagination-arrow disabled">›</span>
+                {% endif %}
+
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <div class="benefit-note">
+        <span>ⓘ</span>
+        Danh mục này được sử dụng khi thiết lập phúc lợi cho hợp đồng tại chi nhánh.
+    </div>
+
+</div>
+{% endblock %}

@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.conf import settings
 from django.conf.urls.static import static
 
+
 def home(request):
     return render(request, 'home.html')
 
@@ -59,6 +60,9 @@ urlpatterns = [
     ),
 
     # --- TÍCH HỢP ĐẦY ĐỦ TẤT CẢ CÁC APP CỦA NHÓM ---
+    # Trang hợp đồng
+    path('contracts/', include('contracts.urls')),
+
     path('payroll/', include('payroll.urls')),
     path('reports/', include('reports.urls')),
     path('scheduling/', include('scheduling.urls', namespace='scheduling')),

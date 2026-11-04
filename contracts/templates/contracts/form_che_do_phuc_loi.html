@@ -1,0 +1,108 @@
+{% extends 'base_internal.html' %}
+{% load static %}
+
+{% block title %}{{ tieu_de }} | HRM System{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/contracts.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="benefit-modal-overlay">
+
+    <div class="benefit-modal">
+
+        <!-- Tiêu đề popup -->
+        <div class="benefit-modal-header">
+            <div>
+                <h2>{{ tieu_de }}</h2>
+
+                <p>
+                    {% if che_do %}
+                        Cập nhật thông tin chế độ phúc lợi trong danh mục của chi nhánh.
+                    {% else %}
+                        Nhập thông tin để tạo chế độ phúc lợi cho chi nhánh.
+                    {% endif %}
+                </p>
+            </div>
+
+            <a href="{% url 'contracts:danh_sach_che_do_phuc_loi' %}"
+               class="benefit-modal-close">
+                ×
+            </a>
+        </div>
+
+        <!-- Form -->
+        <form method="post">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="benefit-form-group">
+
+                <label for="{{ form.ten_pl.id_for_label }}">
+                    Tên phúc lợi <span>*</span>
+                </label>
+
+                {{ form.ten_pl }}
+
+                {% for error in form.ten_pl.errors %}
+                    <small class="error-message">{{ error }}</small>
+                {% endfor %}
+
+            </div>
+
+            <div class="benefit-form-group">
+
+                <label for="{{ form.mo_ta.id_for_label }}">
+                    Mô tả
+                </label>
+
+                {{ form.mo_ta }}
+
+                {% for error in form.mo_ta.errors %}
+                    <small class="error-message">{{ error }}</small>
+                {% endfor %}
+
+            </div>
+
+            <div class="benefit-form-group">
+
+                <label for="{{ form.dieu_kien_huong.id_for_label }}">
+                    Điều kiện hưởng
+                </label>
+
+                {{ form.dieu_kien_huong }}
+
+                {% for error in form.dieu_kien_huong.errors %}
+                    <small class="error-message">{{ error }}</small>
+                {% endfor %}
+
+            </div>
+
+            <!-- Nút thao tác -->
+            <div class="benefit-modal-actions">
+
+                <a href="{% url 'contracts:danh_sach_che_do_phuc_loi' %}"
+                   class="btn btn-secondary">
+                    Hủy
+                </a>
+
+                <button type="submit" class="btn btn-primary">
+                    Lưu
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
