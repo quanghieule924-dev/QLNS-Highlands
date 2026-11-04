@@ -1,0 +1,645 @@
+
+{% extends "base_internal.html" %}
+
+{% block title %}
+Quản lý chấm công | Highlands HRM
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .manager-attendance {
+        padding: 18px 20px 35px;
+        font-family: 'Montserrat', sans-serif;
+        color: #253047;
+    }
+
+    .ma-heading {
+        background: white;
+        border-left: 5px solid #c8102e;
+        border-radius: 14px;
+        padding: 24px 28px;
+        box-shadow: 0 3px 14px rgba(0,0,0,.04);
+        margin-bottom: 24px;
+    }
+
+    .ma-heading h2 {
+        margin: 0 0 8px;
+        font-size: 24px;
+    }
+
+    .ma-heading p {
+        margin: 0;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .ma-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 22px;
+        border-bottom: 1px solid #dfe3ea;
+        margin-bottom: 24px;
+    }
+
+    .ma-tab {
+        background: transparent;
+        border: none;
+        border-bottom: 3px solid transparent;
+        padding: 13px 7px;
+        font: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        color: #64748b;
+    }
+
+    .ma-tab.active {
+        color: #c8102e;
+        border-bottom-color: #c8102e;
+    }
+
+    .ma-tab.pending {
+        color: #a1a9b7;
+    }
+
+    .ma-summary {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 15px;
+        margin-bottom: 24px;
+    }
+
+    .ma-stat {
+        background: white;
+        border: 1px solid #e5e9f0;
+        border-radius: 13px;
+        padding: 21px;
+    }
+
+    .ma-stat-label {
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 15px;
+    }
+
+    .ma-stat-number {
+        font-size: 29px;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .ma-stat-note {
+        margin-top: 12px;
+        font-size: 12px;
+        color: #8792a3;
+    }
+
+    .ma-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+    }
+
+    .ma-toolbar h3 {
+        margin: 0 0 6px;
+        font-size: 19px;
+    }
+
+    .ma-toolbar p {
+        margin: 0;
+        font-size: 13px;
+        color: #64748b;
+    }
+
+    .ma-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .ma-button {
+        display: inline-block;
+        background: #c8102e;
+        color: white;
+        text-decoration: none;
+        border-radius: 9px;
+        padding: 12px 16px;
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    .ma-button:hover {
+        background: #ab0d27;
+        color: white;
+    }
+
+    .ma-filter {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 17px;
+    }
+
+    .ma-input,
+    .ma-select {
+        border: 1px solid #d9dee7;
+        border-radius: 9px;
+        background: white;
+        color: #253047;
+        font: inherit;
+        font-size: 13px;
+        padding: 11px 13px;
+        min-width: 150px;
+    }
+
+    .ma-input {
+        flex: 1;
+        min-width: 190px;
+    }
+
+    .ma-table-card {
+        background: #fff;
+        border: 1px solid #e5e9f0;
+        border-radius: 13px;
+        overflow: hidden;
+    }
+
+    .ma-table-wrap {
+        overflow-x: auto;
+    }
+
+    .ma-table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 1050px;
+        font-size: 13px;
+    }
+
+    .ma-table th {
+        background: #f9e1e6;
+        color: #80283a;
+        font-weight: 700;
+        text-align: left;
+        padding: 16px 13px;
+        border-bottom: 1px solid #edcdd5;
+        white-space: nowrap;
+    }
+
+    .ma-table td {
+        padding: 16px 13px;
+        border-bottom: 1px solid #edf0f4;
+        vertical-align: middle;
+    }
+
+    .ma-table tbody tr:hover {
+        background: #fafbfc;
+    }
+
+    .ma-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .ma-employee-name {
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .ma-employee-code {
+        font-size: 12px;
+        color: #8792a3;
+    }
+
+    .ma-badge {
+        display: inline-block;
+        border-radius: 20px;
+        padding: 7px 11px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .ma-da-checkin {
+        background: #fff0d6;
+        color: #9c6500;
+    }
+
+    .ma-da-checkout {
+        background: #e0f5e8;
+        color: #16794b;
+    }
+
+    .ma-chua-checkin {
+        background: #f0f1f4;
+        color: #64748b;
+    }
+
+    .ma-chua-den-gio {
+        background: #e8f0fe;
+        color: #3560a0;
+    }
+
+    .ma-late {
+        color: #c8102e;
+        font-weight: 700;
+    }
+
+    .ma-empty {
+        padding: 45px 20px;
+        text-align: center;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .ma-footer-note {
+        margin-top: 17px;
+        color: #718096;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    @media (max-width: 1100px) {
+        .ma-summary {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 600px) {
+        .manager-attendance {
+            padding: 12px;
+        }
+
+        .ma-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .ma-heading {
+            padding: 20px;
+        }
+
+        .ma-tabs {
+            gap: 8px;
+        }
+
+        .ma-tab {
+            font-size: 12px;
+            padding: 10px 5px;
+        }
+    }
+</style>
+
+<div class="manager-attendance">
+
+    <!-- TIÊU ĐỀ -->
+    <div class="ma-heading">
+        <h2>Quản lý chấm công</h2>
+
+    </div>
+
+    <!-- THANH TAB -->
+    <div class="ma-tabs">
+
+        <span class="ma-tab active">
+            Chấm công hôm nay
+        </span>
+
+<a
+    href="{% url 'attendance:manager_history' %}"
+    class="ma-tab"
+    style="text-decoration:none;"
+>
+    Lịch sử chấm công
+</a>
+
+        <!--<span class="ma-tab pending">
+            Giải trình
+        </span> -->
+
+<a
+    href="{% url 'attendance:manager_face_station' %}"
+    class="ma-tab"
+    style="text-decoration:none;"
+>
+    Face ID &amp; Trạm
+</a>
+
+    </div>
+
+    <!-- THỐNG KÊ -->
+    <div class="ma-summary">
+
+        <div class="ma-stat">
+            <div class="ma-stat-label">
+                Lượt ca theo lịch
+            </div>
+            <div class="ma-stat-number">
+                {{ tong_luot_ca }}
+            </div>
+            <div class="ma-stat-note">
+                Đã được công bố hôm nay
+            </div>
+        </div>
+
+        <div class="ma-stat">
+            <div class="ma-stat-label">
+                Đã Check-in
+            </div>
+            <div class="ma-stat-number">
+                {{ da_checkin }}
+            </div>
+            <div class="ma-stat-note">
+                Bao gồm ca đã Check-out
+            </div>
+        </div>
+
+        <div class="ma-stat">
+            <div class="ma-stat-label">
+                Chưa Check-in
+            </div>
+            <div class="ma-stat-number">
+                {{ chua_checkin }}
+            </div>
+            <div class="ma-stat-note">
+                Bao gồm ca chưa đến giờ
+            </div>
+        </div>
+
+        <div class="ma-stat">
+            <div class="ma-stat-label">
+                Đã Check-out
+            </div>
+            <div class="ma-stat-number">
+                {{ da_checkout }}
+            </div>
+            <div class="ma-stat-note">
+                Đã ghi nhận giờ kết thúc
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TIÊU ĐỀ BẢNG -->
+    <div class="ma-toolbar">
+
+        <div>
+            <h3>Danh sách chấm công hôm nay</h3>
+            <p>
+                Ngày {{ hom_nay|date:"d/m/Y" }}
+                · {{ tong_luot_ca }} lượt ca làm việc
+            </p>
+        </div>
+
+
+
+    </div>
+
+    <!-- BỘ LỌC -->
+    <div class="ma-filter">
+
+        <input
+            type="text"
+            class="ma-input"
+            id="maSearch"
+            placeholder="Tìm tên hoặc mã nhân viên..."
+        >
+
+        <select class="ma-select" id="maShiftFilter">
+            <option value="">Tất cả ca làm</option>
+        </select>
+
+        <select class="ma-select" id="maStatusFilter">
+            <option value="">Tất cả trạng thái</option>
+            <option value="Đã Check-in">Đã Check-in</option>
+            <option value="Đã Check-out">Đã Check-out</option>
+            <option value="Chưa Check-in">Chưa Check-in</option>
+            <option value="Chưa đến giờ">Chưa đến giờ</option>
+        </select>
+
+    </div>
+
+    <!-- BẢNG CHẤM CÔNG -->
+    <div class="ma-table-card">
+        <div class="ma-table-wrap">
+
+            <table class="ma-table">
+
+                <thead>
+                    <tr>
+                        <th>Nhân viên</th>
+                        <th>Ca làm việc</th>
+                        <th>Giờ theo lịch</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Giờ thực tế</th>
+                        <th>Trạng thái</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                </thead>
+
+                <tbody id="maTableBody">
+
+                    {% for item in danh_sach_cham_cong %}
+
+                        <tr
+                            class="ma-data-row"
+                            data-name="{{ item.ho_ten|lower }}"
+                            data-code="{{ item.ma_nv|lower }}"
+                            data-shift="{{ item.ten_ca }}"
+                            data-status="{{ item.trang_thai }}"
+                        >
+
+                            <td>
+                                <div class="ma-employee-name">
+                                    {{ item.ho_ten }}
+                                </div>
+
+                                <div class="ma-employee-code">
+                                    {{ item.ma_nv }}
+                                </div>
+                            </td>
+
+                            <td>
+                                {{ item.ten_ca }}
+                            </td>
+
+                            <td>
+                                {% if item.gio_bat_dau and item.gio_ket_thuc %}
+                                    {{ item.gio_bat_dau|date:"H:i" }}
+                                    –
+                                    {{ item.gio_ket_thuc|date:"H:i" }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if item.time_checkin %}
+                                    {{ item.time_checkin|date:"H:i:s" }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if item.time_checkout %}
+                                    {{ item.time_checkout|date:"H:i:s" }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ item.so_gio_lam }}
+                            </td>
+
+                            <td>
+                                <span
+                                    class="ma-badge ma-{{ item.mau_trang_thai }}"
+                                >
+                                    {{ item.trang_thai }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {% if item.ghi_chu != '—' %}
+                                    <span class="ma-late">
+                                        {{ item.ghi_chu }}
+                                    </span>
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="8">
+                                <div class="ma-empty">
+                                    Hôm nay chưa có lịch làm việc
+                                    nào được công bố.
+                                </div>
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+    <p
+        id="maNoMatch"
+        class="ma-footer-note"
+        style="display:none;"
+    >
+        Không tìm thấy nhân viên hoặc ca làm
+        phù hợp với bộ lọc.
+    </p>
+
+    <p class="ma-footer-note">
+        Dữ liệu được lấy từ lịch làm việc đã công bố
+        và các bản ghi chấm công thực tế.
+        Các lượt chưa Check-in không mặc nhiên
+        được xác định là vắng mặt.
+    </p>
+
+</div>
+
+
+<script>
+(function () {
+
+    const searchInput =
+        document.getElementById("maSearch");
+
+    const shiftFilter =
+        document.getElementById("maShiftFilter");
+
+    const statusFilter =
+        document.getElementById("maStatusFilter");
+
+    const rows = Array.from(
+        document.querySelectorAll(".ma-data-row")
+    );
+
+    const noMatch =
+        document.getElementById("maNoMatch");
+
+    // Tạo danh sách ca từ dữ liệu bảng
+    const shiftNames = [
+        ...new Set(
+            rows.map(row => row.dataset.shift)
+        )
+    ];
+
+    shiftNames.sort().forEach(name => {
+
+        const option = document.createElement("option");
+
+        option.value = name;
+        option.textContent = name;
+
+        shiftFilter.appendChild(option);
+    });
+
+    // Lọc danh sách
+    function applyFilters() {
+
+        const keyword =
+            searchInput.value.trim().toLowerCase();
+
+        const shift = shiftFilter.value;
+        const status = statusFilter.value;
+
+        let visible = 0;
+
+        rows.forEach(row => {
+
+            const name = row.dataset.name || "";
+            const code = row.dataset.code || "";
+
+            const matchesName =
+                name.includes(keyword) ||
+                code.includes(keyword);
+
+            const matchesShift =
+                !shift || row.dataset.shift === shift;
+
+            const matchesStatus =
+                !status || row.dataset.status === status;
+
+            const show =
+                matchesName &&
+                matchesShift &&
+                matchesStatus;
+
+            row.style.display = show ? "" : "none";
+
+            if (show) {
+                visible += 1;
+            }
+        });
+
+        noMatch.style.display =
+            rows.length > 0 && visible === 0
+                ? "block"
+                : "none";
+    }
+
+    searchInput.addEventListener("input", applyFilters);
+    shiftFilter.addEventListener("change", applyFilters);
+    statusFilter.addEventListener("change", applyFilters);
+
+})();
+</script>
+
+{% endblock %}

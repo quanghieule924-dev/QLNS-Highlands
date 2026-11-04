@@ -1,0 +1,1279 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trạm chấm công Face ID | Highlands Coffee</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --red: #c8102e;
+            --dark: #121923;
+            --card: #1c2633;
+            --border: #344151;
+            --text: #ffffff;
+            --muted: #a7b4c5;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: radial-gradient(
+                circle at top,
+                #263444 0%,
+                #141d29 52%,
+                #0d141d 100%
+            );
+            color: var(--text);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .kiosk-container {
+            width: min(1200px, calc(100% - 40px));
+            margin: auto;
+            padding: 26px 0 35px;
+        }
+
+        /* HEADER */
+
+        .kiosk-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-logo {
+            width: 55px;
+            height: 55px;
+            border-radius: 16px;
+            background: var(--red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 29px;
+            font-weight: 800;
+            box-shadow: 0 8px 25px rgba(200,16,46,.25);
+        }
+
+        .brand h1 {
+            font-size: 20px;
+            margin: 0 0 5px;
+            letter-spacing: .3px;
+        }
+
+        .brand p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--muted);
+            letter-spacing: 1.4px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .station-status {
+            display: flex;
+            gap: 9px;
+            align-items: center;
+            color: #9fe5b9;
+            font-size: 13px;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #42d38b;
+            box-shadow: 0 0 12px rgba(66,211,139,.6);
+        }
+
+        .clock {
+            text-align: right;
+        }
+
+        .clock-time {
+            font-size: 28px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .clock-date {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* TITLE */
+
+        .page-intro {
+            text-align: center;
+            padding: 32px 0 26px;
+        }
+
+        .page-intro h2 {
+            margin: 0 0 10px;
+            font-size: 29px;
+            font-weight: 700;
+        }
+
+        .page-intro p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* MAIN LAYOUT */
+
+        .kiosk-main {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr)
+                                   minmax(320px, .75fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .panel {
+            background: rgba(28,38,51,.95);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            min-width: 0;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .panel-title h3 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .panel-subtitle {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* CAMERA */
+
+        .camera-box {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #090f17;
+            border: 1px solid #39495b;
+            border-radius: 16px;
+        }
+
+        #cameraPreview {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: none;
+            transform: scaleX(-1);
+        }
+
+        .face-frame {
+            position: absolute;
+            width: 49%;
+            height: 76%;
+            border: 2px dashed rgba(255,255,255,.6);
+            border-radius: 45% 45% 42% 42%;
+            pointer-events: none;
+            display: none;
+            z-index: 2;
+        }
+
+        .camera-placeholder {
+            text-align: center;
+            color: #8ea0b7;
+            padding: 25px;
+        }
+
+        .camera-icon {
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 20px;
+            border: 2px solid #425369;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+        }
+
+        .camera-placeholder strong {
+            display: block;
+            margin-bottom: 10px;
+            color: #e5edf7;
+            font-size: 17px;
+        }
+
+        .camera-placeholder p {
+            font-size: 13px;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .camera-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 8px 12px;
+            background: rgba(0,0,0,.6);
+            color: white;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 3;
+        }
+
+        .camera-instruction {
+            margin: 18px 0 0;
+            text-align: center;
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .camera-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* FORM */
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #e7edf5;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #415066;
+            background: #111a26;
+            border-radius: 10px;
+            outline: none;
+            font-size: 15px;
+            color: white;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            border-color: #df4b65;
+            box-shadow: 0 0 0 3px rgba(200,16,46,.15);
+        }
+
+        .form-input::placeholder {
+            color: #738299;
+        }
+
+        .field-help {
+            margin: 9px 0 25px;
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .action-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .action-option {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .action-option input {
+            position: absolute;
+            opacity: 0;
+            width: 1px;
+            height: 1px;
+        }
+
+        .action-content {
+            display: block;
+            text-align: center;
+            padding: 17px 10px;
+            border: 1px solid #415066;
+            border-radius: 12px;
+            font-size: 14px;
+            background: #141e2b;
+            color: #d5dce7;
+            transition: .2s;
+        }
+
+        .action-option input:checked + .action-content {
+            border-color: #ec526a;
+            background: rgba(200,16,46,.18);
+            color: #ff91a4;
+            font-weight: 700;
+        }
+
+        .action-option input:focus-visible + .action-content {
+            outline: 2px solid white;
+            outline-offset: 3px;
+        }
+
+        .btn {
+            padding: 15px;
+            border: 0;
+            border-radius: 11px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .btn-primary {
+            background: var(--red);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #e0183a;
+        }
+
+        .btn-secondary {
+            background: #374456;
+            color: #e3e9f1;
+            flex: 1;
+        }
+
+        .btn:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+
+        /* STATUS */
+
+        .result-box {
+            margin-top: 23px;
+            border: 1px solid #415066;
+            background: #15202d;
+            border-radius: 12px;
+            padding: 17px;
+            min-height: 85px;
+        }
+
+        .result-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 9px;
+        }
+
+        .result-description {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .result-box.success {
+            border-color: #2b9165;
+            background: #142d25;
+        }
+
+        .result-box.error {
+            border-color: #ba4558;
+            background: #321a25;
+        }
+
+        .result-box.error .result-title {
+            color: #ff8fa0;
+        }
+
+        .device-info {
+            margin-top: 23px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .kiosk-footer {
+            margin-top: 28px;
+            text-align: center;
+            color: #7e8ca0;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 850px) {
+            .kiosk-main {
+                grid-template-columns: 1fr;
+            }
+
+            .header-right {
+                gap: 12px;
+            }
+
+            .station-status {
+                display: none;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .kiosk-container {
+                width: calc(100% - 22px);
+            }
+
+            .kiosk-header {
+                align-items: flex-start;
+            }
+
+            .brand h1 {
+                font-size: 15px;
+            }
+
+            .brand p {
+                font-size: 10px;
+            }
+
+            .brand-logo {
+                width: 45px;
+                height: 45px;
+            }
+
+            .clock-time {
+                font-size: 19px;
+            }
+
+            .page-intro h2 {
+                font-size: 23px;
+            }
+
+            .panel {
+                padding: 16px;
+            }
+
+            .camera-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="kiosk-container">
+
+    <!-- HEADER -->
+    <header class="kiosk-header">
+
+        <div class="brand">
+            <div class="brand-logo">H</div>
+
+            <div>
+                <h1>HIGHLANDS COFFEE</h1>
+                <p>FACE ID ATTENDANCE SYSTEM</p>
+            </div>
+        </div>
+
+        <div class="header-right">
+
+            <div class="station-status">
+                <span class="status-dot"></span>
+                <span>Chế độ thử camera</span>
+            </div>
+
+            <div class="clock">
+                <div class="clock-time" id="clockTime">
+                    --:--:--
+                </div>
+
+                <div class="clock-date" id="clockDate">
+                    Đang tải ngày...
+                </div>
+            </div>
+
+        </div>
+
+    </header>
+
+    <!-- TITLE -->
+    <section class="page-intro">
+
+        <h2>HỆ THỐNG CHẤM CÔNG FACE ID</h2>
+
+        <p>
+            Chi nhánh 258 Bạch Đằng
+            <br>
+            Vui lòng nhập mã nhân viên và thực hiện quét khuôn mặt
+        </p>
+
+    </section>
+
+    <!-- MAIN -->
+    <main class="kiosk-main">
+
+        <!-- CAMERA -->
+        <section class="panel">
+
+            <div class="panel-title">
+                <h3>Nhận diện khuôn mặt</h3>
+                <span class="panel-subtitle">CAMERA PREVIEW</span>
+            </div>
+
+            <div class="camera-box">
+
+                <div class="camera-tag">
+                    ● LIVE CAMERA
+                </div>
+
+                <video
+                    id="cameraPreview"
+                    autoplay
+                    muted
+                    playsinline
+                ></video>
+
+                <div class="face-frame" id="faceFrame"></div>
+
+                <div
+                    class="camera-placeholder"
+                    id="cameraPlaceholder"
+                >
+                    <div class="camera-icon">◎</div>
+
+                    <strong>Camera chưa được kích hoạt</strong>
+
+                    <p>
+                        Nhập mã nhân viên và nhấn nút
+                        mở camera để bắt đầu.
+                    </p>
+                </div>
+
+            </div>
+
+            <p class="camera-instruction">
+                Đặt khuôn mặt vào giữa khung hình.
+                Đảm bảo đủ ánh sáng và không che khuất mặt.
+            </p>
+
+            <div class="camera-controls">
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="openCamera"
+                >
+                    Mở camera
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    id="closeCamera"
+                    disabled
+                >
+                    Tắt camera
+                </button>
+
+            </div>
+
+
+<button
+    type="button"
+    class="btn btn-primary"
+    id="verifyFaceButton"
+    disabled
+    style="width:100%; margin-top:12px;"
+>
+    Quét Face ID & xác nhận chấm công
+</button>
+
+<!-- CSRF cho yêu cầu POST tới Django -->
+<div style="display:none;">
+    {% csrf_token %}
+</div>
+
+
+        </section>
+
+        <!-- EMPLOYEE INPUT -->
+        <section class="panel">
+
+            <div class="panel-title">
+                <h3>Thông tin chấm công</h3>
+                <span class="panel-subtitle">ATTENDANCE</span>
+            </div>
+
+            <label class="form-label" for="employeeCode">
+                Mã nhân viên
+            </label>
+
+            <input
+
+                id="employeeCode"
+                class="form-input"
+                type="text"
+                placeholder="Ví dụ: NV03"
+                autocomplete="off"
+                maxlength="20"
+            >
+
+<div style="margin: 14px 0 22px;">
+
+    <button
+        type="button"
+        class="btn btn-secondary"
+        id="loadShiftsButton"
+        style="width:100%;"
+    >
+        Kiểm tra ca làm hôm nay
+    </button>
+
+    <label
+        for="shiftSelect"
+        class="form-label"
+        style="margin-top:18px;"
+    >
+        Ca làm việc đã công bố
+    </label>
+
+    <select
+        id="shiftSelect"
+        class="form-input"
+        style="appearance:auto;"
+        disabled
+    >
+        <option value="">
+            -- Nhập mã nhân viên để tìm ca --
+        </option>
+    </select>
+
+    <p
+        id="employeeInfo"
+        style="color:#a7b4c5;font-size:13px;"
+    ></p>
+
+</div>
+
+
+
+
+            <label class="form-label">
+                Hình thức chấm công
+            </label>
+
+            <div class="action-options">
+
+                <label class="action-option">
+                    <input
+                        type="radio"
+                        name="attendanceAction"
+                        value="checkin"
+                        checked
+                    >
+                    <span class="action-content">
+                        Check-in
+                    </span>
+                </label>
+
+                <label class="action-option">
+                    <input
+                        type="radio"
+                        name="attendanceAction"
+                        value="checkout"
+                    >
+                    <span class="action-content">
+                        Check-out
+                    </span>
+                </label>
+
+            </div>
+
+<div class="result-box" id="resultBox">
+
+    <div class="result-title" id="resultTitle">
+        Sẵn sàng chấm công
+    </div>
+
+    <p class="result-description" id="resultDescription">
+        Vui lòng nhập mã nhân viên, chọn ca làm việc
+        và thực hiện quét khuôn mặt để Check-in hoặc Check-out.
+    </p>
+
+</div>
+
+            <div class="device-info">
+                <span>Thiết bị: Trạm chấm công</span>
+                <span>Trạng thái: Đang hoạt động</span>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="kiosk-footer">
+        Highlands HRM · Hệ thống chấm công nội bộ
+        <br>
+        Vui lòng liên hệ quản lý khi cần hỗ trợ.
+    </footer>
+
+</div>
+
+
+<script>
+(function () {
+
+    const video = document.getElementById("cameraPreview");
+    const placeholder = document.getElementById("cameraPlaceholder");
+    const faceFrame = document.getElementById("faceFrame");
+
+    const openButton = document.getElementById("openCamera");
+    const closeButton = document.getElementById("closeCamera");
+
+    const employeeCode = document.getElementById("employeeCode");
+
+    const resultBox = document.getElementById("resultBox");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultDescription = document.getElementById("resultDescription");
+
+    const verifyButton = document.getElementById("verifyFaceButton");
+    let verifying = false;
+    let cameraStream = null;
+    let openingCamera = false;
+    let pageActive = true;
+
+
+    // =====================================================
+    // 1. ĐỒNG HỒ THỜI GIAN THỰC
+    // =====================================================
+
+    function updateClock() {
+
+        const now = new Date();
+
+        document.getElementById("clockTime").textContent =
+            now.toLocaleTimeString("vi-VN", {
+                hour12: false
+            });
+
+        document.getElementById("clockDate").textContent =
+            now.toLocaleDateString("vi-VN", {
+                weekday: "long",
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric"
+            });
+    }
+
+    updateClock();
+
+    const clockInterval = setInterval(updateClock, 1000);
+
+
+    // =====================================================
+    // 2. HIỂN THỊ THÔNG BÁO
+    // =====================================================
+
+    function showResult(title, description, type = "") {
+
+        resultTitle.textContent = title;
+        resultDescription.textContent = description;
+
+        resultBox.className = "result-box";
+
+        if (type) {
+            resultBox.classList.add(type);
+        }
+    }
+
+
+    // =====================================================
+    // 3. TẮT CAMERA
+    // =====================================================
+
+    function stopCamera() {
+
+        if (cameraStream) {
+
+            cameraStream.getTracks().forEach(track => {
+                track.stop();
+            });
+
+            cameraStream = null;
+        }
+
+        video.pause();
+        video.srcObject = null;
+        video.style.display = "none";
+
+        faceFrame.style.display = "none";
+        placeholder.style.display = "block";
+
+        openButton.disabled = false;
+        closeButton.disabled = true;
+        verifyButton.disabled = true;
+    }
+
+
+    // =====================================================
+    // 4. MỞ CAMERA
+    // =====================================================
+
+    async function startCamera() {
+
+        if (openingCamera || cameraStream) {
+            return;
+        }
+
+        const code = employeeCode.value.trim();
+
+        if (!code) {
+
+            showResult(
+                "Chưa nhập mã nhân viên",
+                "Vui lòng nhập mã nhân viên trước khi mở camera.",
+                "error"
+            );
+
+            employeeCode.focus();
+            return;
+        }
+
+        if (!navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia) {
+
+            showResult(
+                "Không thể mở camera",
+                "Trình duyệt không hỗ trợ camera hoặc " +
+                "website chưa chạy trong môi trường an toàn.",
+                "error"
+            );
+
+            return;
+        }
+
+        openingCamera = true;
+        openButton.disabled = true;
+
+        showResult(
+            "Đang khởi động camera",
+            "Vui lòng cấp quyền sử dụng camera trên trình duyệt."
+        );
+
+        let stream = null;
+
+        try {
+
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: "user"
+                },
+                audio: false
+            });
+
+            if (!pageActive) {
+                stream.getTracks().forEach(track => track.stop());
+                return;
+            }
+
+            cameraStream = stream;
+            video.srcObject = stream;
+
+            await video.play();
+
+            if (!pageActive) {
+                stopCamera();
+                return;
+            }
+
+            video.style.display = "block";
+            placeholder.style.display = "none";
+            faceFrame.style.display = "block";
+
+            closeButton.disabled = false;
+            verifyButton.disabled = false;
+
+            showResult(
+                "Camera đã hoạt động",
+                "Đang xem trước hình ảnh cho mã nhân viên " +
+                code +
+                ". Chưa xác minh danh tính hoặc ghi công."
+            );
+
+        } catch (error) {
+
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+
+            cameraStream = null;
+            video.srcObject = null;
+            video.style.display = "none";
+            placeholder.style.display = "block";
+            faceFrame.style.display = "none";
+            closeButton.disabled = true;
+            openButton.disabled = false;
+
+            if (error.name === "NotAllowedError") {
+
+                showResult(
+                    "Camera bị từ chối quyền truy cập",
+                    "Vui lòng cho phép trình duyệt sử dụng camera.",
+                    "error"
+                );
+
+            } else if (error.name === "NotFoundError") {
+
+                showResult(
+                    "Không tìm thấy camera",
+                    "Vui lòng kiểm tra camera của laptop.",
+                    "error"
+                );
+
+            } else {
+
+                showResult(
+                    "Không thể mở camera",
+                    error.message,
+                    "error"
+                );
+            }
+
+        } finally {
+            openingCamera = false;
+        }
+    }
+
+
+    // =====================================================
+    // 5. SỰ KIỆN
+    // =====================================================
+
+
+/* =====================================================
+   XÁC MINH FACE ID TẠI KIOSK
+   Chưa ghi nhận Check-in/Check-out
+   ===================================================== */
+
+
+/* =====================================================
+   LẤY CA LÀM VIỆC VÀ GHI CHẤM CÔNG THẬT
+   ===================================================== */
+
+const shiftSelect = document.getElementById("shiftSelect");
+const loadShiftsButton = document.getElementById("loadShiftsButton");
+const employeeInfo = document.getElementById("employeeInfo");
+
+// Xóa danh sách ca khi thay đổi mã nhân viên
+function resetShifts() {
+    shiftSelect.innerHTML =
+        '<option value="">-- Chưa chọn ca --</option>';
+
+    shiftSelect.disabled = true;
+    employeeInfo.textContent = "";
+}
+
+employeeCode.addEventListener("input", resetShifts);
+
+
+// =====================================================
+// 1. LẤY CÁC CA ĐÃ CÔNG BỐ TRONG NGÀY
+// =====================================================
+
+async function loadTodayShifts() {
+
+    const code = employeeCode.value.trim();
+
+    resetShifts();
+
+    if (!code) {
+        showResult(
+            "Chưa nhập mã nhân viên",
+            "Vui lòng nhập mã nhân viên để kiểm tra ca.",
+            "error"
+        );
+        return;
+    }
+
+    loadShiftsButton.disabled = true;
+
+    try {
+
+        const url =
+            "{% url 'attendance:kiosk_today_shifts' %}" +
+            "?ma_nv=" + encodeURIComponent(code);
+
+        const response = await fetch(url, {
+            credentials: "same-origin"
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message || "Không thể tải ca làm."
+            );
+        }
+
+        employeeInfo.textContent =
+            data.nhan_vien + " · " + data.ngay;
+
+        if (!data.ca_lam.length) {
+            showResult(
+                "Không có ca hôm nay",
+                "Nhân viên chưa có lịch công bố trong ngày.",
+                "error"
+            );
+            return;
+        }
+
+        data.ca_lam.forEach(ca => {
+
+            const option = document.createElement("option");
+
+            option.value = ca.id;
+
+            option.textContent =
+                ca.ten_ca + " (" +
+                ca.gio_bat_dau + "–" +
+                ca.gio_ket_thuc + ") · " +
+                ca.trang_thai;
+
+            shiftSelect.appendChild(option);
+        });
+
+        shiftSelect.disabled = false;
+
+        showResult(
+            "Đã tải ca làm",
+            "Vui lòng chọn đúng ca trước khi quét Face ID."
+        );
+
+    } catch (error) {
+
+        showResult(
+            "Không thể tải ca",
+            error.message,
+            "error"
+        );
+
+    } finally {
+        loadShiftsButton.disabled = false;
+    }
+}
+
+loadShiftsButton.addEventListener(
+    "click",
+    loadTodayShifts
+);
+
+
+// =====================================================
+// 2. QUÉT FACE ID VÀ GHI CHẤM CÔNG
+// =====================================================
+
+async function verifyFaceAtKiosk() {
+
+    if (verifying || !cameraStream || video.readyState < 2) {
+        showResult(
+            "Camera chưa sẵn sàng",
+            "Vui lòng mở camera trước khi chấm công.",
+            "error"
+        );
+        return;
+    }
+
+    const maNV = employeeCode.value.trim();
+    const maLichLam = shiftSelect.value;
+
+    const selectedAction = document.querySelector(
+        'input[name="attendanceAction"]:checked'
+    );
+
+    if (!maNV || !maLichLam || !selectedAction) {
+        showResult(
+            "Thiếu thông tin chấm công",
+            "Vui lòng nhập mã nhân viên, chọn ca và thao tác.",
+            "error"
+        );
+        return;
+    }
+
+    verifying = true;
+    verifyButton.disabled = true;
+
+    showResult(
+        "Đang xác minh Face ID",
+        "Hệ thống đang kiểm tra khuôn mặt và điều kiện chấm công."
+    );
+
+    try {
+
+        // Chụp hình từ camera
+        const canvas = document.createElement("canvas");
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        if (!canvas.width || !canvas.height) {
+            throw new Error("Không lấy được hình ảnh camera.");
+        }
+
+        const context = canvas.getContext("2d");
+
+        context.drawImage(
+            video,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        // Chuyển ảnh thành JPEG
+        const imageBlob = await new Promise(resolve => {
+            canvas.toBlob(resolve, "image/jpeg", 0.85);
+        });
+
+        if (!imageBlob) {
+            throw new Error("Không thể tạo ảnh chấm công.");
+        }
+
+        const formData = new FormData();
+
+        formData.append("ma_nv", maNV);
+        formData.append("ma_lich_lam", maLichLam);
+        formData.append("thao_tac", selectedAction.value);
+        formData.append("image", imageBlob, "attendance.jpg");
+
+        const csrfToken = document.querySelector(
+            'input[name="csrfmiddlewaretoken"]'
+        ).value;
+
+        // Gửi dữ liệu lên Django để ghi công
+        const response = await fetch(
+            "{% url 'attendance:kiosk_record_attendance' %}",
+            {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "X-CSRFToken": csrfToken
+                },
+                body: formData
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message || "Chấm công không thành công."
+            );
+        }
+
+        showResult(
+            data.message,
+            data.nhan_vien + " · " +
+            data.ten_ca + " · " +
+            data.thoi_gian,
+            "success"
+        );
+
+        // Cập nhật danh sách ca sau khi chấm công
+        await loadTodayShifts();
+
+        // Hiển thị lại thông báo thành công
+        showResult(
+            data.message,
+            data.nhan_vien + " · " +
+            data.ten_ca + " · " +
+            data.thoi_gian,
+            "success"
+        );
+
+    } catch (error) {
+
+        showResult(
+            "Chấm công không thành công",
+            error.message,
+            "error"
+        );
+
+    } finally {
+        verifying = false;
+        verifyButton.disabled = !cameraStream;
+    }
+}
+
+
+verifyButton.addEventListener(
+    "click",
+    verifyFaceAtKiosk
+);
+
+
+    openButton.addEventListener("click", startCamera);
+
+    closeButton.addEventListener("click", function () {
+
+        stopCamera();
+
+        showResult(
+            "Đã tắt camera",
+            "Hệ thống đang chờ lượt quét tiếp theo."
+        );
+    });
+
+    window.addEventListener("pagehide", function () {
+        pageActive = false;
+        clearInterval(clockInterval);
+        stopCamera();
+    });
+
+    document.addEventListener("visibilitychange", function () {
+        if (document.hidden && cameraStream) {
+            stopCamera();
+            showResult(
+                "Camera đã tạm dừng",
+                "Vui lòng mở lại camera để tiếp tục kiểm tra."
+            );
+        }
+    });
+
+})();
+</script>
+
+</body>
+</html>

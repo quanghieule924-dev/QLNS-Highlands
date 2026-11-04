@@ -57,5 +57,11 @@ urlpatterns = [
         employee_preview,
         name='employee_preview',
     ),
+
+    #trang xem lịch làm việc
+    path('scheduling/', include('scheduling.urls', namespace='scheduling')),
+
+    #trang chấm công
+    path('attendance/', include('attendance.urls')),
 ]
 

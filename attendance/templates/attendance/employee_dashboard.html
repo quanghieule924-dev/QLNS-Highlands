@@ -1,0 +1,636 @@
+
+{% extends "base_internal.html" %}
+
+{% block title %}Chấm công | Highlands HRM{% endblock %}
+
+{% block content %}
+
+<style>
+    .att-page {
+        padding: 16px 20px 35px;
+        font-family: 'Montserrat', sans-serif;
+        color: #243047;
+    }
+
+    .att-heading {
+        background: #fff;
+        border-radius: 14px;
+        border-left: 5px solid #c8102e;
+        padding: 25px 28px;
+        margin-bottom: 25px;
+        box-shadow: 0 3px 14px rgba(0,0,0,.04);
+    }
+
+    .att-heading h2 {
+        margin: 0 0 9px;
+        font-size: 25px;
+        font-weight: 700;
+    }
+
+    .att-heading p {
+        margin: 0;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .att-tabs {
+        display: flex;
+        gap: 12px;
+        border-bottom: 1px solid #dfe3ea;
+        margin-bottom: 24px;
+    }
+
+    .att-tab {
+        display: inline-block;
+        padding: 13px 18px;
+        color: #64748b;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        border-bottom: 3px solid transparent;
+    }
+
+    .att-tab:hover {
+        color: #c8102e;
+    }
+
+    .att-tab.active {
+        color: #c8102e;
+        border-bottom-color: #c8102e;
+    }
+
+    .att-card {
+        background: #fff;
+        border: 1px solid #e5e9f0;
+        border-radius: 13px;
+        padding: 24px;
+        margin-bottom: 18px;
+    }
+
+    .att-card h3 {
+        margin: 0 0 12px;
+        font-size: 18px;
+    }
+
+    .att-muted {
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .att-shift-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .att-shift-header h3 {
+        margin: 0;
+    }
+
+    .att-status {
+        display: inline-block;
+        padding: 7px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .att-chua-cham {
+        background: #edf0f4;
+        color: #66758a;
+    }
+
+    .att-da-checkin {
+        background: #fff0d6;
+        color: #a86800;
+    }
+
+    .att-da-checkout {
+        background: #e0f5e8;
+        color: #16794b;
+    }
+
+    .att-chua-den-ngay {
+        background: #e7f0ff;
+        color: #315c9f;
+    }
+
+    .att-can-kiem-tra {
+        background: #ffe4e6;
+        color: #be123c;
+    }
+
+    .att-time-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-top: 20px;
+    }
+
+    .att-time-box {
+        background: #f5f6f9;
+        border-radius: 10px;
+        padding: 15px;
+    }
+
+    .att-time-box span {
+        display: block;
+        color: #64748b;
+        font-size: 12px;
+        margin-bottom: 9px;
+    }
+
+    .att-time-box strong {
+        font-size: 15px;
+    }
+
+    .att-notice {
+        background: #fff;
+        border-radius: 12px;
+        border: 1px solid #e7eaf0;
+        padding: 30px;
+        text-align: center;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .att-summary {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 22px;
+    }
+
+    .att-summary-card {
+        padding: 20px;
+        border: 1px solid #e5e9f0;
+        border-radius: 12px;
+        background: #fff;
+    }
+
+    .att-summary-card span {
+        display: block;
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 13px;
+    }
+
+    .att-summary-card strong {
+        font-size: 25px;
+        color: #253047;
+    }
+
+    .att-history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+    }
+
+    .att-history-header h3 {
+        margin: 0;
+    }
+
+    .att-filter {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .att-month-input {
+        padding: 10px 12px;
+        border: 1px solid #d9dee8;
+        border-radius: 9px;
+        font-family: inherit;
+        font-size: 13px;
+        color: #253047;
+        background: #fff;
+    }
+
+    .att-filter-button {
+        border: 0;
+        border-radius: 9px;
+        background: #c8102e;
+        color: #fff;
+        padding: 11px 18px;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .att-table-wrap {
+        overflow-x: auto;
+    }
+
+    .att-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        min-width: 800px;
+    }
+
+    .att-table thead th {
+        background: #f8dfe4;
+        color: #7d2335;
+        padding: 15px 12px;
+        text-align: left;
+        font-weight: 700;
+        border-bottom: 1px solid #e9c5ce;
+        white-space: nowrap;
+    }
+
+    .att-table tbody td {
+        padding: 16px 12px;
+        border-bottom: 1px solid #edf0f4;
+        vertical-align: middle;
+    }
+
+    .att-table tbody tr:hover {
+        background: #fafbfc;
+    }
+
+    .att-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .att-hours-note {
+        color: #758197;
+        font-size: 12px;
+        margin-top: 18px;
+        line-height: 1.7;
+    }
+
+    .att-error {
+        background: #fef2f2;
+        color: #b91c1c;
+        border-radius: 10px;
+        padding: 18px;
+    }
+
+    @media (max-width: 850px) {
+        .att-summary {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 550px) {
+        .att-page {
+            padding: 12px;
+        }
+
+        .att-heading {
+            padding: 20px;
+        }
+
+        .att-time-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .att-tabs {
+            gap: 0;
+        }
+
+        .att-tab {
+            padding: 12px 10px;
+            font-size: 12px;
+        }
+    }
+</style>
+
+
+<div class="att-page">
+
+    <!-- TIÊU ĐỀ -->
+    <div class="att-heading">
+        <h2>Chấm công</h2>
+    </div>
+
+    {% if loi %}
+
+        <div class="att-error">
+            {{ loi }}
+        </div>
+
+    {% else %}
+
+        <!-- THANH TAB -->
+        <div class="att-tabs">
+
+            <a
+                href="{% url 'attendance:employee_dashboard' %}?tab=today"
+                class="att-tab {% if tab == 'today' %}active{% endif %}"
+            >
+                Chấm công hôm nay
+            </a>
+
+            <a
+                href="{% url 'attendance:employee_dashboard' %}?tab=history"
+                class="att-tab {% if tab == 'history' %}active{% endif %}"
+            >
+                Lịch sử chấm công
+            </a>
+
+        </div>
+
+
+        <!-- =========================================
+             TAB 1: CHẤM CÔNG HÔM NAY
+             ========================================= -->
+
+        {% if tab == 'today' %}
+
+            <div class="att-card">
+
+                <h3>{{ nhan_vien.ho_ten }}</h3>
+
+                <div class="att-muted">
+                    Ngày {{ hom_nay|date:"d/m/Y" }}
+                    · {{ tong_so_ca }} ca làm việc
+                </div>
+
+            </div>
+
+
+            {% for ca in danh_sach_ca %}
+
+                <div class="att-card">
+
+                    <div class="att-shift-header">
+
+                        <h3>{{ ca.ten_ca }}</h3>
+
+                        <span class="att-status att-{{ ca.mau_trang_thai }}">
+                            {{ ca.trang_thai }}
+                        </span>
+
+                    </div>
+
+                    <p class="att-muted">
+
+                        {% if ca.gio_bat_dau and ca.gio_ket_thuc %}
+
+                            {{ ca.gio_bat_dau|time:"H:i" }}
+                            –
+                            {{ ca.gio_ket_thuc|time:"H:i" }}
+
+                        {% else %}
+
+                            Thời gian ca chưa được cấu hình
+
+                        {% endif %}
+
+                    </p>
+
+                    <div class="att-time-grid">
+
+                        <div class="att-time-box">
+
+                            <span>Check-in</span>
+
+                            <strong>
+                                {% if ca.time_checkin %}
+                                    {{ ca.time_checkin|date:"H:i:s" }}
+                                {% else %}
+                                    --:--:--
+                                {% endif %}
+                            </strong>
+
+                        </div>
+
+                        <div class="att-time-box">
+
+                            <span>Check-out</span>
+
+                            <strong>
+                                {% if ca.time_checkout %}
+                                    {{ ca.time_checkout|date:"H:i:s" }}
+                                {% else %}
+                                    --:--:--
+                                {% endif %}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <p class="att-hours-note">
+                        Việc chấm công được thực hiện tại trạm Face ID
+                        của cửa hàng.
+                    </p>
+
+                </div>
+
+            {% empty %}
+
+                <div class="att-notice">
+                    Bạn không có ca làm việc nào
+                    được công bố trong hôm nay.
+                </div>
+
+            {% endfor %}
+
+
+        <!-- =========================================
+             TAB 2: LỊCH SỬ CHẤM CÔNG
+             ========================================= -->
+
+        {% elif tab == 'history' %}
+
+            <!-- BỘ LỌC THÁNG -->
+            <div class="att-history-header">
+
+                <h3>Lịch sử chấm công cá nhân</h3>
+
+                <form
+                    method="get"
+                    action="{% url 'attendance:employee_dashboard' %}"
+                    class="att-filter"
+                >
+
+                    <input
+                        type="hidden"
+                        name="tab"
+                        value="history"
+                    >
+
+                    <input
+                        type="month"
+                        name="month"
+                        class="att-month-input"
+                        value="{{ thang_chon }}"
+                        min="2000-01"
+                        max="2100-12"
+                    >
+
+                    <button
+                        type="submit"
+                        class="att-filter-button"
+                    >
+                        Xem lịch sử
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- THỐNG KÊ -->
+            <div class="att-summary">
+
+                <div class="att-summary-card">
+
+                    <span>Số ca theo lịch trong tháng</span>
+
+                    <strong>{{ tong_so_ca_thang }}</strong>
+
+                </div>
+
+                <div class="att-summary-card">
+
+                    <span>Số ca đã Check-out</span>
+
+                    <strong>{{ tong_ca_hoan_thanh }}</strong>
+
+                </div>
+
+                <div class="att-summary-card">
+
+                    <span>Tổng giờ ghi nhận</span>
+
+                    <strong>{{ tong_gio_lam }}</strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- BẢNG LỊCH SỬ -->
+            <div class="att-card">
+
+                <div class="att-table-wrap">
+
+                    <table class="att-table">
+
+                        <thead>
+                            <tr>
+                                <th>Ngày làm</th>
+                                <th>Ca làm việc</th>
+                                <th>Giờ ca</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                                <th>Giờ thực tế</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for item in lich_su %}
+
+                                <tr>
+
+                                    <td>
+                                        <strong>
+                                            {{ item.ngay_lam|date:"d/m/Y" }}
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        {{ item.ten_ca }}
+                                    </td>
+
+                                    <td>
+
+                                        {% if item.gio_bat_dau and item.gio_ket_thuc %}
+
+                                            {{ item.gio_bat_dau|time:"H:i" }}
+                                            –
+                                            {{ item.gio_ket_thuc|time:"H:i" }}
+
+                                        {% else %}
+                                            —
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+
+                                        {% if item.time_checkin %}
+                                            {{ item.time_checkin|date:"H:i:s" }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+
+                                        {% if item.time_checkout %}
+                                            {{ item.time_checkout|date:"H:i:s" }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+                                        {{ item.so_gio_lam }}
+                                    </td>
+
+                                    <td>
+
+                                        <span class="att-status att-{{ item.mau_trang_thai }}">
+                                            {{ item.trang_thai }}
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                            {% empty %}
+
+                                <tr>
+                                    <td
+                                        colspan="7"
+                                        style="
+                                            text-align:center;
+                                            color:#64748b;
+                                            padding:35px;
+                                        "
+                                    >
+                                        Không có lịch làm việc đã công bố
+                                        trong tháng này.
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <p class="att-hours-note">
+                    Tổng giờ được tính từ thời gian Check-in đến
+                    Check-out đã ghi nhận. Đây chưa phải giờ công
+                    tính lương cuối cùng.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
