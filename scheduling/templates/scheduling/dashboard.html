@@ -1,10 +1,2370 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+
+{% extends 'base_internal.html' %}
+
+{% block title %}
+    Phân ca và đăng ký | Highlands HRM
+{% endblock %}
+
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/font.css' %}">
+<style>
+    /* =========================================
+       1. GIAO DIỆN CHUNG
+       ========================================= */
+
+    .sch-wrap {
+    padding: 12px 18px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+    .sch-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 15px;
+    }
+
+    .sch-head h2,
+    .sch-head h3 {
+        margin: 0;
+    }
+
+    .sch-muted {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .sch-box {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 9px;
+        padding: 16px;
+        margin: 14px 0;
+    }
+
+    .sch-good {
+        padding: 14px;
+        border-radius: 8px;
+        background: #dcfce7;
+        color: #166534;
+        margin: 12px 0;
+    }
+
+    .sch-notice {
+        padding: 12px;
+        border: 1px solid #bae6fd;
+        background: #eff6ff;
+        border-radius: 8px;
+        margin: 12px 0;
+    }
+
+    .sch-msg {
+        padding: 12px;
+        border-radius: 7px;
+        background: #eef2ff;
+        color: #1e40af;
+        margin: 10px 0;
+    }
+
+
+    /* =========================================
+       2. THANH TAB
+       ========================================= */
+
+    .sch-tabs {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        border-bottom: 1px solid #e5e7eb;
+        margin: 20px 0;
+    }
+
+    .sch-tab {
+        border: none;
+        background: transparent;
+        color: #64748b;
+        padding: 12px 14px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 14px;
+        border-bottom: 3px solid transparent;
+    }
+
+    .sch-tab:hover {
+        color: #c8102e;
+    }
+
+    .sch-tab.active {
+        color: #c8102e;
+        border-bottom-color: #c8102e;
+    }
+
+    .sch-pane {
+        display: none;
+    }
+
+    .sch-pane.active {
+        display: block;
+    }
+
+
+    /* =========================================
+       3. NÚT BẤM
+       ========================================= */
+
+    .sch-btn {
+        display: inline-block;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 6px;
+        background: #c8102e;
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 13px;
+    }
+
+    .sch-btn:hover {
+        opacity: 0.9;
+    }
+
+    .sch-btn.gray {
+        background: #475569;
+    }
+
+    .sch-btn.blue {
+        background: #2563eb;
+    }
+
+    .sch-btn.olive {
+        background: #166534;
+    }
+
+    .sch-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .sch-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 12px 0;
+        align-items: center;
+    }
+
+
+    /* =========================================
+       4. FORM ĐĂNG KÝ CA NHÂN VIÊN
+       ========================================= */
+
+    .sch-days {
+        display: grid;
+        grid-template-columns: repeat(
+            auto-fit,
+            minmax(170px, 1fr)
+        );
+        gap: 12px;
+    }
+
+    .sch-check {
+        display: block;
+        padding: 9px;
+        margin: 7px 0;
+        border: 1px solid #e5e7eb;
+        border-radius: 7px;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+    .sch-check:hover {
+        background: #fff7f7;
+    }
+
+    .sch-check input {
+        margin-right: 8px;
+        accent-color: #c8102e;
+    }
+
+    .sch-check .sch-muted {
+        display: block;
+        margin-left: 22px;
+        margin-top: 3px;
+    }
+
+    .sch-form-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+    }
+
+
+    /* =========================================
+       5. BẢNG DỮ LIỆU VÀ MA TRẬN XẾP CA
+       ========================================= */
+
+    .sch-table-scroll {
+        width: 100%;
+        overflow-x: auto;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        background: white;
+    }
+
+    .sch-table {
+        width: 100%;
+        min-width: 1150px;
+        border-collapse: collapse;
+    }
+
+    .sch-table th,
+    .sch-table td {
+        padding: 9px;
+        border: 1px solid #e5e7eb;
+        text-align: left;
+        vertical-align: top;
+        font-size: 13px;
+    }
+
+    .sch-table th {
+        background: #f8fafc;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .sch-table .shift-name {
+        min-width: 130px;
+        background: #fff7f7;
+        font-weight: 700;
+    }
+
+    .sch-table .role-col {
+        min-width: 105px;
+        font-weight: 700;
+    }
+
+    .sch-table-small {
+        min-width: 600px;
+    }
+
+    .sch-meter {
+        display: block;
+        color: #64748b;
+        font-size: 11px;
+        margin-top: 6px;
+    }
+
+    .sch-meter.short {
+        color: #b91c1c;
+        font-weight: 700;
+    }
+
+
+    /* =========================================
+       6. DANH SÁCH CHỌN NHIỀU NHÂN VIÊN
+       ========================================= */
+
+    .sch-picker {
+        position: relative;
+        min-width: 140px;
+    }
+
+    .sch-picker summary {
+        cursor: pointer;
+        padding: 8px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        background: white;
+        font-size: 12px;
+        list-style: none;
+    }
+
+    .sch-picker summary:hover {
+        border-color: #c8102e;
+    }
+
+    .sch-picker[open] .choices {
+        position: absolute;
+        z-index: 50;
+        top: 100%;
+        left: 0;
+        min-width: 210px;
+        max-height: 240px;
+        overflow-y: auto;
+        background: white;
+        padding: 8px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        box-shadow: 0 6px 20px #0002;
+    }
+
+    .sch-picker label {
+        display: block;
+        padding: 7px;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+    .sch-picker label:hover {
+        background: #f1f5f9;
+    }
+
+    .sch-picker input {
+        accent-color: #c8102e;
+        margin-right: 6px;
+    }
+
+
+    /* =========================================
+       7. LỊCH SỬ ĐĂNG KÝ
+       ========================================= */
+
+    .sch-history summary {
+        cursor: pointer;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .sch-history summary:hover {
+        color: #c8102e;
+    }
+
+    .sch-history table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    .sch-history th,
+    .sch-history td {
+        padding: 9px;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+        font-size: 13px;
+    }
+
+
+    /* =========================================
+       8. FORM MỞ ĐỢT VÀ ĐỊNH BIÊN
+       ========================================= */
+
+    .sch-field {
+        margin-bottom: 15px;
+    }
+
+    .sch-field label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+        font-size: 13px;
+    }
+
+    .sch-field input,
+    .sch-field select {
+        padding: 9px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .sch-field-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .sch-number-input {
+        width: 85px;
+        padding: 7px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+    }
+
+    .sch-round-select {
+        padding: 9px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        background: white;
+    }
+
+    @media (max-width: 700px) {
+        .sch-field-row {
+            grid-template-columns: 1fr;
+        }
+
+        .sch-wrap {
+            padding: 8px;
+        }
+    }
+
+     /* Ẩn form khi nhân viên đã gửi đăng ký */
+    .registration-form-container.is-hidden {
+              display: none;
+    }
+
+
+/* =========================================
+   HIỂN THỊ TÊN NHÂN VIÊN TRONG Ô PHÂN CA
+   ========================================= */
+
+.sch-picker-summary {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 6px;
+    min-height: 36px;
+}
+
+.sch-selected-names {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+}
+
+.sch-selected-name {
+    display: block;
+    padding: 5px 7px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.sch-empty-label {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.sch-picker-arrow {
+    color: #64748b;
+    flex-shrink: 0;
+}
+
+.sch-no-employee {
+    padding: 9px;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.sch-picker-close {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    padding: 7px;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    background: #f8fafc;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.sch-picker-close:hover {
+    background: #e2e8f0;
+}
+
+/* Không hiển thị lời nhắc khi đã có nhân viên */
+.sch-picker-summary:has(.sch-selected-name)
+.sch-empty-label {
+    display: none;
+}
+
+/* =========================================
+   PHÂN BIỆT MÀU NỀN 3 CA LÀM VIỆC
+   Giữ nguyên cấu trúc bảng
+   ========================================= */
+
+/* CA SÁNG - Xanh nhạt */
+.sch-table tr.ca-sang td {
+    background-color: #F3F9FF;
+}
+
+.sch-table tr.ca-sang .shift-name {
+    background-color: #DCEEFF;
+}
+
+/* CA CHIỀU - Cam nhạt */
+.sch-table tr.ca-chieu td {
+    background-color: #FFFAF0;
+}
+
+.sch-table tr.ca-chieu .shift-name {
+    background-color: #FFE9C7;
+}
+
+/* CA TỐI - Tím nhạt */
+.sch-table tr.ca-toi td {
+    background-color: #FAF6FF;
+}
+
+.sch-table tr.ca-toi .shift-name {
+    background-color: #EDE0FF;
+}
+
+
+/* =========================================
+   LỊCH LÀM VIỆC CÁ NHÂN DẠNG BẢNG TUẦN
+   ========================================= */
+
+/* Tiêu đề phía trên mỗi bảng */
+.sch-week-header {
+    margin-top: 25px;
+    margin-bottom: 12px;
+}
+
+.sch-week-header h3 {
+    margin: 0 0 6px;
+    color: #1f2937;
+    font-size: 19px;
+}
+
+.sch-week-header p {
+    margin: 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+/* Khung bảng */
+.sch-week-table-wrap {
+    margin-bottom: 28px;
+}
+
+.sch-week-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    table-layout: fixed;
+    background: white;
+}
+
+/* Hàng tiêu đề */
+.sch-week-table thead th {
+    background: #f4a0a0;
+    color: #7f1d1d;
+    padding: 13px 6px;
+    border: 1px solid #e5e7eb;
+    text-align: center;
+    font-size: 13px;
+}
+
+/* Hiển thị ngày bên dưới thứ */
+.sch-week-table thead small {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+}
+
+/* Các ô trong bảng */
+.sch-week-table tbody td,
+.sch-week-table tbody th {
+    border: 1px solid #e5e7eb;
+    padding: 16px 8px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Cột Ca làm */
+.sch-week-shift {
+    width: 145px;
+    font-size: 14px;
+}
+
+.sch-week-shift strong {
+    display: block;
+}
+
+.sch-week-shift small {
+    display: block;
+    font-size: 11px;
+    margin-top: 5px;
+    font-weight: normal;
+}
+
+/* Ca Sáng - Xanh nhạt */
+.sch-week-table .ca-sang th {
+    background: #dceeff;
+}
+
+.sch-week-table .ca-sang td {
+    background: #f3f9ff;
+}
+
+/* Ca Chiều - Cam nhạt */
+.sch-week-table .ca-chieu th {
+    background: #ffe9c7;
+}
+
+.sch-week-table .ca-chieu td {
+    background: #fffbf3;
+}
+
+/* Ca Tối - Tím nhạt */
+.sch-week-table .ca-toi th {
+    background: #ede0ff;
+}
+
+.sch-week-table .ca-toi td {
+    background: #fbf7ff;
+}
+
+/* Dấu tick xanh khi có lịch */
+.sch-work-check {
+    color: #16a34a;
+    font-size: 27px;
+    font-weight: 900;
+}
+
+/* Ngày không được phân ca */
+.sch-no-work {
+    color: #cbd5e1;
+    font-size: 16px;
+}
+
+/* Hiệu ứng khi rê chuột */
+.sch-week-table tbody td:hover {
+    filter: brightness(0.97);
+}
+
+
+/* =========================================
+   TIÊU ĐỀ LỊCH LÀM VIỆC - NHÂN VIÊN
+   ========================================= */
+
+.sch-wrap .employee-page-heading {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 15px !important;
+
+    width: fit-content;
+    max-width: 100%;
+    padding: 15px 22px;
+    box-sizing: border-box;
+
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-left: 5px solid #c8102e;
+    border-radius: 12px;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.sch-wrap .employee-page-heading:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.1);
+}
+
+.sch-wrap .employee-heading-icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0;
+
+    width: 46px;
+    height: 46px;
+
+    background: #c8102e;
+    color: #ffffff;
+    border-radius: 10px;
+    font-size: 26px;
+    line-height: 1;
+}
+
+.sch-wrap .employee-heading-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.sch-wrap .employee-heading-text h2 {
+    margin: 0 !important;
+    font-size: 22px;
+    font-weight: 750;
+    color: #1f2937;
+    line-height: 1.3;
+}
+
+.sch-wrap .employee-heading-text p {
+    margin: 5px 0 0 !important;
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sch-wrap .employee-page-heading {
+        transition: none;
+    }
+
+    .sch-wrap .employee-page-heading:hover {
+        transform: none;
+    }
+}
+
+
+/* =========================================
+   FONT CHỮ CHO BẢNG LỊCH LÀM VIỆC CÁ NHÂN
+   ========================================= */
+
+/* Font chung cho bảng lịch */
+.sch-week-table {
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Tên ca: Sáng, Chiều, Tối */
+.sch-week-table .sch-week-shift strong {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.5;
+}
+
+/* Giờ làm việc */
+.sch-week-table .sch-week-shift small {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.5;
+}
+
+/* Tên các thứ trong tuần */
+.sch-week-table thead th {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+
+/* =========================================
+   HÀNG TIÊU ĐỀ BẢNG PHÂN CA QUẢN LÝ
+   Màu hồng giống bảng lịch cá nhân
+   ========================================= */
+
+#manager-matrix .sch-table thead th {
+    background-color: #F4A0A0;
+    color: #651B25;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    padding: 14px 10px;
+    border: 1px solid #E8B5B5;
+}
+
+/* Giữ hai cột đầu căn trái cho dễ đọc */
+#manager-matrix .sch-table thead th:nth-child(1),
+#manager-matrix .sch-table thead th:nth-child(2) {
+    text-align: left;
+}
+
+
+/* Đồng bộ Montserrat cho giao diện phân ca */
+
+.sch-wrap,
+.sch-wrap h1,
+.sch-wrap h2,
+.sch-wrap h3,
+.sch-wrap h4,
+.sch-wrap p,
+.sch-wrap span,
+.sch-wrap a,
+.sch-wrap button,
+.sch-wrap input,
+.sch-wrap select,
+.sch-wrap textarea,
+.sch-wrap table,
+.sch-wrap th,
+.sch-wrap td {
+    font-family: 'Montserrat', sans-serif;
+}
+
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="sch-wrap">
+
+    <!-- =========================================
+         A. TIÊU ĐỀ TRANG
+         ========================================= -->
+
+    <div class="sch-head">
+
+
+{% if request.user.role == 'admin' %}
+
+    <div class="employee-page-heading">
+
+    <!-- Biểu tượng -->
+    <div class="employee-heading-icon">
+        <span>▦</span>
+    </div>
+
+    <!-- Nội dung tiêu đề -->
+    <div class="employee-heading-text">
+
+        <h2>Phân ca &amp; Xếp lịch</h2>
+
+    </div>
+
+</div>
+
+
+{% else %}
+
+
+
+<!-- TIÊU ĐỀ TRANG LỊCH LÀM VIỆC -->
+<div class="employee-page-heading">
+
+    <div class="employee-heading-icon">
+        <span>▦</span>
+    </div>
+
+    <div class="employee-heading-text">
+        <h2>Lịch làm việc</h2>
+    </div>
+
+</div>
+
+
+{% endif %}
+
+
+        <strong>📍 Chi nhánh 258 Bạch Đằng</strong>
+
+    </div>
+
+
+    <!-- =========================================
+         B. THÔNG BÁO TỪ DJANGO
+         ========================================= -->
+
+    {% for message in messages %}
+        <div class="sch-msg">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+
+    <!-- =========================================
+         C. GIAO DIỆN NHÂN VIÊN
+         ========================================= -->
+
+    {% if request.user.role == 'employee' %}
+
+        <!-- C1. THANH TAB NHÂN VIÊN -->
+
+        <div class="sch-tabs">
+
+            <button
+                type="button"
+                class="sch-tab active"
+                data-tab="employee-register">
+                Đăng ký ca rảnh
+            </button>
+
+            <button
+                type="button"
+                class="sch-tab"
+                data-tab="employee-history">
+                Lịch sử đăng ký
+            </button>
+
+            <button
+                type="button"
+                class="sch-tab"
+                data-tab="employee-official">
+                Lịch chính thức
+            </button>
+
+        </div>
+
+
+        <!-- =====================================
+             C2. ĐĂNG KÝ CA RẢNH
+             ===================================== -->
+
+        <section
+            id="employee-register"
+            class="sch-pane active">
+
+            {% if dot %}
+
+                <!-- Thông tin đợt đăng ký -->
+
+                <div class="sch-box">
+
+                    <h3>{{ dot.ten_dot }}</h3>
+
+                    <p class="sch-muted">
+                        Tuần làm việc:
+                        {{ dot.ngay_bat_dau_tuan|date:'d/m/Y' }}
+                        –
+                        {{ dot.ngay_ket_thuc_tuan|date:'d/m/Y' }}
+                    </p>
+
+                    <p class="sch-muted">
+                        Hạn đăng ký và chỉnh sửa:
+                        <strong>
+                            {{ dot.han_nhan_dang_ky|date:'d/m/Y H:i' }}
+                        </strong>
+                    </p>
+
+                    {% if submitted %}
+
+                        <div class="sch-good">
+                            ✓ Bạn đã đăng ký ca thành công.
+                            Có thể chỉnh sửa trước hạn chót.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                {% if can_edit %}
+
+                    <!-- Nút chỉnh sửa sau khi đã nộp -->
+
+                    {% if submitted %}
+
+                        <button
+                            type="button"
+                            id="edit-registration-btn"
+                            class="sch-btn">
+                            Chỉnh sửa đăng ký
+                        </button>
+
+                    {% endif %}
+
+
+                    <!-- FORM ĐĂNG KÝ -->
+
+                    <form
+                      id="registration-form"
+                      method="post"
+                      class="registration-form-container{% if submitted %} is-hidden{% endif %}">
+
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="action"
+                            value="save_registration">
+
+
+                        <!-- Danh sách 7 ngày -->
+
+                        <div class="sch-days">
+
+                            {% for day in days %}
+
+                                <div class="sch-box">
+
+                                    <strong>
+                                        {{ day.date|date:'l, d/m/Y' }}
+                                    </strong>
+
+                                    {% for item in day.shifts %}
+
+                                        <label class="sch-check">
+
+                                            {% if item.checked %}
+
+                                                <input
+                                                    type="checkbox"
+                                                    name="ca_dang_ky"
+                                                    value="{{ day.date|date:'Y-m-d' }}|{{ item.obj.pk }}"
+                                                    checked>
+
+                                            {% else %}
+
+                                                <input
+                                                    type="checkbox"
+                                                    name="ca_dang_ky"
+                                                    value="{{ day.date|date:'Y-m-d' }}|{{ item.obj.pk }}">
+
+                                            {% endif %}
+
+                                            {{ item.obj.ten_ca }}
+
+                                            <span class="sch-muted">
+                                                {{ item.obj.start_time|time:'H:i' }}
+                                                –
+                                                {{ item.obj.end_time|time:'H:i' }}
+                                            </span>
+
+                                        </label>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- Nút gửi / lưu chỉnh sửa -->
+
+                        <div class="sch-form-actions">
+
+                            <button
+                                type="submit"
+                                class="sch-btn">
+
+                                {% if submitted %}
+                                    Lưu chỉnh sửa
+                                {% else %}
+                                    Xác nhận gửi đăng ký
+                                {% endif %}
+
+                            </button>
+
+                            {% if submitted %}
+
+                                <button
+                                    type="button"
+                                    id="cancel-registration-btn"
+                                    class="sch-btn gray">
+                                    Hủy chỉnh sửa
+                                </button>
+
+                            {% endif %}
+
+                        </div>
+
+                    </form>
+
+                {% endif %}
+
+            {% else %}
+
+                <div class="sch-box">
+                    Hiện chưa có đợt đăng ký đang mở.
+                    Bạn vẫn có thể xem lại các đợt cũ
+                    ở mục Lịch sử đăng ký.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =====================================
+             C3. LỊCH SỬ ĐĂNG KÝ NHÂN VIÊN
+             ===================================== -->
+
+        <section
+            id="employee-history"
+            class="sch-pane">
+
+            <h3>Lịch sử đăng ký theo đợt</h3>
+
+            {% for item in history %}
+
+                <details class="sch-box sch-history">
+
+                    <summary>
+
+                        {{ item.dot.ten_dot }}
+
+                        —
+                        {{ item.dot.ngay_bat_dau_tuan|date:'d/m/Y' }}
+                        đến
+                        {{ item.dot.ngay_ket_thuc_tuan|date:'d/m/Y' }}
+
+                        —
+                        <strong>{{ item.count }} ca</strong>
+
+                    </summary>
+
+                    <p class="sch-muted">
+                        Cập nhật gần nhất:
+                        {{ item.last_time|date:'d/m/Y H:i'|default:'—' }}
+                    </p>
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Ngày làm</th>
+                                <th>Ca đăng ký</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for reg in item.items %}
+
+                                <tr>
+                                    <td>
+                                        {{ reg.ngay_lam_dang_ky|date:'d/m/Y' }}
+                                    </td>
+
+                                    <td>
+                                        {{ reg.ma_ca_lam.ten_ca }}
+                                    </td>
+                                </tr>
+
+                            {% empty %}
+
+                                <tr>
+                                    <td colspan="2">
+                                        Đã nộp form nhưng không chọn ca nào.
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </details>
+
+            {% empty %}
+
+                <div class="sch-box">
+                    Chưa có lịch sử đăng ký.
+                </div>
+
+            {% endfor %}
+
+        </section>
+
+
+
+<!-- =====================================
+     C4. LỊCH LÀM VIỆC CÁ NHÂN
+     ===================================== -->
+
+
+<!-- =========================================
+     C4. LỊCH LÀM VIỆC CÁ NHÂN DẠNG BẢNG TUẦN
+     ========================================= -->
+
+<section
+    id="employee-official"
+    class="sch-pane">
+
+    <h3>Lịch làm việc đã công bố</h3>
+
+    {% for tuan in official_weeks %}
+
+        <!-- THÔNG TIN TUẦN -->
+
+        <div class="sch-week-header">
+
+            <h3>
+              Lịch làm – {{ tuan.ten_dot }}
+              ({{ tuan.nam }})
+            </h3>
+
+            <p>
+                Từ ngày
+                <strong>
+                    {{ tuan.ngay_bat_dau|date:'d/m/Y' }}
+                </strong>
+
+                đến ngày
+                <strong>
+                    {{ tuan.ngay_ket_thuc|date:'d/m/Y' }}
+                </strong>
+            </p>
+
+        </div>
+
+
+        <!-- BẢNG LỊCH 3 CA x 7 NGÀY -->
+
+        <div class="sch-table-scroll sch-week-table-wrap">
+
+            <table class="sch-week-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Ca làm</th>
+
+                        {% for ngay in tuan.ngay_trong_tuan %}
+
+                            <th>
+                                {{ ngay|date:'D' }}
+
+                                <small>
+                                    {{ ngay|date:'d/m' }}
+                                </small>
+                            </th>
+
+                        {% endfor %}
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for hang in tuan.cac_hang_ca %}
+
+                        <tr class="{{ hang.mau_ca }}">
+
+                            <!-- CỘT TÊN CA VÀ GIỜ LÀM -->
+
+                            <th class="sch-week-shift">
+
+                                <strong>
+                                    {{ hang.ca.ten_ca }}
+                                </strong>
+
+                                <small>
+                                    {{ hang.ca.start_time|time:'H:i' }}
+                                    –
+                                    {{ hang.ca.end_time|time:'H:i' }}
+                                </small>
+
+                            </th>
+
+
+                            <!-- 7 NGÀY TRONG TUẦN -->
+
+                            {% for o in hang.cac_ngay %}
+
+                                <td>
+
+                                    {% if o.da_xep %}
+
+                                        <span
+                                            class="sch-work-check"
+                                            title="Có lịch làm việc">
+                                            ✓
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="sch-no-work">
+                                            —
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                            {% endfor %}
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% empty %}
+
+        <div class="sch-box">
+            Bạn chưa có lịch làm việc được công bố.
+        </div>
+
+    {% endfor %}
+
+</section>
+
+
+
+
+    <!-- =========================================
+         D. GIAO DIỆN QUẢN LÝ
+         ========================================= -->
+
+    {% elif request.user.role == 'admin' %}
+
+
+        <!-- D1. THANH TAB QUẢN LÝ -->
+
+        <div class="sch-tabs">
+
+            <button
+                type="button"
+                class="sch-tab active"
+                data-tab="manager-matrix">
+                Xếp ca làm việc
+            </button>
+
+            <button
+                type="button"
+                class="sch-tab"
+                data-tab="manager-registrations">
+                Tổng hợp đăng ký
+            </button>
+
+            <button
+                type="button"
+                class="sch-tab"
+                data-tab="manager-requirements">
+                Định biên nhân sự
+            </button>
+
+            <button
+                type="button"
+                class="sch-tab"
+                data-tab="manager-history">
+                Lịch sử phân ca
+            </button>
+
+            <button
+                type="button"
+                class="sch-tab"
+                data-tab="manager-create">
+                Mở đợt đăng ký
+            </button>
+
+        </div>
+
+
+        <!-- =====================================
+             D2. MA TRẬN XẾP CA
+             ===================================== -->
+
+        <section
+            id="manager-matrix"
+            class="sch-pane active">
+
+            {% if dot %}
+
+                <!-- Thông tin tuần đang xem -->
+
+                <div class="sch-head">
+
+                    <div>
+
+                        <h3>{{ dot.ten_dot }}</h3>
+
+                        <p class="sch-muted">
+                            {{ dot.ngay_bat_dau_tuan|date:'d/m/Y' }}
+                            –
+                            {{ dot.ngay_ket_thuc_tuan|date:'d/m/Y' }}
+                        </p>
+
+                        <p class="sch-muted">
+                            Trạng thái:
+                            <strong>{{ dot.trang_thai }}</strong>
+                        </p>
+
+                    </div>
+
+
+                    <!-- Chọn tuần cần xem -->
+
+                    <form method="get">
+
+                        <select
+                            name="dot"
+                            class="sch-round-select"
+                            onchange="this.form.submit()">
+
+                            {% for r in rounds %}
+
+                                {% if dot.pk == r.pk %}
+
+                                    <option
+                                        value="{{ r.pk }}"
+                                        selected>
+                                        {{ r.ten_dot }}
+                                        ({{ r.ngay_bat_dau_tuan|date:'d/m' }})
+                                    </option>
+
+                                {% else %}
+
+                                    <option value="{{ r.pk }}">
+                                        {{ r.ten_dot }}
+                                        ({{ r.ngay_bat_dau_tuan|date:'d/m' }})
+                                    </option>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </select>
+
+                    </form>
+
+                </div>
+
+
+                <!-- ĐÓNG FORM ĐĂNG KÝ -->
+
+                {% if dot.trang_thai == 'Mở form' %}
+
+                    <div class="sch-notice">
+                        Form đang mở. Sau khi nhân viên
+                        đăng ký xong, quản lý đóng form
+                        để bắt đầu phân ca.
+                    </div>
+
+                    <form method="post" class="sch-actions">
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            name="action"
+                            value="close_registration"
+                            class="sch-btn olive"
+                            onclick="return confirm('Đóng form ngay? Nhân viên sẽ không thể chỉnh sửa đăng ký nữa.');">
+
+                            Đóng form đăng ký
+
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+
+                <!-- XẾP CA TỰ ĐỘNG -->
+
+                {% if can_schedule %}
+
+                    <form method="post" class="sch-actions">
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            name="action"
+                            value="auto_assign"
+                            class="sch-btn blue"
+                            onclick="return confirm('Tự động xếp ca theo định biên và các đăng ký rảnh?');">
+
+                            ⚙ Gợi ý xếp ca tự động
+
+                        </button>
+
+                        <span class="sch-muted">
+                            Hệ thống bổ sung nhân viên còn thiếu
+                            và lưu thành bản nháp.
+                        </span>
+
+                    </form>
+
+                {% endif %}
+
+
+                <!-- BẢNG PHÂN CA -->
+
+                <form method="post" id="assignment-form">
+
+                    {% csrf_token %}
+
+                    <div class="sch-table-scroll">
+
+                        <table class="sch-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Ca làm việc</th>
+
+                                    <th>Vị trí</th>
+
+                                    {% for d in days %}
+                                        <th>
+                                            {{ d|date:'D (d/m)' }}
+                                        </th>
+                                    {% endfor %}
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                {% for row in matrix %}
+
+                                    <tr class="
+    {% if row.shift.ten_ca == 'Ca Sáng' %}
+        ca-sang
+    {% elif row.shift.ten_ca == 'Ca Chiều' %}
+        ca-chieu
+    {% elif row.shift.ten_ca == 'Ca Tối' %}
+        ca-toi
+    {% endif %}
+">
+
+                                        <!-- Cột ca: gộp 4 vị trí -->
+
+                                        {% if row.first_role %}
+
+                                            <td
+                                                class="shift-name"
+                                                rowspan="4">
+
+                                                {{ row.shift.ten_ca }}
+
+                                                <p class="sch-muted">
+                                                    {{ row.shift.start_time|time:'H:i' }}
+                                                    –
+                                                    {{ row.shift.end_time|time:'H:i' }}
+                                                </p>
+
+                                            </td>
+
+                                        {% endif %}
+
+
+                                        <!-- Cột vị trí -->
+
+                                        <td class="role-col">
+                                            {{ row.role_label }}
+                                        </td>
+
+
+                                        <!-- 7 cột thứ Hai - Chủ nhật -->
+
+                                        {% for cell in row.cells %}
+
+                                            <td>
+
+                                                <!-- Lịch đã công bố -->
+
+                                                {% if readonly %}
+
+                                                    {% for name in cell.selected_names %}
+
+                                                        <div>• {{ name }}</div>
+
+                                                    {% empty %}
+
+                                                        <span class="sch-muted">
+                                                            —
+                                                        </span>
+
+                                                    {% endfor %}
+
+
+                                                <!-- Lịch đang phân ca -->
+
+                                                {% elif can_schedule %}
+
+
+<!-- DANH SÁCH CHỌN NHÂN VIÊN TRONG MỘT Ô -->
+
+<details class="sch-picker">
+
+    <!-- Tên nhân viên hiển thị ngay trên ô -->
+    <summary class="sch-picker-summary">
+
+        <span class="sch-selected-names">
+
+            {% for option in cell.options %}
+
+                {% if option.selected %}
+                    <span class="sch-selected-name">
+                        {{ option.nv.ho_ten }}
+                    </span>
+                {% endif %}
+
+            {% endfor %}
+
+        </span>
+
+        <span class="sch-empty-label">
+            + Chọn nhân viên
+        </span>
+
+        <span class="sch-picker-arrow">▾</span>
+
+    </summary>
+
+
+    <!-- Danh sách nhân viên có thể chọn -->
+    <div class="choices">
+
+        {% for option in cell.options %}
+
+            <label class="sch-employee-option">
+
+                {% if option.selected %}
+
+                    <input
+                        type="checkbox"
+                        name="pick|{{ cell.day|date:'Y-m-d' }}|{{ cell.shift.pk }}|{{ cell.role }}"
+                        value="{{ option.nv.pk }}"
+                        data-employee-name="{{ option.nv.ho_ten }}"
+                        checked>
+
+                {% else %}
+
+                    <input
+                        type="checkbox"
+                        name="pick|{{ cell.day|date:'Y-m-d' }}|{{ cell.shift.pk }}|{{ cell.role }}"
+                        value="{{ option.nv.pk }}"
+                        data-employee-name="{{ option.nv.ho_ten }}">
+
+                {% endif %}
+
+                <span>{{ option.nv.ho_ten }}</span>
+
+            </label>
+
+        {% empty %}
+
+            <div class="sch-no-employee">
+                Không có nhân viên phù hợp
+                đăng ký ca này.
+            </div>
+
+        {% endfor %}
+
+        <button
+            type="button"
+            class="sch-picker-close">
+            Đóng
+        </button>
+
+    </div>
+
+</details>
+
+
+
+                                                <!-- Form còn mở -->
+
+                                                {% else %}
+
+                                                    {% for name in cell.selected_names %}
+
+                                                        <div>• {{ name }}</div>
+
+                                                    {% empty %}
+
+                                                        <span class="sch-muted">
+                                                            —
+                                                        </span>
+
+                                                    {% endfor %}
+
+                                                {% endif %}
+
+
+                                                <!-- Định biên nhân sự -->
+
+
+<!-- =========================================
+     HIỂN THỊ SỐ LƯỢNG NHÂN VIÊN ĐÃ XẾP
+     Chỉ hiển thị khi đang xếp ca
+     ========================================= -->
+
+{% if can_schedule %}
+
+    {% if cell.count < cell.required %}
+
+        <span class="sch-meter short">
+            Đã xếp:
+            {{ cell.count }}/{{ cell.required }}
+        </span>
+
+    {% else %}
+
+        <span class="sch-meter">
+            Đã xếp:
+            {{ cell.count }}/{{ cell.required }}
+        </span>
+
+    {% endif %}
+
+{% endif %}
+
+                                            </td>
+
+                                        {% endfor %}
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <!-- Nút lưu nháp / công bố -->
+
+                    {% if can_schedule %}
+
+                        <div class="sch-actions">
+
+                            <button
+                                type="submit"
+                                name="action"
+                                value="save_draft"
+                                class="sch-btn gray">
+
+                                Lưu nháp
+
+                            </button>
+
+                            <button
+                                type="submit"
+                                name="action"
+                                value="publish"
+                                class="sch-btn"
+                                onclick="return confirm('Bạn chắc chắn muốn công bố lịch chính thức?');">
+
+                                Công bố lịch chính thức
+
+                            </button>
+
+                        </div>
+
+                    {% elif readonly %}
+
+                        <div class="sch-good">
+                            Lịch đã được công bố.
+                            Hiện ở chế độ chỉ xem.
+                        </div>
+
+                    {% endif %}
+
+                </form>
+
+            {% else %}
+
+                <div class="sch-box">
+                    Chưa có đợt đăng ký nào.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =====================================
+             D3. TỔNG HỢP ĐĂNG KÝ
+             ===================================== -->
+
+        <section
+            id="manager-registrations"
+            class="sch-pane">
+
+            <h3>
+                Tổng hợp đăng ký ca
+
+                {% if dot %}
+                    – {{ dot.ten_dot }}
+                {% endif %}
+            </h3>
+
+            <div class="sch-table-scroll">
+
+                <table class="sch-table sch-table-small">
+
+                    <thead>
+                        <tr>
+                            <th>Nhân viên</th>
+                            <th>Vị trí</th>
+                            <th>Ngày đăng ký</th>
+                            <th>Ca đăng ký</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for r in registrations %}
+
+                            <tr>
+
+                                <td>
+                                    {{ r.ma_nv.ho_ten }}
+                                </td>
+
+                                <td>
+                                    {{ r.ma_nv.vi_tri }}
+                                </td>
+
+                                <td>
+                                    {{ r.ngay_lam_dang_ky|date:'d/m/Y' }}
+                                </td>
+
+                                <td>
+                                    {{ r.ma_ca_lam.ten_ca }}
+                                </td>
+
+                            </tr>
+
+                        {% empty %}
+
+                            <tr>
+                                <td colspan="4">
+                                    Chưa có đăng ký ca.
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             D4. THIẾT LẬP ĐỊNH BIÊN
+             ===================================== -->
+
+        <section
+            id="manager-requirements"
+            class="sch-pane">
+
+            <h3>Định biên nhân sự theo ca và vị trí</h3>
+
+            {% if dot %}
+
+                <p class="sch-muted">
+                    Số người cần cho mỗi ca,
+                    mỗi vị trí trong một ngày.
+                    Định biên áp dụng cho cả 7 ngày.
+                </p>
+
+                <form method="post" class="sch-box">
+
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="action"
+                        value="save_requirements">
+
+
+                    <div class="sch-table-scroll">
+
+                        <table class="sch-table sch-table-small">
+
+                            <thead>
+
+                                <tr>
+                                    <th>Ca làm việc</th>
+                                    <th>Vị trí</th>
+                                    <th>Số người cần / ngày</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                {% for r in requirement_rows %}
+
+                                    {% for v in r.roles %}
+
+                                        <tr>
+
+                                            <td>
+                                                {{ r.shift.ten_ca }}
+
+                                                <span class="sch-muted">
+                                                    (
+                                                    {{ r.shift.start_time|time:'H:i' }}
+                                                    –
+                                                    {{ r.shift.end_time|time:'H:i' }}
+                                                    )
+                                                </span>
+                                            </td>
+
+                                            <td>
+                                                {{ v.label }}
+                                            </td>
+
+                                            <td>
+
+                                                {% if readonly %}
+
+                                                    <input
+                                                        type="number"
+                                                        class="sch-number-input"
+                                                        value="{{ v.count }}"
+                                                        disabled>
+
+                                                {% else %}
+
+                                                    <input
+                                                        type="number"
+                                                        class="sch-number-input"
+                                                        name="need|{{ r.shift.pk }}|{{ v.code }}"
+                                                        value="{{ v.count }}"
+                                                        min="0"
+                                                        max="30"
+                                                        required>
+
+                                                {% endif %}
+
+                                            </td>
+
+                                        </tr>
+
+                                    {% endfor %}
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    {% if not readonly %}
+
+                        <div class="sch-actions">
+
+                            <button
+                                type="submit"
+                                class="sch-btn">
+
+                                Lưu định biên
+
+                            </button>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="sch-good">
+                            Định biên tuần này đã được công bố,
+                            chỉ có thể xem.
+                        </div>
+
+                    {% endif %}
+
+                </form>
+
+            {% else %}
+
+                <div class="sch-box">
+                    Chưa có đợt đăng ký.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =====================================
+             D5. LỊCH SỬ PHÂN CA QUẢN LÝ
+             ===================================== -->
+
+        <section
+            id="manager-history"
+            class="sch-pane">
+
+            <h3>Lịch sử các tuần làm việc</h3>
+
+            {% for r in rounds %}
+
+                <div class="sch-box">
+
+                    <h4>{{ r.ten_dot }}</h4>
+
+                    <p class="sch-muted">
+
+                        Thời gian:
+                        {{ r.ngay_bat_dau_tuan|date:'d/m/Y' }}
+                        –
+                        {{ r.ngay_ket_thuc_tuan|date:'d/m/Y' }}
+
+                    </p>
+
+                    <p class="sch-muted">
+                        Trạng thái:
+                        <strong>{{ r.trang_thai }}</strong>
+                    </p>
+
+                    <a href="?dot={{ r.pk }}#manager-matrix">
+                        Xem bảng phân ca tuần này
+                    </a>
+
+                </div>
+
+            {% empty %}
+
+                <div class="sch-box">
+                    Chưa có lịch sử phân ca.
+                </div>
+
+            {% endfor %}
+
+        </section>
+
+
+        <!-- =====================================
+             D6. MỞ ĐỢT ĐĂNG KÝ MỚI
+             ===================================== -->
+
+        <section
+            id="manager-create"
+            class="sch-pane">
+
+            <h3>Thiết lập đợt đăng ký mới</h3>
+
+            <form
+                method="post"
+                class="sch-box"
+                style="max-width: 650px;">
+
+                {% csrf_token %}
+
+                <input
+                    type="hidden"
+                    name="action"
+                    value="create_round">
+
+
+                <!-- Tên đợt -->
+
+                <div class="sch-field">
+
+                    <label for="round-name">
+                        Tên đợt đăng ký
+                    </label>
+
+                    <input
+                        id="round-name"
+                        type="text"
+                        name="name"
+                        placeholder="Ví dụ: Đăng ký ca tuần 46"
+                        required>
+
+                </div>
+
+
+                <!-- Tuần làm việc -->
+
+                <div class="sch-field-row">
+
+                    <div class="sch-field">
+
+                        <label for="round-start">
+                            Bắt đầu tuần (Thứ Hai)
+                        </label>
+
+                        <input
+                            id="round-start"
+                            type="date"
+                            name="start"
+                            required>
+
+                    </div>
+
+                    <div class="sch-field">
+
+                        <label for="round-end">
+                            Kết thúc tuần (Chủ nhật)
+                        </label>
+
+                        <input
+                            id="round-end"
+                            type="date"
+                            name="end"
+                            required>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Hạn chót đăng ký -->
+
+                <div class="sch-field">
+
+                    <label for="round-deadline">
+                        Hạn chót đăng ký ca
+                    </label>
+
+                    <input
+                        id="round-deadline"
+                        type="datetime-local"
+                        name="deadline"
+                        required>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="sch-btn">
+
+                    Tạo và mở đợt đăng ký
+
+                </button>
+
+            </form>
+
+        </section>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+    /* =========================================
+       1. CHUYỂN TAB NHÂN VIÊN / QUẢN LÝ
+       ========================================= */
+
+    document.querySelectorAll(".sch-tab").forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            const targetId = button.dataset.tab;
+
+            // Bỏ active khỏi các nút tab
+            document.querySelectorAll(".sch-tab").forEach(function (tab) {
+                tab.classList.remove("active");
+            });
+
+            // Ẩn toàn bộ nội dung tab
+            document.querySelectorAll(".sch-pane").forEach(function (pane) {
+                pane.classList.remove("active");
+            });
+
+            // Kích hoạt tab được chọn
+            button.classList.add("active");
+
+            const targetPane = document.getElementById(targetId);
+
+            if (targetPane) {
+                targetPane.classList.add("active");
+            }
+        });
+
+    });
+
+
+    /* =========================================
+       2. MỞ TAB THEO ĐƯỜNG DẪN URL
+       ========================================= */
+
+    if (window.location.hash) {
+
+        const tabId = window.location.hash.substring(1);
+
+        const targetButton = document.querySelector(
+            '.sch-tab[data-tab="' + tabId + '"]'
+        );
+
+        if (targetButton) {
+            targetButton.click();
+        }
+    }
+
+
+    /* =========================================
+       3. CHỈNH SỬA FORM ĐĂNG KÝ CA
+       ========================================= */
+
+    const editButton = document.getElementById(
+        "edit-registration-btn"
+    );
+
+    const registrationForm = document.getElementById(
+        "registration-form"
+    );
+
+    const cancelButton = document.getElementById(
+        "cancel-registration-btn"
+    );
+
+
+// Nếu đã nộp form, ẩn form khi tải trang
+    if (registrationForm && editButton) {
+        registrationForm.classList.add("is-hidden");
+    }
+
+// Nhấn Chỉnh sửa đăng ký
+    if (editButton && registrationForm) {
+        editButton.addEventListener("click", function () {
+             registrationForm.classList.remove("is-hidden");
+             editButton.hidden = true;
+        });
+}
+
+// Nhấn Hủy chỉnh sửa
+if (cancelButton && registrationForm) {
+    cancelButton.addEventListener("click", function () {
+        registrationForm.reset();
+        registrationForm.classList.add("is-hidden");
+
+        if (editButton) {
+            editButton.hidden = false;
+        }
+    });
+}
+
+
+/* =========================================
+   4. QUẢN LÝ DANH SÁCH CHỌN NHÂN VIÊN
+   ========================================= */
+
+const shiftPickers = document.querySelectorAll(".sch-picker");
+
+// Cập nhật tên hiển thị trong ô phân ca
+function updateShiftPicker(picker) {
+
+    const checkboxes = picker.querySelectorAll(
+        'input[type="checkbox"]'
+    );
+
+    const namesContainer = picker.querySelector(
+        ".sch-selected-names"
+    );
+
+    const emptyLabel = picker.querySelector(
+        ".sch-empty-label"
+    );
+
+    if (!namesContainer || !emptyLabel) {
+        return;
+    }
+
+    // Xóa tên hiển thị trước đó
+    namesContainer.replaceChildren();
+
+    let selectedCount = 0;
+
+    checkboxes.forEach(function (checkbox) {
+
+        if (checkbox.checked) {
+
+            selectedCount++;
+
+            const employeeName = document.createElement("span");
+
+            employeeName.className = "sch-selected-name";
+
+            employeeName.textContent = checkbox.dataset.employeeName;
+
+            namesContainer.appendChild(employeeName);
+        }
+    });
+
+    // Nếu chưa chọn ai thì hiển thị lời nhắc
+    emptyLabel.hidden = selectedCount > 0;
+
+    // Cập nhật bộ đếm nhân sự ngay trong ô
+    const cell = picker.closest("td");
+
+    if (cell) {
+
+        const meter = cell.querySelector(".sch-meter");
+
+        if (meter) {
+
+            const requiredText = meter.textContent.split("/")[1];
+
+            const required = Number(requiredText);
+
+            if (!Number.isNaN(required)) {
+
+                meter.textContent =
+                    "Đã xếp: " + selectedCount + "/" + required;
+
+                meter.classList.toggle(
+                    "short",
+                    selectedCount < required
+                );
+            }
+        }
+    }
+}
+
+
+// Khởi tạo từng danh sách
+shiftPickers.forEach(function (picker) {
+
+    updateShiftPicker(picker);
+
+    // Khi mở một ô, tự đóng các ô khác
+    picker.addEventListener("toggle", function () {
+
+        if (picker.open) {
+
+            shiftPickers.forEach(function (otherPicker) {
+
+                if (otherPicker !== picker) {
+                    otherPicker.open = false;
+                }
+            });
+        }
+    });
+
+
+    // Chọn hoặc bỏ chọn nhân viên
+    picker.addEventListener("change", function (event) {
+
+        if (event.target.matches('input[type="checkbox"]')) {
+
+            updateShiftPicker(picker);
+        }
+    });
+
+
+    // Nút Đóng trong danh sách
+    const closeButton = picker.querySelector(
+        ".sch-picker-close"
+    );
+
+    if (closeButton) {
+
+        closeButton.addEventListener("click", function () {
+
+            picker.open = false;
+        });
+    }
+});
+
+
+// Khi bấm ra ngoài danh sách, đóng tất cả
+document.addEventListener("click", function (event) {
+
+    if (!event.target.closest(".sch-picker")) {
+
+        shiftPickers.forEach(function (picker) {
+            picker.open = false;
+        });
+    }
+});
+
+</script>
+
+{% endblock %}

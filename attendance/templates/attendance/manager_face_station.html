@@ -1,0 +1,582 @@
+
+{% extends "base_internal.html" %}
+
+{% block title %}
+Face ID & Trạm | Highlands HRM
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .fs-page {
+        padding: 18px 20px 35px;
+        font-family: 'Montserrat', sans-serif;
+        color: #253047;
+    }
+
+    .fs-heading {
+        background: white;
+        border-left: 5px solid #c8102e;
+        border-radius: 14px;
+        padding: 24px 28px;
+        margin-bottom: 24px;
+        box-shadow: 0 3px 14px rgba(0,0,0,.04);
+    }
+
+    .fs-heading h2 {
+        font-size: 24px;
+        margin: 0 0 8px;
+    }
+
+    .fs-heading p {
+        color: #64748b;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .fs-tabs {
+        display: flex;
+        gap: 22px;
+        flex-wrap: wrap;
+        border-bottom: 1px solid #dfe3ea;
+        margin-bottom: 24px;
+    }
+
+    .fs-tab {
+        display: inline-block;
+        padding: 13px 7px;
+        text-decoration: none;
+        color: #64748b;
+        font-size: 14px;
+        font-weight: 700;
+        border-bottom: 3px solid transparent;
+    }
+
+    .fs-tab.active {
+        color: #c8102e;
+        border-bottom-color: #c8102e;
+    }
+
+    .fs-tab.pending {
+        color: #a1a9b7;
+    }
+
+    .fs-summary {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 15px;
+        margin-bottom: 28px;
+    }
+
+    .fs-stat {
+        background: white;
+        border: 1px solid #e5e9f0;
+        border-radius: 13px;
+        padding: 21px;
+    }
+
+    .fs-stat span {
+        display: block;
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 14px;
+    }
+
+    .fs-stat strong {
+        display: block;
+        font-size: 28px;
+        color: #253047;
+    }
+
+    .fs-section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin: 25px 0 16px;
+    }
+
+    .fs-section-heading h3 {
+        font-size: 19px;
+        margin: 0 0 6px;
+    }
+
+    .fs-section-heading p {
+        font-size: 13px;
+        margin: 0;
+        color: #64748b;
+    }
+
+    .fs-btn {
+        display: inline-block;
+        padding: 12px 18px;
+        border-radius: 9px;
+        background: #c8102e;
+        color: white;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .fs-btn:hover {
+        background: #ae102b;
+        color: white;
+    }
+
+    .fs-filter {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+    }
+
+    .fs-input,
+    .fs-select {
+        background: #fff;
+        border: 1px solid #d9dee7;
+        border-radius: 9px;
+        padding: 12px 13px;
+        font-family: inherit;
+        font-size: 13px;
+        color: #253047;
+    }
+
+    .fs-input {
+        flex: 1;
+        min-width: 180px;
+    }
+
+    .fs-card {
+        background: #fff;
+        border: 1px solid #e5e9f0;
+        border-radius: 13px;
+        overflow: hidden;
+    }
+
+    .fs-table-wrap {
+        overflow-x: auto;
+    }
+
+    .fs-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 800px;
+        font-size: 13px;
+    }
+
+    .fs-table th {
+        background: #f9e1e6;
+        color: #80283a;
+        text-align: left;
+        padding: 16px 13px;
+        white-space: nowrap;
+    }
+
+    .fs-table td {
+        padding: 16px 13px;
+        border-bottom: 1px solid #edf0f4;
+        vertical-align: middle;
+    }
+
+    .fs-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .fs-table tbody tr:hover {
+        background: #fafbfc;
+    }
+
+    .fs-name {
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .fs-muted {
+        font-size: 12px;
+        color: #8792a3;
+    }
+
+    .fs-badge {
+        display: inline-block;
+        padding: 7px 11px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .fs-dang-hoat-dong,
+    .fs-tram-on {
+        background: #e0f5e8;
+        color: #16794b;
+    }
+
+    .fs-chua-dang-ky {
+        background: #f0f1f4;
+        color: #64748b;
+    }
+
+    .fs-da-khoa,
+    .fs-tram-off {
+        background: #ffe4e6;
+        color: #be123c;
+    }
+
+    .fs-empty {
+        padding: 35px;
+        text-align: center;
+        color: #64748b;
+    }
+
+    .fs-note {
+        font-size: 12px;
+        color: #718096;
+        line-height: 1.8;
+        margin: 15px 0 25px;
+    }
+
+    @media (max-width: 1100px) {
+        .fs-summary {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 600px) {
+        .fs-page {
+            padding: 12px;
+        }
+
+        .fs-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .fs-heading {
+            padding: 20px;
+        }
+    }
+</style>
+
+
+<div class="fs-page">
+
+    <!-- TIÊU ĐỀ -->
+    <div class="fs-heading">
+        <h2>Quản lý chấm công</h2>
+        <p>
+            Quản lý dữ liệu Face ID và cấu hình
+            trạm chấm công tại cửa hàng.
+        </p>
+    </div>
+
+    <!-- THANH TAB -->
+    <div class="fs-tabs">
+
+        <a
+            href="{% url 'attendance:manager_dashboard' %}"
+            class="fs-tab"
+        >
+            Chấm công hôm nay
+        </a>
+
+        <a
+            href="{% url 'attendance:manager_history' %}"
+            class="fs-tab"
+        >
+            Lịch sử chấm công
+        </a>
+
+        <!-- <span class="fs-tab pending">
+            Giải trình
+        </span> -->
+
+        <span class="fs-tab active">
+            Face ID &amp; Trạm
+        </span>
+
+    </div>
+
+    <!-- THỐNG KÊ -->
+    <div class="fs-summary">
+
+        <div class="fs-stat">
+            <span>Tổng nhân viên</span>
+            <strong>{{ tong_nhan_vien }}</strong>
+        </div>
+
+        <div class="fs-stat">
+            <span>Đã đăng ký Face ID</span>
+            <strong>{{ so_da_dang_ky }}</strong>
+        </div>
+
+        <div class="fs-stat">
+            <span>Chưa đăng ký Face ID</span>
+            <strong>{{ so_chua_dang_ky }}</strong>
+        </div>
+
+        <div class="fs-stat">
+            <span>Trạm đang bật</span>
+            <strong>
+                {{ so_tram_hoat_dong }}/{{ tong_tram }}
+            </strong>
+        </div>
+
+    </div>
+
+    <!-- FACE ID NHÂN VIÊN -->
+    <div class="fs-section-heading">
+
+        <div>
+            <h3>Dữ liệu khuôn mặt nhân viên</h3>
+            <p>
+                Theo dõi trạng thái đăng ký và cập nhật Face ID.
+            </p>
+        </div>
+
+        <a
+            class="fs-btn"
+            href="{% url 'attendance:face_enrollment' %}"
+        >
+            Đăng ký khuôn mặt nhân viên
+        </a>
+
+    </div>
+
+    <div class="fs-filter">
+
+        <input
+            type="text"
+            id="fsSearch"
+            class="fs-input"
+            placeholder="Tìm tên hoặc mã nhân viên..."
+        >
+
+        <select id="fsStatusFilter" class="fs-select">
+            <option value="">Tất cả trạng thái</option>
+            <option value="Đang hoạt động">Đang hoạt động</option>
+            <option value="Chưa đăng ký">Chưa đăng ký</option>
+            <option value="Đã khóa">Đã khóa</option>
+        </select>
+
+    </div>
+
+    <div class="fs-card">
+        <div class="fs-table-wrap">
+            <table class="fs-table">
+
+                <thead>
+                    <tr>
+                        <th>Mã NV</th>
+                        <th>Nhân viên</th>
+                        <th>Trạng thái Face ID</th>
+                        <th>Ngày cập nhật</th>
+                        <th>Phiên bản mô hình</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in danh_sach_face %}
+
+                        <tr
+                            class="fs-face-row"
+                            data-name="{{ item.ho_ten|lower }}"
+                            data-code="{{ item.ma_nv|lower }}"
+                            data-status="{{ item.trang_thai }}"
+                        >
+
+                            <td>
+                                <strong>{{ item.ma_nv }}</strong>
+                            </td>
+
+                            <td>
+                                <div class="fs-name">
+                                    {{ item.ho_ten }}
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="fs-badge fs-{{ item.mau_trang_thai }}">
+                                    {{ item.trang_thai }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {% if item.ngay_cap_nhat %}
+                                    {{ item.ngay_cap_nhat|date:"d/m/Y H:i" }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ item.phien_ban }}
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="5" class="fs-empty">
+                                Chưa có hồ sơ nhân viên trong hệ thống.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+    <p class="fs-note" id="fsNoMatch" style="display:none;">
+        Không tìm thấy nhân viên phù hợp với bộ lọc.
+    </p>
+
+    <p class="fs-note">
+        Dữ liệu khuôn mặt được lưu dưới dạng đặc trưng
+        đã mã hóa. Trang quản lý không hiển thị ảnh gốc,
+        embedding hoặc khóa mã hóa.
+    </p>
+
+    <!-- TRẠM CHẤM CÔNG -->
+    <div class="fs-section-heading">
+        <div>
+            <h3>Danh sách trạm chấm công</h3>
+            <p>
+                Theo dõi cấu hình trạm và tài khoản kiosk liên kết.
+            </p>
+        </div>
+    </div>
+
+    <div class="fs-card">
+        <div class="fs-table-wrap">
+            <table class="fs-table">
+
+                <thead>
+                    <tr>
+                        <th>Mã trạm</th>
+                        <th>Tên trạm</th>
+                        <th>Chi nhánh</th>
+                        <th>Tài khoản kiosk</th>
+                        <th>IP cho phép</th>
+                        <th>Trạng thái cấu hình</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for tram in danh_sach_tram %}
+
+                        <tr>
+
+                            <td>
+                                <strong>{{ tram.ma_tram }}</strong>
+                            </td>
+
+                            <td>{{ tram.ten_tram }}</td>
+
+                            <td>{{ tram.chi_nhanh }}</td>
+
+                            <td>
+                                {{ tram.tai_khoan }}
+                            </td>
+
+                            <td>
+                                {{ tram.ip_cho_phep|default:"Chưa cấu hình" }}
+                            </td>
+
+                            <td>
+                                {% if tram.dang_hoat_dong %}
+                                    <span class="fs-badge fs-tram-on">
+                                        Đang bật
+                                    </span>
+                                {% else %}
+                                    <span class="fs-badge fs-tram-off">
+                                        Đã tắt
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="6" class="fs-empty">
+                                Chưa có trạm chấm công nào được đăng ký.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+    <p class="fs-note">
+        Trạng thái Đang bật chỉ phản ánh cấu hình của trạm
+        trong database. Hệ thống chưa giám sát kết nối
+        trực tuyến hoặc trạng thái camera theo thời gian thực.
+    </p>
+
+</div>
+
+
+<script>
+(function () {
+
+    const searchInput =
+        document.getElementById("fsSearch");
+
+    const statusFilter =
+        document.getElementById("fsStatusFilter");
+
+    const rows = Array.from(
+        document.querySelectorAll(".fs-face-row")
+    );
+
+    const noMatch =
+        document.getElementById("fsNoMatch");
+
+    function applyFilter() {
+
+        const keyword =
+            searchInput.value.trim().toLowerCase();
+
+        const status = statusFilter.value;
+
+        let visible = 0;
+
+        rows.forEach(row => {
+
+            const name = row.dataset.name || "";
+            const code = row.dataset.code || "";
+
+            const matchesText =
+                name.includes(keyword) ||
+                code.includes(keyword);
+
+            const matchesStatus =
+                !status || row.dataset.status === status;
+
+            const show = matchesText && matchesStatus;
+
+            row.style.display = show ? "" : "none";
+
+            if (show) visible++;
+        });
+
+        noMatch.style.display =
+            rows.length > 0 && visible === 0
+                ? "block"
+                : "none";
+    }
+
+    searchInput.addEventListener("input", applyFilter);
+    statusFilter.addEventListener("change", applyFilter);
+
+})();
+</script>
+
+{% endblock %}

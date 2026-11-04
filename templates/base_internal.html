@@ -12,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+    <link rel="stylesheet" href="{% static 'css/font.css' %}">
     <link rel="stylesheet" href="{% static 'css/common.css' %}">
     <link rel="stylesheet" href="{% static 'css/internal.css' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -303,12 +304,18 @@
                         <span>Hợp đồng &amp; Phúc lợi</span>
                     </a>
 
-                    <a href="{% url 'accounts:module' 'scheduling' %}" class="{% if active_menu == 'scheduling' %}active{% endif %}">
+                    <a
+                        href="{% url 'scheduling:dashboard' %}"
+                        class="{% if active_menu == 'scheduling' %}active{% endif %}"
+                    >
                         <span class="menu-icon">▦</span>
                         <span>Phân ca làm việc</span>
                     </a>
 
-                    <a href="{% url 'accounts:module' 'attendance' %}" class="{% if active_menu == 'attendance' %}active{% endif %}">
+                    <a
+                        href="{% url 'attendance:dashboard' %}"
+                        class="{% if active_menu == 'attendance' %}active{% endif %}"
+                    >
                         <span class="menu-icon">◷</span>
                         <span>Chấm công</span>
                     </a>
@@ -345,12 +352,18 @@
                         <span>Hợp đồng &amp; Phúc lợi</span>
                     </a>
 
-                    <a href="{% url 'accounts:module' 'scheduling' %}" class="{% if active_menu == 'scheduling' %}active{% endif %}">
+                    <a
+                        href="{% url 'scheduling:dashboard' %}"
+                        class="{% if active_menu == 'scheduling' %}active{% endif %}"
+                    >
                         <span class="menu-icon">▦</span>
                         <span>Lịch làm việc</span>
                     </a>
 
-                    <a href="{% url 'accounts:module' 'attendance' %}" class="{% if active_menu == 'attendance' %}active{% endif %}">
+                    <a
+                        href="{% url 'attendance:dashboard' %}"
+                        class="{% if active_menu == 'attendance' %}active{% endif %}"
+                    >
                         <span class="menu-icon">◷</span>
                         <span>Chấm công</span>
                     </a>

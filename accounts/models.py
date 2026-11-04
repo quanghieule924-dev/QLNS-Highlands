@@ -8,6 +8,7 @@ class User(AbstractUser):
         ('admin', 'Quản lý'),
         ('employee', 'Nhân viên'),
         ('candidate', 'Ứng viên'),
+        ('kiosk', 'Trạm chấm công'),
     ]
 
 
