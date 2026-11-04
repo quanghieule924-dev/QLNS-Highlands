@@ -1,0 +1,856 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đánh giá kết quả tuyển dụng - HRM Highlands</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <link rel="stylesheet" href="{% static 'css/internal.css' %}">
+    <style>
+        :root {
+            --sidebar-width: 210px !important;
+            --header-height: 72px !important;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', 'Be Vietnam Pro', sans-serif; }
+
+        body {
+            background-color: #F8F6F0 !important;
+            color: #333;
+            display: block !important;
+            overflow: auto !important;
+            height: auto !important;
+            margin: 0;
+        }
+
+        /* THANH HEADER NGANG ĐỎ ĐẬM HIGHLANDS */
+        .internal-header {
+            position: fixed !important;
+            top: 0; right: 0; left: 0;
+            z-index: 1000;
+            height: var(--header-height) !important;
+            display: flex;
+            align-items: center;
+            background: #8A1A22 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 0 !important;
+        }
+
+        .internal-brand {
+            width: var(--sidebar-width) !important;
+            min-width: var(--sidebar-width) !important;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 14px !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
+            background: #8A1A22 !important;
+            color: #fff;
+            text-decoration: none;
+        }
+        .brand-logo-img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        .brand-text strong {
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+        }
+        .brand-text small {
+            color: #FFD43B;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .header-search {
+            width: 320px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-left: 25px;
+            padding: 0 14px;
+            border-radius: 20px;
+            background: #ffffff !important;
+        }
+        .header-search input {
+            width: 100%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: #333 !important;
+            font-size: 13px;
+        }
+        .header-account {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-left: auto;
+            padding: 0 25px;
+        }
+        .account-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: #fff;
+            color: #8A1A22;
+            font-weight: 800;
+            font-size: 12px;
+            display: grid;
+            place-items: center;
+        }
+        .logout-button {
+            background-color: #ffffff !important;
+            color: #8A1A22 !important;
+            border: none !important;
+            padding: 8px 20px !important;
+            border-radius: 20px !important;
+            font-weight: 700 !important;
+            font-size: 13px !important;
+            cursor: pointer !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .logout-button:hover {
+            background-color: #FFF0F1 !important;
+        }
+
+        /* THANH SIDEBAR DỌC NỀN TRẮNG TÁCH BIỆT */
+        .internal-sidebar {
+            position: fixed !important;
+            top: var(--header-height) !important;
+            bottom: 0; left: 0;
+            z-index: 900;
+            width: var(--sidebar-width) !important;
+            padding: 20px 10px 14px !important;
+            background: #FFFFFF !important;
+            border-right: 1px solid #E5E0D8 !important;
+            overflow-y: auto;
+            color: #292929 !important;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-menu {
+            padding-top: 5px !important;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .sidebar-menu a {
+            color: #444444 !important;
+            font-size: 12px;
+            border-radius: 6px;
+            padding: 0 10px;
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: background 0.15s ease;
+        }
+        .sidebar-menu a:hover {
+            background: #FFF0F1 !important;
+            color: #8A1A22 !important;
+        }
+        .sidebar-menu a.active {
+            background: #8A1A22 !important;
+            color: #FFFFFF !important;
+            font-weight: 700 !important;
+            border-left: none !important;
+        }
+
+        .sidebar-note {
+            margin-top: auto;
+            padding: 10px;
+            border: 1px solid #EAE5DE;
+            border-radius: 8px;
+            background: #FAFAFA;
+        }
+        .sidebar-note strong {
+            color: #1A1A1A !important;
+            font-size: 10px;
+        }
+        .sidebar-note p {
+            color: #777777 !important;
+            margin: 4px 0 0;
+            font-size: 9px;
+            line-height: 1.5;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: var(--sidebar-width) !important;
+            margin-top: var(--header-height) !important;
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px 40px;
+            background-color: #F8F6F0 !important;
+            min-height: calc(100vh - var(--header-height));
+            box-sizing: border-box;
+        }
+
+        .top-header-clean {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-title h1 { font-size: 26px; font-weight: 800; color: #1a1a1a; margin: 0; }
+
+        .card-container { background: #fff; border-radius: 12px; border: 1px solid #eaeaea; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); margin-bottom: 30px; }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #1a1a1a;
+            letter-spacing: -0.2px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        /* CỤM BỘ LỌC CHUẨN MẪU */
+        .table-filter-grid {
+            display: grid;
+            grid-template-columns: 2fr 1.2fr 1.2fr 1.2fr 100px;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .filter-input, .filter-select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            background: #fff;
+            color: #333;
+            font-family: inherit;
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            border-color: #8A1A22;
+        }
+
+        .btn-search-filter {
+            background: #8A1A22;
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.2s;
+            height: 41px;
+        }
+        .btn-search-filter:hover {
+            background: #701319;
+        }
+
+        /* BẢNG 1 & 2: TIÊU ĐỀ IN ĐẬM, TO RÕ, ĐỒNG BỘ */
+        .table-header {
+            display: grid;
+            grid-template-columns: 1.1fr 1.8fr 1.5fr 1.5fr 1.2fr 1fr;
+            gap: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+            font-weight: 800;
+            color: #111;
+            text-transform: uppercase;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 1.1fr 1.8fr 1.5fr 1.5fr 1.2fr 1fr;
+            gap: 15px;
+            padding: 16px 0;
+            border-bottom: 1px solid #f5f5f5;
+            align-items: center;
+        }
+
+        .history-table-header {
+            display: grid;
+            grid-template-columns: 1.1fr 1.5fr 1.3fr 1fr 1fr 1.3fr 1.5fr 60px;
+            gap: 8px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+            font-weight: 800;
+            color: #111;
+            text-transform: uppercase;
+        }
+
+        .history-table-row {
+            display: grid;
+            grid-template-columns: 1.1fr 1.5fr 1.3fr 1fr 1fr 1.3fr 1.5fr 60px;
+            gap: 8px;
+            padding: 14px 0;
+            border-bottom: 1px solid #f5f5f5;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #111;
+        }
+
+        .applicant-info { display: flex; align-items: center; gap: 10px; }
+        .avatar-placeholder { width: 36px; height: 36px; background: #FFF0F1; color: #8A1A22; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+        .app-name { font-size: 14px; font-weight: 700; color: #111; text-align: left; }
+        .app-code { font-size: 13px; font-weight: 800; color: #8A1A22; text-align: left; }
+
+        /* HUY HIỆU TRẠNG THÁI */
+        .badge-pv {
+            background: #FFF3CD;
+            color: #856404;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .badge-dat {
+            background: #D1E7DD;
+            color: #0F5132;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .badge-khong-dat {
+            background: #F8D7DA;
+            color: #842029;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        /* NÚT ĐÁNH GIÁ: NỀN TRẮNG, CHỮ ĐỎ, HOVER ĐỎ TRẮNG */
+        .action-btn {
+            background: #ffffff;
+            color: #8A1A22;
+            border: 1px solid #8A1A22;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+            white-space: nowrap;
+        }
+        .action-btn:hover {
+            background: #8A1A22;
+            color: #fff;
+        }
+
+        /* ICON THÙNG RÁC XÓA VĨNH VIỄN */
+        .delete-btn {
+            background: transparent;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 15px;
+            transition: 0.2s;
+            text-align: center;
+        }
+        .delete-btn:hover {
+            color: #8A1A22;
+        }
+
+        /* MODAL ĐÁNH GIÁ CHI TIẾT (ĐỦ THANH CUỘN, NÚT LƯU Ở ĐÁY) */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-container {
+            background: #fff;
+            width: 850px;
+            max-width: 95%;
+            max-height: 90vh;
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .modal-header {
+            padding: 18px 25px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            background: #fff;
+        }
+        .modal-header h2 { font-size: 18px; font-weight: 800; color: #111; }
+        .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #999; line-height: 1; }
+
+        .modal-body {
+            padding: 25px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .candidate-banner { background: #F8F6F0; padding: 14px 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border: 1px solid #EAE5DE; }
+        .info-grid-modal { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; background: #FAFAFA; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; margin-bottom: 20px; font-size: 13px; }
+        .info-grid-modal label { display: block; font-size: 11px; color: #777; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; }
+        .info-grid-modal div { font-weight: 700; color: #222; }
+
+        .rating-box { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: #FAFAFA; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; margin-bottom: 20px; }
+        .rating-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 13px; font-weight: 600; }
+        .score-buttons { display: flex; gap: 5px; }
+        .score-btn { width: 28px; height: 28px; border-radius: 4px; border: 1px solid #ccc; background: #fff; font-size: 12px; font-weight: 700; cursor: pointer; display: grid; place-items: center; transition: 0.15s; }
+        .score-btn.active { background: #8A1A22; color: #fff; border-color: #8A1A22; }
+
+        .radio-group-eval { display: flex; gap: 15px; margin-bottom: 15px; }
+        .radio-label-eval { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; cursor: pointer; padding: 10px 20px; border-radius: 8px; border: 1px solid #ddd; background: #fff; }
+        .radio-label-eval input { accent-color: #8A1A22; }
+
+        .modal-footer { padding: 16px 25px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px; background: #fafafa; border-radius: 0 0 12px 12px; flex-shrink: 0; }
+        .btn-cancel { background: #fff; border: 1px solid #ccc; padding: 10px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; color: #444; }
+        .btn-save-draft { background: #8A1A22; color: #fff; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <!-- THANH HEADER NGANG -->
+    <header class="internal-header">
+        <a href="{% url 'home' %}" class="internal-brand">
+            <img src="{% static 'images/logo-highlands.png' %}" alt="Highlands Logo" class="brand-logo-img">
+            <span class="brand-text">
+                <strong>HRM System</strong>
+                <small>HIGHLANDS COFFEE</small>
+            </span>
+        </a>
+
+        <div class="header-search">
+            <span class="search-icon">⌕</span>
+            <input type="search" name="search" placeholder="Tìm nhân viên, hợp đồng..." aria-label="Tìm kiếm">
+        </div>
+
+        <div class="header-account">
+            <span class="account-avatar">QL</span>
+            <form method="post" action="{% url 'accounts:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-button">Đăng xuất</button>
+            </form>
+        </div>
+    </header>
+
+    <!-- THANH SIDEBAR DỌC -->
+    <aside class="internal-sidebar">
+        <nav class="sidebar-menu">
+            <a href="{% url 'home' %}" class="{% if active_menu == 'dashboard' %}active{% endif %}">
+                <span class="menu-icon">▦</span>
+                <span>Tổng quan</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'employees' %}active{% endif %}">
+                <span class="menu-icon">♙</span>
+                <span>Quản lý nhân viên</span>
+            </a>
+
+            <a href="{% url 'recruitment:quan_ly_tuyen_dung' %}" class="{% if active_menu == 'tuyen_dung' or request.resolver_match.namespace == 'recruitment' %}active{% endif %}">
+                <span class="menu-icon">♧</span>
+                <span>Tuyển dụng</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'contracts' %}active{% endif %}">
+                <span class="menu-icon">▤</span>
+                <span>Hợp đồng &amp; Phúc lợi</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'scheduling' %}active{% endif %}">
+                <span class="menu-icon">▦</span>
+                <span>Phân ca làm việc</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'attendance' %}active{% endif %}">
+                <span class="menu-icon">◷</span>
+                <span>Chấm công</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'payroll' %}active{% endif %}">
+                <span class="menu-icon">▤</span>
+                <span>Quản lý lương</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'training' %}active{% endif %}">
+                <span class="menu-icon">♧</span>
+                <span>Đào tạo</span>
+            </a>
+
+            <a href="#" class="{% if active_menu == 'reports' %}active{% endif %}">
+                <span class="menu-icon">▥</span>
+                <span>Báo cáo thống kê</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-note">
+            <strong>Không gian chi nhánh</strong>
+            <p>Theo dõi nhân sự và hoạt động tại chi nhánh của bạn.</p>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- TIÊU ĐỀ CHÍNH VÀ NHÃN CHI NHÁNH THẲNG HÀNG -->
+        <div class="top-header-clean">
+            <div class="page-title">
+                <h1>Đánh giá kết quả tuyển dụng</h1>
+            </div>
+            <div style="font-size: 13px; font-weight: 600; color: #8A1A22; background: #FFF0F1; padding: 8px 16px; border-radius: 20px;">📍 Chi nhánh Bạch Đằng, Đà Nẵng</div>
+        </div>
+
+        <!-- BẢNG 1: DANH SÁCH CHỜ ĐÁNH GIÁ -->
+        <div class="card-container">
+            <div class="section-title">Danh sách chờ đánh giá kết quả</div>
+
+            <div class="table-filter-grid">
+                <input type="text" id="pendingSearchText" class="filter-input" placeholder="🔍 Tìm tên ứng viên...">
+                <select id="pendingFilterViTri" class="filter-select">
+                    <option value="">💼 Vị trí...</option>
+                    <option value="Nhân viên phục vụ">Nhân viên phục vụ</option>
+                    <option value="Thu ngân">Thu ngân</option>
+                    <option value="Pha chế">Pha chế</option>
+                </select>
+                <!-- ĐOẠN CODE MỚI (ĐÃ ĐỔI THÀNH INPUT ĐỂ GÕ TỰ DO) -->
+                <input type="text" name="ma_ho_so" value="{{ ma_ho_so_filter }}" class="filter-input" placeholder="🔍 Nhập mã hồ sơ ">
+                <select id="pendingFilterTrangThai" class="filter-select">
+                    <option value="">⚙️ Trạng thái...</option>
+                    <option value="Đã phỏng vấn">Đã phỏng vấn</option>
+                </select>
+                <button type="button" class="btn-search-filter" onclick="filterPendingTable()">Tìm kiếm</button>
+            </div>
+
+            <div class="table-header">
+                <div>Mã hồ sơ</div>
+                <div>Ứng viên</div>
+                <div>Vị trí</div>
+                <div>Đợt tuyển</div>
+                <div>Trạng thái PV</div>
+                <div style="text-align: right;">Thao tác</div>
+            </div>
+
+            <div id="pending-list">
+                {% for item in danh_sach_cho_pv %}
+                <div class="table-row" id="row-{{ item.ma_ho_so }}" data-hoten="{{ item.ma_ung_vien.ho_ten|lower }}" data-vitri="{{ item.ma_vi_tri.ten_vi_tri|lower }}" data-mahs="{{ item.ma_ho_so|lower }}" data-trangthai="{{ item.trang_thai_pv|default:'Đã phỏng vấn'|lower }}">
+                    <div class="app-code">{{ item.ma_ho_so }}</div>
+                    <div class="applicant-info">
+                        <div class="avatar-placeholder">{{ item.ma_ung_vien.ho_ten|slice:":2"|upper }}</div>
+                        <div>
+                            <div class="app-name">{{ item.ma_ung_vien.ho_ten }}</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 13px; font-weight: 700; color: #333;">{{ item.ma_vi_tri.ten_vi_tri }}</div>
+                    <div style="font-size: 13px; font-weight: 700; color: #444;">{{ item.ma_dot.ten_dot }}</div>
+                    <div>
+                        <span class="badge-pv" id="badge-{{ item.ma_ho_so }}">● {{ item.trang_thai_pv|default:"Đã phỏng vấn" }}</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <button class="action-btn" onclick="openReviewModal('{{ item.ma_ho_so }}', '{{ item.ma_ung_vien.ho_ten }}', '{{ item.ma_vi_tri.ten_vi_tri }}')">Đánh giá</button>
+                    </div>
+                </div>
+                {% empty %}
+                <div id="empty-pending" style="padding: 30px; text-align: center; color: #777; font-size: 13px;">
+                    Không có hồ sơ nào đang chờ đánh giá.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- BẢNG 2: LỊCH SỬ ĐÁNH GIÁ -->
+        <div class="card-container">
+            <div class="section-title">Lịch sử đánh giá kết quả tuyển dụng</div>
+
+            <div class="table-filter-grid">
+                <input type="text" id="historySearchText" class="filter-input" placeholder="🔍 Tìm tên ứng viên...">
+                <select id="historyFilterViTri" class="filter-select">
+                    <option value="">💼 Vị trí...</option>
+                    <option value="Nhân viên phục vụ">Nhân viên phục vụ</option>
+                    <option value="Thu ngân">Thu ngân</option>
+                    <option value="Pha chế">Pha chế</option>
+                </select>
+                <!-- ĐOẠN CODE MỚI (ĐÃ ĐỔI THÀNH INPUT ĐỂ GÕ TỰ DO) -->
+                <input type="text" id="historyFilterMaHS" name="ma_ho_so" value="{{ ma_ho_so_filter }}" class="filter-input" placeholder="🔍 Nhập mã hồ sơ ">
+
+                <!-- ĐÃ THÊM id="historyFilterTrangThai" -->
+                <select id="historyFilterTrangThai" class="filter-select">
+                    <option value="">⚙️ Kết quả...</option>
+                    <option value="Đạt">Đạt</option>
+                    <option value="Không đạt">Không đạt</option>
+                </select>
+                <button type="button" class="btn-search-filter" onclick="filterHistoryTable()">Tìm kiếm</button>
+            </div>
+
+            <div class="history-table-header">
+                <div>Mã hồ sơ</div>
+                <div>Ứng viên</div>
+                <div>Vị trí</div>
+                <div>Kết quả</div>
+                <div>Ngày đánh giá</div>
+                <div>Người đánh giá</div>
+                <div>Nhận xét</div>
+                <div style="text-align: center;">Thao tác</div>
+            </div>
+
+            <div id="history-list">
+                {% for item in danh_sach_ket_qua %}
+                <div class="history-table-row" id="history-{{ item.ma_ho_so }}" data-hoten="{{ item.ma_ung_vien.ho_ten|lower }}" data-vitri="{{ item.ma_vi_tri.ten_vi_tri|lower }}" data-mahs="{{ item.ma_ho_so|lower }}" data-trangthai="{{ item.trang_thai|lower }}">
+                    <div class="app-code">{{ item.ma_ho_so }}</div>
+                    <div style="font-weight: 700; color: #111;">{{ item.ma_ung_vien.ho_ten }}</div>
+                    <div style="font-weight: 600;">{{ item.ma_vi_tri.ten_vi_tri }}</div>
+                    <div>
+                        {% if item.trang_thai == 'Đạt' %}
+                            <span class="badge-dat">● Đạt</span>
+                        {% else %}
+                            <span class="badge-khong-dat">● Không đạt</span>
+                        {% endif %}
+                    </div>
+                    <div style="color: #666;">{% now "d/m/Y" %}</div>
+                    <div style="font-weight: 600; color: #333;">Quản lý nhân sự</div>
+                    <div style="color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="Đã đánh giá phỏng vấn">Đã đánh giá phỏng vấn</div>
+                    <div style="text-align: center;">
+                        <form method="POST" action="" onsubmit="return confirm('Bạn có chắc chắn muốn xóa vĩnh viễn bản ghi lịch sử này không?');" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="delete_ma_ho_so" value="{{ item.ma_ho_so }}">
+                            <button type="submit" class="delete-btn" title="Xóa lịch sử">🗑️</button>
+                        </form>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="padding: 30px; text-align: center; color: #777; font-size: 13px;">Chưa có lịch sử đánh giá nào.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL ĐÁNH GIÁ KẾT QUẢ CHI TIẾT -->
+    <div id="reviewModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Đánh giá kết quả phỏng vấn</h2>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+
+            <form method="POST" action="" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+                {% csrf_token %}
+                <input type="hidden" name="ma_ho_so" id="input-modal-ma-hs">
+
+                <div class="modal-body">
+                    <!-- BANNER ỨNG VIÊN: 3 PHẦN NGANG (TÊN TRÁI - VỊ TRÍ GIỮA - MÃ HS PHẢI) -->
+                    <div class="candidate-banner" style="display: flex; justify-content: space-between; align-items: center; padding: 14px 20px;">
+                        <div style="font-size: 15px; font-weight: 800; color: #111;" id="modal-uv-name">Nguyễn Minh Anh</div>
+                        <div style="font-size: 13px; font-weight: 600; color: #555;" id="modal-vi-tri">Nhân viên phục vụ</div>
+                        <div style="font-size: 13px; font-weight: 800; color: #8A1A22;" id="modal-ma-hs-display">HS001</div>
+                    </div>
+
+                    <div class="info-grid-modal">
+                        <div>
+                            <label>Thời gian phỏng vấn</label>
+                            <div>08/10/2026 - 09:00</div>
+                        </div>
+                        <div>
+                            <label>Hình thức</label>
+                            <div>Trực tiếp</div>
+                        </div>
+                        <div>
+                            <label>Địa điểm</label>
+                            <div>Highlands Coffee</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: 800; font-size: 14px; margin-bottom: 8px; color: #111;">Đánh giá kết quả *</label>
+                        <div class="radio-group-eval">
+                            <label class="radio-label-eval">
+                                <input type="radio" name="ket_qua" value="Đạt" checked> Đạt
+                            </label>
+                            <label class="radio-label-eval">
+                                <input type="radio" name="ket_qua" value="Không đạt"> Không đạt
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="rating-box">
+                        <div>
+                            <div style="font-weight: 800; font-size: 14px; margin-bottom: 15px; color: #111;">Tiêu chí đánh giá</div>
+                            <div class="rating-row">
+                                <span>Giao tiếp</span>
+                                <div class="score-buttons">
+                                    <button type="button" class="score-btn" onclick="selectScore(this)">1</button>
+                                    <button type="button" class="score-btn" onclick="selectScore(this)">2</button>
+                                    <button type="button" class="score-btn" onclick="selectScore(this)">3</button>
+                                    <button type="button" class="score-btn active" onclick="selectScore(this)">4</button>
+                                    <button type="button" class="score-btn" onclick="selectScore(this)">5</button>
+                                </div>
+                            </div>
+                            <div class="rating-row">
+                                <span>Thái độ</span>
+                                <div class="score-buttons">
+                                    <button type="button" class="score-btn" onclick="selectScore(this)">1</button>
+                                    <button type="button" class="score-btn" onclick="selectScore(this)">2</button>
+                                    <button type="button" class="score-btn" onclick="selectScore(this)">3</button>
+                                    <button type="button" class="score-btn" onclick="selectScore(this)">4</button>
+                                    <button type="button" class="score-btn active" onclick="selectScore(this)">5</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-weight: 800; font-size: 14px; margin-bottom: 15px; color: #111;">&nbsp;</div>
+                            <div class="rating-row">
+                                <span>Khả năng xử lý tình huống</span>
+                                <div class="score-buttons">
+                                    <button type="button" class="score-btn" onclick="selectScore(this)">1</button>
+                                    <button type="button" class="score-btn" onclick="selectScore(this)">2</button>
+                                    <button type="button" class="score-btn" onclick="selectScore(this)">3</button>
+                                    <button type="button" class="score-btn active" onclick="selectScore(this)">4</button>
+                                    <button type="button" class="score-btn" onclick="selectScore(this)">5</button>
+                                </div>
+                            </div>
+                            <div class="rating-row">
+                                <span>Mức độ phù hợp vị trí</span>
+                                <div class="score-buttons">
+                                    <button type="button" class="score-btn" onclick="selectScore(this)">1</button>
+                                    <button type="button" class="score-btn" onclick="selectScore(this)">2</button>
+                                    <button type="button" class="score-btn" onclick="selectScore(this)">3</button>
+                                    <button type="button" class="score-btn" onclick="selectScore(this)">4</button>
+                                    <button type="button" class="score-btn active" onclick="selectScore(this)">5</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div>
+                            <label style="display: block; font-weight: 800; font-size: 13px; margin-bottom: 8px; color: #111;">Ngày đánh giá *</label>
+                            <input type="date" name="ngay_danh_gia" id="input-ngay-dg" class="filter-input" required>
+                        </div>
+                        <div>
+                            <label style="display: block; font-weight: 800; font-size: 13px; margin-bottom: 8px; color: #111;">Người đánh giá *</label>
+                            <input type="text" name="nguoi_danh_gia" id="input-nguoi-dg" class="filter-input" placeholder="Nhập tên người đánh giá..." required>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 10px;">
+                        <label style="display: block; font-weight: 800; font-size: 14px; margin-bottom: 8px; color: #111;">Nhận xét</label>
+                        <textarea name="ly_do" id="input-nhan-xet" class="filter-input" style="height: 80px; resize: none;" placeholder="Ứng viên giao tiếp tốt..."></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Hủy</button>
+                    <button type="submit" class="btn-save-draft">Lưu đánh giá</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', (event) => {
+            let today = new Date().toISOString().split('T')[0];
+            document.getElementById('input-ngay-dg').value = today;
+
+            let savedNguoiDG = localStorage.getItem('highlands_nguoi_danh_gia');
+            if (savedNguoiDG) {
+                document.getElementById('input-nguoi-dg').value = savedNguoiDG;
+            }
+        });
+
+        function openReviewModal(maHS, hoTen, viTri) {
+            document.getElementById('modal-ma-hs-display').innerText = maHS;
+            document.getElementById('input-modal-ma-hs').value = maHS;
+            document.getElementById('modal-uv-name').innerText = hoTen;
+            document.getElementById('modal-vi-tri').innerText = viTri;
+            document.getElementById('reviewModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('reviewModal').style.display = 'none';
+        }
+
+        function selectScore(button) {
+            let parentRow = button.parentElement;
+            let buttons = parentRow.getElementsByClassName('score-btn');
+            for (let btn of buttons) {
+                btn.classList.remove('active');
+            }
+            button.classList.add('active');
+        }
+
+        function filterPendingTable() {
+            let textQuery = document.getElementById('pendingSearchText').value.toLowerCase();
+            let viTriQuery = document.getElementById('pendingFilterViTri').value.toLowerCase();
+            let maHSQuery = document.getElementById('pendingFilterMaHS').value.toLowerCase();
+            let trangThaiQuery = document.getElementById('pendingFilterTrangThai').value.toLowerCase();
+
+            let rows = document.getElementById('pending-list').getElementsByClassName('table-row');
+            for (let row of rows) {
+                let hoten = row.getAttribute('data-hoten');
+                let vitri = row.getAttribute('data-vitri');
+                let mahs = row.getAttribute('data-mahs');
+                let trangthai = row.getAttribute('data-trangthai');
+
+                let matchText = hoten.includes(textQuery) || mahs.includes(textQuery);
+                let matchViTri = !viTriQuery || vitri.includes(viTriQuery);
+                let matchMaHS = !maHSQuery || mahs === maHSQuery;
+                let matchTrangThai = !trangThaiQuery || trangthai.includes(trangThaiQuery);
+
+                if (matchText && matchViTri && matchMaHS && matchTrangThai) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            }
+        }
+
+        function filterHistoryTable() {
+            let textQuery = document.getElementById('historySearchText').value.toLowerCase();
+            let viTriQuery = document.getElementById('historyFilterViTri').value.toLowerCase();
+            let maHSQuery = document.getElementById('historyFilterMaHS').value.toLowerCase();
+            let trangThaiQuery = document.getElementById('historyFilterTrangThai').value.toLowerCase();
+
+            let rows = document.getElementById('history-list').getElementsByClassName('history-table-row');
+            for (let row of rows) {
+                let hoten = row.getAttribute('data-hoten');
+                let vitri = row.getAttribute('data-vitri');
+                let mahs = row.getAttribute('data-mahs');
+                let trangthai = row.getAttribute('data-trangthai');
+
+                let matchText = hoten.includes(textQuery) || mahs.includes(textQuery);
+                let matchViTri = !viTriQuery || vitri.includes(viTriQuery);
+                let matchMaHS = !maHSQuery || mahs === maHSQuery.toLowerCase();
+                let matchTrangThai = !trangThaiQuery || trangthai.includes(trangThaiQuery.toLowerCase());
+
+                if (matchText && matchViTri && matchMaHS && matchTrangThai) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>

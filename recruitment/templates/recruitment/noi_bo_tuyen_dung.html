@@ -1,0 +1,725 @@
+{% extends 'base_internal.html' %}
+{% load static %}
+
+{% block title %}Tổng quan tuyển dụng - Highlands Coffee HRM{% endblock %}
+
+{% block extra_css %}
+<style>
+    .recruitment-overview {
+        padding: 4px 20px 40px 0px;
+        background-color: #F8F6F0;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+
+    .top-header-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 5px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid #EBE7DF;
+        padding-bottom: 16px;
+    }
+
+    .page-main-title h1 {
+        font-size: 26px;
+        font-weight: 800;
+        color: #1A1A1A;
+        margin: 0;
+        letter-spacing: -0.3px;
+    }
+
+    .branch-pill-top {
+        background-color: #FFF5F5;
+        color: #8A1A22;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid #F5D6D8;
+    }
+
+    .stats-top-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 28px;
+    }
+
+    .stat-box {
+        background: #FFFFFF;
+        padding: 18px 20px;
+        border-radius: 12px;
+        border: 1px solid #EAE5DE;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.01);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .stat-box-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+    }
+
+    .stat-box-header span {
+        font-size: 13px;
+        color: #333333;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        line-height: 1.3;
+        max-width: 70%;
+    }
+
+    .stat-icon-wrap {
+        width: 38px;
+        height: 38px;
+        background: #FFF0F1;
+        color: #8A1A22;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+    }
+
+    .stat-icon-wrap svg {
+        width: 19px;
+        height: 19px;
+        stroke: #8A1A22;
+        stroke-width: 2.3;
+        fill: none;
+    }
+
+    .stat-box h2 {
+        font-size: 28px;
+        font-weight: 800;
+        color: #1A1A1A;
+        margin-bottom: 4px;
+        line-height: 1.1;
+    }
+
+    .stat-box-footer {
+        font-size: 13px;
+        color: #8A1A22;
+        font-weight: 600;
+    }
+
+    .section-subtitle-wrap {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 16px;
+    }
+
+    .section-subtitle {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1A1A1A;
+        font-family: inherit;
+        letter-spacing: -0.2px;
+    }
+
+    .features-grid-3-2 {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        margin-bottom: 35px;
+    }
+
+    .features-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+
+    .features-row.row-bottom {
+        width: 66.66%;
+        margin: 0 auto;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .feature-card {
+        background: #FFFFFF;
+        border-radius: 14px;
+        padding: 24px 20px;
+        border: 1px solid #EAE5DE;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 195px;
+        transition: box-shadow 0.2s ease;
+    }
+
+    .feature-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .feature-card-top {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 30px;
+    }
+
+    .feature-icon-wrap {
+        width: 40px;
+        height: 40px;
+        background: #FFF0F1;
+        color: #8A1A22;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+    }
+
+    .feature-icon-wrap svg {
+        width: 20px;
+        height: 20px;
+        stroke: #8A1A22;
+        stroke-width: 2.2;
+        fill: none;
+    }
+
+    .feature-info h3 {
+        font-size: 15px;
+        font-weight: 700;
+        color: #1A1A1A;
+        margin-bottom: 6px;
+    }
+
+    .feature-info p {
+        font-size: 12px;
+        color: #666666;
+        line-height: 1.4;
+        font-weight: 400;
+    }
+
+    .feature-action-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .feature-main-btn {
+        flex: 1;
+        background: #FFFFFF;
+        border: 1px solid #D6D0C4;
+        padding: 10px 14px;
+        border-radius: 8px;
+        color: #333333;
+        font-weight: 600;
+        font-size: 12px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .feature-arrow-btn {
+        width: 42px;
+        height: 40px;
+        background: #FFFFFF;
+        border: 1.5px solid #D6D0C4;
+        border-radius: 8px;
+        color: #1A1A1A;
+        display: grid;
+        place-items: center;
+        font-size: 22px;
+        font-weight: 900;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+        line-height: 1;
+    }
+
+    .feature-main-btn:hover,
+    .feature-arrow-btn:hover {
+        background: #8A1A22 !important;
+        border-color: #8A1A22 !important;
+        color: #FFFFFF !important;
+    }
+
+    .management-section {
+        background: #FFFFFF;
+        border-radius: 12px;
+        padding: 22px;
+        border: 1px solid #EAE5DE;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
+    }
+
+    .btn-create-outline {
+        background-color: #FFFFFF;
+        color: #8A1A22;
+        border: 1.5px solid #8A1A22;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 13px;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-create-outline:hover {
+        background-color: #8A1A22;
+        color: #FFFFFF;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        font-size: 13px;
+        margin-top: 12px;
+    }
+
+    th {
+        background: #FAFAFA;
+        color: #555555;
+        padding: 11px 14px;
+        font-weight: 600;
+        border-bottom: 2px solid #EAE5DE;
+    }
+
+    td {
+        padding: 13px 14px;
+        border-bottom: 1px solid #F0ECE6;
+        color: #333333;
+        font-weight: 400;
+    }
+
+    .badge-active {
+        background: #E6F8ED;
+        color: #198754;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 11px;
+    }
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.45);
+        justify-content: center;
+        align-items: center;
+        z-index: 999999;
+        backdrop-filter: blur(2px);
+    }
+
+    .modal-container {
+        background: #FFFFFF;
+        width: 720px;
+        max-width: 90%;
+        border-radius: 14px;
+        padding: 32px 36px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        box-sizing: border-box;
+        margin: auto;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #444444;
+    }
+
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #D6D0C4;
+        border-radius: 8px;
+        font-size: 13px;
+        outline: none;
+        background: #FFFFFF;
+        color: #333;
+        font-family: inherit;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+        border-color: #8A1A22;
+        box-shadow: 0 0 0 2px rgba(138, 26, 34, 0.1);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    .modal-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 26px;
+    }
+
+    .btn-secondary {
+        background: #FFFFFF;
+        border: 1px solid #CCCCCC;
+        padding: 9px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 13px;
+        color: #555;
+    }
+
+    .btn-secondary:hover {
+        background: #F4F4F4;
+    }
+
+    .btn-primary-custom {
+        background-color: #8A1A22;
+        color: #FFFFFF;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 13px;
+        transition: background 0.2s;
+    }
+
+    .btn-primary-custom:hover {
+        background-color: #701319;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="recruitment-overview">
+    <div class="top-header-flex">
+        <div class="page-main-title">
+            <h1>Tổng quan tuyển dụng</h1>
+        </div>
+        <div class="branch-pill-top">
+            <span>🏠</span> Chi nhánh Bạch Đằng, Đà Nẵng
+        </div>
+    </div>
+
+    <!-- 8 THẺ THỐNG KÊ CHIA ĐỀU 2 HÀNG (4 TRÊN, 4 DƯỚI) -->
+    <div class="stats-top-grid">
+        <div class="stat-box">
+            <div class="stat-box-header">
+                <span>Đợt tuyển dụng</span>
+                <div class="stat-icon-wrap">
+                    <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                </div>
+            </div>
+            <h2>{{ danh_sach|length }}</h2>
+            <div class="stat-box-footer">Đợt tuyển đã đăng</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-box-header">
+                <span>Đợt tuyển đang mở</span>
+                <div class="stat-icon-wrap">
+                    <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                </div>
+            </div>
+            <h2>{{ so_dot_dang_mo }}</h2>
+            <div class="stat-box-footer">Đợt tuyển đang mở</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-box-header">
+                <span>Vị trí đang tuyển</span>
+                <div class="stat-icon-wrap">
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+            </div>
+            <h2>{{ tong_vi_tri_dang_tuyen }}</h2>
+            <div class="stat-box-footer">Vị trí</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-box-header">
+                <span>Tổng nhân sự cần tuyển</span>
+                <div class="stat-icon-wrap">
+                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </div>
+            </div>
+            <h2>{{ tong_nhan_su_can_tuyen }}</h2>
+            <div class="stat-box-footer">Chỉ tiêu nhân sự</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-box-header">
+                <span>Đạt vòng CV</span>
+                <div class="stat-icon-wrap">
+                    <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+            </div>
+            <h2>{{ dat_vong_cv }}</h2>
+            <div class="stat-box-footer">Hồ sơ qua vòng lọc CV</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-box-header">
+                <span>Tổng số hồ sơ bị loại</span>
+                <div class="stat-icon-wrap">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                </div>
+            </div>
+            <h2>{{ khong_dat_vong_cv }}</h2>
+            <div class="stat-box-footer">Hồ sơ bị loại</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-box-header">
+                <span>Lịch phỏng vấn sắp tới</span>
+                <div class="stat-icon-wrap">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                </div>
+            </div>
+            <h2>{{ lich_phong_van_sap_toi }}</h2>
+            <div class="stat-box-footer">Đã xếp lịch PV</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-box-header">
+                <span>Kết quả tuyển dụng</span>
+                <div class="stat-icon-wrap">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </div>
+            </div>
+            <h2>{{ ket_qua_tuyen_dung }}</h2>
+            <div class="stat-box-footer">Đã chốt kết quả</div>
+        </div>
+    </div>
+
+    <!-- TIÊU ĐỀ "CÁC CHỨC NĂNG CHÍNH" -->
+    <div class="section-subtitle-wrap">
+        <div>
+            <div class="section-subtitle">Các chức năng chính</div>
+        </div>
+        <span style="font-size: 12px; color: #888888; font-weight: 500;">5 chức năng</span>
+    </div>
+
+    <!-- 5 CHỨC NĂNG CHÍNH -->
+    <div class="features-grid-3-2">
+        <div class="features-row">
+            <div class="feature-card">
+                <div class="feature-card-top">
+                    <div class="feature-icon-wrap">
+                        <svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                    </div>
+                    <div class="feature-info">
+                        <h3>Đăng tin tuyển dụng</h3>
+                        <p>Tạo và quản lý đợt tuyển dụng, vị trí và số lượng</p>
+                    </div>
+                </div>
+                <div class="feature-action-row">
+                    <button class="feature-main-btn" onclick="openModal()">Đăng tin tuyển dụng</button>
+                    <button class="feature-arrow-btn" onclick="openModal()">↗</button>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-card-top">
+                    <div class="feature-icon-wrap">
+                        <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                    </div>
+                    <div class="feature-info">
+                        <h3>Hồ sơ ứng viên</h3>
+                        <p>Xem danh sách và thông tin hồ sơ ứng viên</p>
+                    </div>
+                </div>
+                <div class="feature-action-row">
+                    <a href="{% url 'recruitment:hr_danh_sach_ho_so' %}" class="feature-main-btn">Danh sách hồ sơ</a>
+                    <a href="{% url 'recruitment:hr_danh_sach_ho_so' %}" class="feature-arrow-btn">↗</a>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-card-top">
+                    <div class="feature-icon-wrap">
+                        <svg viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                    </div>
+                    <div class="feature-info">
+                        <h3>Sàng lọc hồ sơ</h3>
+                        <p>Đánh giá CV và cập nhật trạng thái ứng viên</p>
+                    </div>
+                </div>
+                <div class="feature-action-row">
+                    <a href="{% url 'recruitment:hr_sang_loc_cv' %}" class="feature-main-btn">Sàng lọc hồ sơ</a>
+                    <a href="{% url 'recruitment:hr_sang_loc_cv' %}" class="feature-arrow-btn">↗</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-row row-bottom">
+            <div class="feature-card">
+                <div class="feature-card-top">
+                    <div class="feature-icon-wrap">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    </div>
+                    <div class="feature-info">
+                        <h3>Lịch phỏng vấn</h3>
+                        <p>Sắp xếp lịch, người phỏng vấn và theo dõi buổi tới</p>
+                    </div>
+                </div>
+                <div class="feature-action-row">
+                    <a href="{% url 'recruitment:hr_lich_phong_van' %}" class="feature-main-btn">Lịch phỏng vấn</a>
+                    <a href="{% url 'recruitment:hr_lich_phong_van' %}" class="feature-arrow-btn">↗</a>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-card-top">
+                    <div class="feature-icon-wrap">
+                        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                    <div class="feature-info">
+                        <h3>Kết quả tuyển dụng</h3>
+                        <p>Ghi nhận kết quả và danh sách được tiếp nhận</p>
+                    </div>
+                </div>
+                <div class="feature-action-row">
+                    <a href="{% url 'recruitment:hr_ket_qua_tuyen_dung' %}" class="feature-main-btn">Kết quả tuyển dụng</a>
+                    <a href="{% url 'recruitment:hr_ket_qua_tuyen_dung' %}" class="feature-arrow-btn">↗</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BẢNG DANH SÁCH ĐỢT TUYỂN DỤNG ĐÃ ĐĂNG -->
+    <div class="management-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="font-size: 15px; font-weight: 700; color: #1A1A1A;">Danh sách đợt tuyển dụng đã đăng</h3>
+            <button class="btn-create-outline" onclick="openModal()">+ Tạo đợt tuyển dụng mới</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã đợt</th>
+                    <th>Tên đợt tuyển dụng</th>
+                    <th>Vị trí</th>
+                    <th>Số lượng</th>
+                    <th>Mức lương</th>
+                    <th>Thời gian</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in danh_sach %}
+                <tr>
+                    <td><strong>{{ item.ma_dot }}</strong></td>
+                    <td>{{ item.ten_dot }}</td>
+                    <td>{{ item.ma_vi_tri }}</td>
+                    <td>{{ item.so_luong_can_tuyen }}</td>
+                    <td>{{ item.muc_luong_hien_thi }}</td>
+                    <td>{{ item.ngay_bat_dau|date:"d/m/Y" }} - {{ item.ngay_ket_thuc|date:"d/m/Y" }}</td>
+                    <td>
+                        <span class="badge-active" style="
+                            background-color: {% if item.trang_thai_dong == 'Đang tuyển' %}#E6F8ED{% elif item.trang_thai_dong == 'Sắp mở' %}#FFF3CD{% else %}#F8D7DA{% endif %};
+                            color: {% if item.trang_thai_dong == 'Đang tuyển' %}#198754{% elif item.trang_thai_dong == 'Sắp mở' %}#856404{% else %}#842029{% endif %};
+                            padding: 4px 10px; border-radius: 20px; font-weight: 600; font-size: 11px; display: inline-block;">
+                            ● {{ item.trang_thai_dong }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: #777; padding: 25px;">Chưa có đợt tuyển dụng nào được tạo. Hãy bấm nút "Tạo đợt tuyển dụng mới" ở trên!</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- MODAL TẠO ĐỢT TUYỂN DỤNG -->
+<div id="createModal" class="modal-overlay">
+    <div class="modal-container">
+        <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #111;">Tạo đợt tuyển dụng mới</h2>
+
+        <form method="POST" action="/recruitment/noi-bo/">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Mã đợt tuyển dụng</label>
+                    <input type="text" name="ma_dot" placeholder="Hệ thống tự động sinh mã...">
+                </div>
+                <div class="form-group">
+                    <label>Vị trí tuyển dụng *</label>
+                    <select name="ma_vi_tri" required>
+                        <option value="">-- Chọn vị trí --</option>
+                        <option value="Nhân viên phục vụ">Nhân viên phục vụ</option>
+                        <option value="Thu ngân">Thu ngân</option>
+                        <option value="Pha chế">Pha chế</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Tên đợt tuyển dụng *</label>
+                <input type="text" name="ten_dot" placeholder="Ví dụ: Tuyển nhân viên tháng 11/2026" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Số lượng cần tuyển *</label>
+                    <input type="number" name="so_luong_can_tuyen" placeholder="Nhập số lượng" required>
+                </div>
+                <div class="form-group">
+                    <label>Mức lương *</label>
+                    <input type="text" name="muc_luong" placeholder="Ví dụ: 25.000đ - 30.000đ/giờ" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Ngày bắt đầu *</label>
+                    <input type="date" name="ngay_bat_dau" required>
+                </div>
+                <div class="form-group">
+                    <label>Ngày kết thúc *</label>
+                    <input type="date" name="ngay_ket_thuc" required>
+                </div>
+            </div>
+
+            <div class="modal-buttons">
+                <button type="button" class="btn-secondary" onclick="closeModal()">Hủy</button>
+                <button type="submit" class="btn-primary-custom">Tạo đợt tuyển dụng</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function openModal() {
+        document.getElementById('createModal').style.display = 'flex';
+    }
+    function closeModal() {
+        document.getElementById('createModal').style.display = 'none';
+    }
+</script>
+{% endblock %}
