@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ sơ của tôi - Cổng Ứng Viên</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        body { background-color: #F8F6F0; color: #333; }
+
+        /* NAVBAR NẰM NGANG */
+        .navbar { background-color: #8A1A22; color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; }
+        .navbar-brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px; }
+        .navbar-brand span { font-size: 12px; font-weight: 400; opacity: 0.9; display: block; }
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-links a { color: #fff; text-decoration: none; font-weight: 500; font-size: 15px; }
+        .nav-links a.active { border-bottom: 2px solid #FFD43B; padding-bottom: 3px; }
+        .nav-right { display: flex; align-items: center; gap: 20px; }
+        .user-badge { background-color: #fff; color: #8A1A22; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 13px; }
+
+        /* KHU VỰC NỘI DUNG CHÍNH */
+        .main-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .breadcrumb { font-size: 13px; color: #666; margin-bottom: 10px; }
+
+        .page-header-flex { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
+        .page-title h1 { font-size: 26px; font-weight: 800; color: #1a1a1a; margin-bottom: 5px; }
+        .page-title p { color: #666; font-size: 14px; }
+        .branch-badge { background-color: #FFF0F1; color: #8A1A22; border: 1px solid #ffd1d4; padding: 10px 16px; border-radius: 8px; font-weight: 700; font-size: 13px; text-align: right; }
+
+        /* Nút Nộp hồ sơ mới */
+        .btn-primary { background-color: #8A1A22; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; box-shadow: 0 4px 6px rgba(138, 26, 34, 0.2); }
+        .btn-primary:hover { background-color: #6e131b; transform: translateY(-1px); }
+
+        /* CÁC KHỐI CHỮ NHẬT THỐNG KÊ */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 35px; }
+        .metric-card { background: #fff; border-radius: 12px; padding: 22px; border: 1px solid #eaeaea; box-shadow: 0 3px 10px rgba(0,0,0,0.02); position: relative; }
+        .metric-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .metric-title { font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase; }
+        .metric-icon { font-size: 20px; }
+        .metric-number { font-size: 32px; font-weight: 800; color: #1a1a1a; margin-bottom: 5px; }
+        .metric-desc { font-size: 12px; color: #888; font-weight: 500; }
+
+        /* BẢNG DỮ LIỆU CHỨC NĂNG */
+        .section-card { background: #fff; border-radius: 12px; border: 1px solid #eaeaea; margin-bottom: 30px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.02); }
+        .section-header { padding: 20px 25px; border-bottom: 1px solid #eaeaea; display: flex; justify-content: space-between; align-items: center; background: #fff; }
+        .section-title { font-size: 16px; font-weight: 700; color: #1a1a1a; display: flex; align-items: center; gap: 8px; }
+
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background-color: #FAFAFA; color: #777; font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 15px 25px; border-bottom: 1px solid #eaeaea; }
+        td { padding: 20px 25px; border-bottom: 1px solid #eaeaea; font-size: 13px; color: #333; vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
+
+        .badge-status { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-block; }
+        .badge-success { background-color: #E6F8ED; color: #198754; }
+        .badge-warning { background-color: #FFF3CD; color: #856404; }
+
+        .btn-action { background-color: #198754; color: #fff; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; }
+        .btn-action.secondary { background-color: #f1f1f1; color: #333; }
+        .btn-action:hover { opacity: 0.9; }
+
+        /* MODAL LÝ DO TỪ CHỐI */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-container { background: #fff; width: 500px; max-width: 90%; border-radius: 12px; padding: 30px; position: relative; }
+        .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 10px; color: #111; }
+        .modal-desc { font-size: 13px; color: #666; margin-bottom: 20px; line-height: 1.5; }
+        .form-group label { display: block; font-size: 12px; font-weight: 700; color: #555; margin-bottom: 8px; }
+        .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 13px; outline: none; resize: vertical; min-height: 100px; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+        .footer-note { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; display: flex; justify-content: space-between; font-size: 12px; color: #777; }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR NGANG -->
+    <header class="navbar">
+        <div class="navbar-brand">
+            <div>
+                HIGHLANDS COFFEE
+                <span>Cổng ứng viên</span>
+            </div>
+        </div>
+        <nav class="nav-links">
+            <a href="/">Trang chủ</a>
+            <a href="{% url 'recruitment:recruitment_list' %}">Việc làm</a>
+            <a href="{% url 'recruitment:ho_so_cua_toi' %}" class="active">Hồ sơ của tôi</a>
+        </nav>
+        <div class="nav-right">
+            <span>🔔 Thông báo</span>
+            <div class="user-badge">UV</div>
+            <a href="#" style="color: #fff; text-decoration: none; font-size: 13px; font-weight: 600;">Đăng xuất</a>
+        </div>
+    </header>
+
+    <!-- KHU VỰC NỘI DUNG TRUNG TÂM -->
+    <div class="main-container">
+        <div class="breadcrumb">Trang chủ / Cổng ứng viên</div>
+
+        <div class="page-header-flex">
+            <div class="page-title">
+                <h1>Quản lý hồ sơ ứng tuyển</h1>
+            </div>
+            <!-- BỔ SUNG NÚT NỘP HỒ SƠ TẠI ĐÂY -->
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <a href="{% url 'recruitment:recruitment_list' %}" class="btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Nộp hồ sơ mới
+                </a>
+                <div class="branch-badge">🏠 Chi nhánh Bạch Đằng, Đà Nẵng</div>
+            </div>
+        </div>
+
+        <!-- 4 KHỐI CHỮ NHẬT THỐNG KÊ -->
+        <div class="dashboard-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-title">Hồ sơ đã nộp</div>
+                    <div class="metric-icon">📁</div>
+                </div>
+                <div class="metric-number">{{ danh_sach_ho_so|length }}</div>
+                <div class="metric-desc">Tổng số hồ sơ</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-title">Kết quả CV</div>
+                    <div class="metric-icon">✅</div>
+                </div>
+                <div class="metric-number">1</div>
+                <div class="metric-desc">Đã qua vòng lọc</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-title">Lịch phỏng vấn</div>
+                    <div class="metric-icon">📅</div>
+                </div>
+                <div class="metric-number">1</div>
+                <div class="metric-desc">Sắp diễn ra</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-title">Offer nhận việc</div>
+                    <div class="metric-icon">🎉</div>
+                </div>
+                <div class="metric-number">0</div>
+                <div class="metric-desc">Chờ kết quả</div>
+            </div>
+        </div>
+
+        <!-- BẢNG 1: TIẾN TRÌNH & KẾT QUẢ CV -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">📄 Tiến trình & Kết quả hồ sơ CV</div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mã đợt</th>
+                        <th>Vị trí ứng tuyển</th>
+                        <th>Ngày nộp</th>
+                        <th>Kết quả vòng CV</th>
+                        <th>Trạng thái hiện tại</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for hs in danh_sach_ho_so %}
+                    <tr>
+                        <td><strong>{{ hs.ma_dot }}</strong></td>
+                        <td>{{ hs.vi_tri }}<br><span style="font-size: 11px; color: #777;">{{ hs.ten_dot }}</span></td>
+                        <td>{{ hs.ngay_nop }}</td>
+                        <td>
+                            {% if hs.trang_thai_ho_so == 'Đã duyệt hồ sơ' %}
+                                <span style="color: #198754; font-weight: 700; font-size: 12px;">Đạt yêu cầu</span>
+                            {% else %}
+                                <span style="color: #856404; font-weight: 700; font-size: 12px;">Đang đánh giá</span>
+                            {% endif %}
+                        </td>
+                        <td><span class="badge-status badge-success">{{ hs.trang_thai_ho_so }}</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #777; padding: 40px;">Bạn chưa nộp hồ sơ ứng tuyển nào.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- BẢNG 2: XÁC NHẬN LỊCH PHỎNG VẤN -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">📅 Xác nhận Lịch phỏng vấn</div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Vị trí</th>
+                        <th>Thời gian & Hình thức</th>
+                        <th>Địa điểm / Link Online</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác xác nhận</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Thu ngân</strong><br><span style="font-size: 11px; color: #777;">DT07</span></td>
+                        <td>02/11/2026 - 09:00 AM<br><span style="font-size: 11px; font-weight: 700;">Trực tiếp</span></td>
+                        <td>Chi nhánh 256 Bạch Đằng</td>
+                        <td><span class="badge-status badge-warning">Chờ xác nhận</span></td>
+                        <td>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn-action" onclick="alert('Lịch phỏng vấn đã được xác nhận!')">Đồng ý tham gia</button>
+                                <button class="btn-action secondary" onclick="openDeclineModal()">Không thể tham gia</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- BẢNG 3: KẾT QUẢ & LỜI MỜI NHẬN VIỆC (OFFER) -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">🎉 Kết quả tuyển dụng & Lời mời nhận việc (Offer)</div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Vị trí trúng tuyển</th>
+                        <th>Mức lương đề xuất</th>
+                        <th>Ngày dự kiến đi làm</th>
+                        <th>Trạng thái Offer</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #777; padding: 40px; background: #fafafa;">Bạn chưa có lời mời nhận việc nào cần xác nhận lúc này.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer-note">
+            <div>© 2026 Highlands Coffee · Cổng tuyển dụng chi nhánh</div>
+            <div>Chính sách bảo mật</div>
+        </div>
+    </div>
+
+    <!-- MODAL NHẬP LÝ DO KHÔNG THỂ THAM GIA PHỎNG VẤN -->
+    <div id="declineModal" class="modal-overlay">
+        <div class="modal-container">
+            <h2 class="modal-title">Lý do không thể tham gia</h2>
+            <p class="modal-desc">Vui lòng cho biết lý do bạn không thể tham gia buổi phỏng vấn để chi nhánh nhận phản hồi.</p>
+
+            <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; line-height: 1.5;">
+                <strong>Vị trí:</strong> Thu ngân (DT07)<br>
+                <strong>Thời gian:</strong> 02/11/2026 - 09:00 AM (Trực tiếp)
+            </div>
+
+            <div class="form-group">
+                <label>Lý do từ chối *</label>
+                <textarea placeholder="Nhập lý do của bạn (ví dụ: bận lịch học, đã có công việc khác...)"></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-action secondary" onclick="closeDeclineModal()">Hủy</button>
+                <button class="btn-action" style="background-color: #8A1A22;" onclick="alert('Đã gửi phản hồi thành công!'); closeDeclineModal();">Gửi phản hồi</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openDeclineModal() { document.getElementById('declineModal').style.display = 'flex'; }
+        function closeDeclineModal() { document.getElementById('declineModal').style.display = 'none'; }
+    </script>
+</body>
+</html>
