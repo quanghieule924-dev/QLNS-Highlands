@@ -65,6 +65,9 @@ urlpatterns = [
         employee_preview,
         name='employee_preview',
     ),
+
+    # Trang hợp đồng
+    path('contracts/', include('contracts.urls')),
     path('payroll/', include('payroll.urls')),
     path('reports/', include('reports.urls')),
 ]

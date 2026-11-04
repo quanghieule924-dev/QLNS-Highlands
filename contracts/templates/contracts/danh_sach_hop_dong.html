@@ -1,0 +1,215 @@
+
+{% extends 'base_internal.html' %}
+
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/contracts.css' %}">
+{% endblock %}
+
+{% block title %}
+    Danh sách hợp đồng | HRM System
+{% endblock %}
+
+{% block content %}
+
+<div class="page-container">
+
+    <!-- TIÊU ĐỀ TRANG -->
+    <div class="contract-breadcrumb"><a href="{% url 'contracts:tong_quan_hop_dong' %}">Hợp đồng &amp; Phúc lợi</a><span>›</span><span class="breadcrumb-current">Danh sách hợp đồng</span></div>
+    <div class="page-header">
+      <div>
+        {% if request.user.role == 'admin' %}
+            <h1>Quản lý hợp đồng</h1>
+        {% else %}
+            <h1>Hợp đồng của tôi</h1>
+        {% endif %}
+      </div>
+
+      {% if request.user.role == 'admin' %}
+        <div class="page-header-actions">
+
+            <a href="{% url 'contracts:them_hop_dong' %}"
+               class="btn btn-primary">
+                + Thêm hợp đồng
+            </a>
+
+            <a href="{% url 'contracts:hop_dong_sap_het_han' %}"
+                class="btn btn-secondary">
+                <i class="fas fa-exclamation-triangle"></i>
+                Hợp đồng sắp hết hạn
+            </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- KHU VỰC TÌM KIẾM VÀ LỌC -->
+    <div class="filter-container">
+
+        <form method="get">
+
+            <div class="filter-row">
+
+                <!-- TÌM KIẾM -->
+                <div class="filter-item">
+                    <label for="search">Tìm kiếm</label>
+
+                    <input
+                        type="text"
+                        id="search"
+                        name="q"
+                        value="{{ tu_khoa }}"
+                        placeholder="Nhập mã hoặc số hợp đồng..."
+                    >
+                </div>
+
+                <!-- LỌC TRẠNG THÁI -->
+                <div class="filter-item">
+                    <label for="trang_thai">Trạng thái</label>
+
+                    <select name="trang_thai" id="trang_thai">
+                        <option value="">Tất cả trạng thái</option>
+
+                        {% for value, label in trang_thai_choices %}
+                            <option value="{{ value }}"
+                                {% if trang_thai == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- LỌC LOẠI HỢP ĐỒNG -->
+                <div class="filter-item">
+                    <label for="loai_hd">Loại hợp đồng</label>
+
+                    <select name="loai_hd" id="loai_hd">
+                        <option value="">Tất cả loại hợp đồng</option>
+
+                        {% for value, label in loai_hd_choices %}
+                            <option value="{{ value }}"
+                                {% if loai_hd == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- NÚT LỌC -->
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary">
+                        Tìm kiếm
+                    </button>
+
+                    <a href="{% url 'contracts:danh_sach_hop_dong' %}"
+                       class="btn btn-secondary">
+                        Đặt lại
+                    </a>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- DANH SÁCH HỢP ĐỒNG -->
+    <div class="table-container">
+
+        <div class="table-header">
+            <h3>Danh sách hợp đồng</h3>
+            <span>Tổng số: {{ hop_dongs|length }} hợp đồng</span>
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="data-table">
+
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã hợp đồng</th>
+                        <th>Số hợp đồng</th>
+                        <th>Nhân viên</th>
+                        <th>Loại hợp đồng</th>
+                        <th>Ngày bắt đầu</th>
+                        <th>Ngày kết thúc</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for hop_dong in hop_dongs %}
+
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+
+                            <td>
+                                <strong>{{ hop_dong.mahd }}</strong>
+                            </td>
+
+                            <td>{{ hop_dong.so_hd }}</td>
+
+                            <td>{{ hop_dong.nhan_vien }}</td>
+
+                            <td>{{ hop_dong.get_loai_hd_display }}</td>
+
+                            <td>
+                                {{ hop_dong.ngay_bat_dau|date:"d/m/Y" }}
+                            </td>
+
+                            <td>
+                                {% if hop_dong.ngay_ket_thuc %}
+                                    {{ hop_dong.ngay_ket_thuc|date:"d/m/Y" }}
+                                {% else %}
+                                    Không xác định
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <span class="status-badge
+                                    {% if hop_dong.trang_thai_hd == 'cho_ky' %}
+                                        status-cho-ky
+                                    {% elif hop_dong.trang_thai_hd == 'da_ky_cho_hieu_luc' %}
+                                        status-cho-hieu-luc
+                                    {% elif hop_dong.trang_thai_hd == 'dang_hieu_luc' %}
+                                        status-dang-hieu-luc
+                                    {% elif hop_dong.trang_thai_hd == 'da_het_han' %}
+                                        status-da-het-han
+                                    {% elif hop_dong.trang_thai_hd == 'da_cham_dut' %}
+                                        status-da-cham-dut
+                                    {% endif %}">
+                                    {{ hop_dong.get_trang_thai_hd_display }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <a href="{% url 'contracts:chi_tiet_hop_dong' hop_dong.mahd %}"
+                                   class="btn-view">
+                                    Chi tiết
+                                </a>
+                            </td>
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="9" class="empty-message">
+                                Không tìm thấy hợp đồng nào.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
