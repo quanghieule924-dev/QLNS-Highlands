@@ -1,0 +1,15 @@
+{% extends "base_internal.html" %}
+{% load static %}
+{% block title %}{{ module_title }} | HRM Highlands{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">{% endblock %}
+{% block content %}
+<div class="overview-page">
+  <div class="overview-heading"><div><span class="overview-eyebrow">HIGHLANDS COFFEE / CHỨC NĂNG</span><h1>{{ module_title }}</h1><p>Khu vực chức năng của hệ thống quản lý nhân sự.</p></div></div>
+  <section class="overview-panel overview-welcome">
+    <span class="overview-welcome-icon">⌘</span>
+    <h2>Chức năng đang được hoàn thiện</h2>
+    <p>Thanh menu và phân quyền truy cập đã hoạt động. Phần nghiệp vụ chi tiết của <strong>{{ module_title }}</strong> sẽ được liên kết khi thành viên phụ trách hoàn thành module.</p>
+    <a class="overview-back" href="{% url 'accounts:dashboard' %}">← Quay về Tổng quan</a>
+  </section>
+</div>
+{% endblock %}

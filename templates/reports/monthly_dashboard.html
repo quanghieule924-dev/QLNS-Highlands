@@ -1,0 +1,75 @@
+{% extends 'base_internal.html' %}
+{% load static %}
+{% block title %}Báo cáo thống kê nhân sự | Highlands Coffee{% endblock %}
+{% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/reports_dashboard.css' %}?v=3">
+{% endblock %}
+{% block content %}
+<div class="hr-report">
+  <div class="hr-report__top">
+    <div>
+      <h1>Báo cáo thống kê nhân sự theo tháng</h1>
+    </div>
+    <form class="hr-report__filter" method="get">
+      <label for="report-month">Kỳ báo cáo</label>
+      <div class="hr-report__filter-row">
+        <input id="report-month" type="month" name="month" value="{{ selected_month }}" required>
+        <button type="submit">Xem báo cáo</button>
+      </div>
+    </form>
+  </div>
+  <div class="hr-report__notice">Dữ liệu minh họa · Chưa kết nối SQLite</div>
+  <div class="hr-report__stats">
+    <article class="hr-report__stat stat-red"><span>Tổng nhân sự</span><strong>{{ stats.total_employees }}</strong><small>Đang hoạt động</small></article>
+    <article class="hr-report__stat stat-blue"><span>Nhân viên mới</span><strong>{{ stats.new_employees }}</strong><small>Gia nhập trong tháng</small></article>
+    <article class="hr-report__stat stat-orange"><span>Nhân viên nghỉ việc</span><strong>{{ stats.resigned_employees }}</strong><small>Biến động trong tháng</small></article>
+    <article class="hr-report__stat stat-purple"><span>HĐ sắp hết hạn</span><strong>{{ stats.expiring_contracts }}</strong><small>Cần theo dõi gia hạn</small></article>
+    <article class="hr-report__stat stat-green"><span>Tỷ lệ đúng giờ</span><strong>{{ stats.on_time_rate }}%</strong><small>Trong kỳ báo cáo</small></article>
+    <article class="hr-report__stat stat-teal"><span>Tổng giờ OT</span><strong>{{ stats.total_ot_hours }}</strong><small>Giờ tăng ca trong tháng</small></article>
+  </div>
+  <div class="hr-report__charts">
+    <section class="hr-report__card"><header><h2>Nhân sự theo bộ phận</h2><span>Số nhân viên</span></header><div class="hr-report__chart-frame"><canvas id="departmentChart"></canvas></div></section>
+    <section class="hr-report__card"><header><h2>Cơ cấu giới tính</h2><span>Tỷ trọng</span></header><div class="hr-report__chart-frame"><canvas id="genderChart"></canvas></div></section>
+    <section class="hr-report__card"><header><h2>Tình hình đi làm trong tháng</h2><span>Theo tuần</span></header><div class="hr-report__chart-frame"><canvas id="attendanceChart"></canvas></div></section>
+    <section class="hr-report__card"><header><h2>Trạng thái hợp đồng</h2><span>Cơ cấu</span></header><div class="hr-report__chart-frame"><canvas id="contractChart"></canvas></div></section>
+    <section class="hr-report__card"><header><h2>Hiệu quả tuyển dụng</h2><span>Trong tháng</span></header><div class="hr-report__chart-frame"><canvas id="recruitmentChart"></canvas></div></section>
+    <section class="hr-report__card"><header><h2>Chỉ số nhân sự tổng hợp</h2><span>Tham khảo</span></header><div class="hr-report__chart-frame"><canvas id="radarChart"></canvas></div></section>
+  </div>
+</div>
+{{ chart_data|json_script:'report-chart-data' }}
+{% endblock %}
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+  const dataEl = document.getElementById('report-chart-data');
+  if (!dataEl || typeof Chart === 'undefined') return;
+  const d = JSON.parse(dataEl.textContent);
+  Chart.defaults.font.family = 'Montserrat, Arial, sans-serif';
+  Chart.defaults.color = '#64748b';
+  Chart.defaults.font.size = 10;
+  const common = {responsive:true, maintainAspectRatio:false, resizeDelay:100,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:9,padding:6,font:{size:9}}},tooltip:{enabled:true}}};
+  const barOptions = { ...common, plugins:{...common.plugins,legend:{display:false}}, scales:{x:{grid:{display:false},ticks:{font:{size:9},maxRotation:0}},y:{beginAtZero:true,ticks:{precision:0,font:{size:9}},grid:{color:'#eef1f6'}}}};
+  const make = (id,type,labels,values,colors,opts={}) => {
+    const el=document.getElementById(id);
+    if(!el) return;
+    new Chart(el,{type,data:{labels,datasets:[{label:'Số lượng',data:values,backgroundColor:colors,borderColor:colors,borderWidth:1,borderRadius:type==='bar'?6:0}]},options:opts});
+  };
+  make('departmentChart','bar',d.department_labels,d.department_values,['#ce0e35','#3269df','#13a783','#f59b38','#875ad6'],barOptions);
+  make('genderChart','doughnut',d.gender_labels,d.gender_values,['#478bf0','#ed82ad'],{...common,cutout:'65%',plugins:{...common.plugins,legend:{position:'right',labels:{boxWidth:8,padding:8,font:{size:9}}}}});
+  const attendance = document.getElementById('attendanceChart');
+  if(attendance) new Chart(attendance,{type:'line',data:{labels:d.attendance_labels,datasets:[
+    {label:'Đúng giờ (%)',data:d.attendance_on_time,borderColor:'#10a777',backgroundColor:'rgba(16,167,119,.08)',fill:true,tension:.35},
+    {label:'Đi muộn (%)',data:d.attendance_late,borderColor:'#eb6384',backgroundColor:'rgba(235,99,132,.07)',fill:false,tension:.35}
+  ]},options:{...common,scales:{y:{min:0,max:100,ticks:{stepSize:50,callback:v=>v+'%',font:{size:9}}},x:{grid:{display:false},ticks:{font:{size:9}}}}}});
+  make('contractChart','doughnut',d.contract_labels,d.contract_values,['#10a777','#f4ad38','#e55a65'],{...common,cutout:'55%',plugins:{...common.plugins,legend:{position:'right',labels:{boxWidth:8,padding:8,font:{size:9}}}}});
+  make('recruitmentChart','bar',d.recruitment_labels,d.recruitment_values,['#27b6c8','#6b70db','#fb9850','#ce0e35'],{...barOptions,indexAxis:'y',scales:{x:{beginAtZero:true,ticks:{precision:0,font:{size:9}}},y:{grid:{display:false},ticks:{font:{size:9}}}}});
+  const radar=document.getElementById('radarChart');
+  if(radar)new Chart(radar,{type:'radar',data:{labels:d.radar_labels,datasets:[{label:'Chỉ số (%)',data:d.radar_values,backgroundColor:'rgba(206,14,53,.13)',borderColor:'#ce0e35',pointBackgroundColor:'#ce0e35',pointRadius:3}]},options:{...common,plugins:{...common.plugins,legend:{display:false}},scales:{r:{min:0,max:100,pointLabels:{font:{size:8}},ticks:{stepSize:50,backdropColor:'transparent',font:{size:8}}}}}});
+})();
+</script>
+{% endblock %}

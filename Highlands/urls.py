@@ -57,5 +57,7 @@ urlpatterns = [
         employee_preview,
         name='employee_preview',
     ),
+    path('payroll/', include('payroll.urls')),
+    path('reports/', include('reports.urls')),
 ]
 
