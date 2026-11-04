@@ -1,0 +1,32 @@
+/* Compact one-screen dashboard. Scoped to reports, no changes to shared sidebar. */
+.hr-report, .hr-report * {box-sizing:border-box}
+.hr-report {width:100%;max-width:1650px;margin:auto;padding:6px 6px 12px;font-family:'Montserrat',Arial,sans-serif;color:#202738}
+.hr-report button,.hr-report input {font:inherit}
+.hr-report__top {display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:9px}
+.hr-report__eyebrow {font-size:9px;letter-spacing:.8px;font-weight:800;color:#c8102e;margin-bottom:4px}
+.hr-report h1 {margin:0 0 3px;font-size:clamp(18px,1.65vw,24px);line-height:1.25;font-weight:800}
+.hr-report__top p {margin:0;color:#748198;font-size:10px;line-height:1.45}
+.hr-report__filter {display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #e1e7ef;border-radius:10px;padding:7px 9px;flex-shrink:0}
+.hr-report__filter label {font-size:10px;font-weight:700;color:#66758b;white-space:nowrap}
+.hr-report__filter-row {display:flex;gap:7px;align-items:center}
+.hr-report__filter input {min-width:135px;max-width:165px;border:1px solid #dfe5ee;border-radius:7px;padding:6px 8px;background:white;font-size:10px;height:31px}
+.hr-report__filter button {height:31px;border:0;border-radius:7px;background:#c8102e;color:white;padding:6px 10px;font-weight:700;font-size:10px;cursor:pointer;white-space:nowrap}
+.hr-report__notice {font-size:10px;color:#8f651e;background:#fff8eb;border:1px solid #f7e0ba;border-radius:8px;padding:6px 10px;margin-bottom:9px}
+.hr-report__stats {display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px;margin-bottom:10px}
+.hr-report__stat {--accent:#c8102e;position:relative;min-width:0;display:flex;flex-direction:column;justify-content:center;background:#fff;padding:10px 10px 9px 14px;border:1px solid #e4e9f0;border-radius:10px;min-height:76px;overflow:hidden}
+.hr-report__stat::before {content:'';position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 4px 4px 0;background:var(--accent)}
+.hr-report__stat span {color:#69778d;font-size:10px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hr-report__stat strong {font-size:clamp(18px,1.6vw,23px);line-height:1.2;font-weight:800;color:#1f2937;margin:3px 0}
+.hr-report__stat small {font-size:9px;line-height:1.25;color:#8a96a8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hr-report__stat.stat-red{--accent:#c8102e}.hr-report__stat.stat-blue{--accent:#3269df}.hr-report__stat.stat-orange{--accent:#ef9a32}.hr-report__stat.stat-purple{--accent:#9361d5}.hr-report__stat.stat-green{--accent:#10a777}.hr-report__stat.stat-teal{--accent:#0faaa9}
+.hr-report__charts {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:stretch}
+.hr-report__card,.hr-report__card--wide {grid-column:auto;min-width:0;overflow:hidden;background:#fff;border:1px solid #e2e7ef;border-radius:12px;padding:10px 12px 9px;box-shadow:0 2px 10px rgba(25,40,65,.03)}
+.hr-report__card header {display:flex;justify-content:space-between;align-items:center;gap:7px;margin-bottom:5px;min-height:19px}
+.hr-report__card h2 {margin:0;font-size:11px;line-height:1.3;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hr-report__card header span {font-size:8px;white-space:nowrap;color:#8491a5;border-radius:999px;background:#f4f6f9;padding:3px 6px}
+/* Chart.js sizes to the frame; no infinite canvas growth. */
+.hr-report__chart-frame {position:relative;width:100%;height:clamp(140px,calc((100dvh - 335px)/2),245px);min-height:0;max-height:245px;overflow:hidden}
+.hr-report__chart-frame canvas {display:block!important;position:relative!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;min-height:0!important;flex:none!important}
+@media(max-width:1300px){.hr-report__stats{grid-template-columns:repeat(3,minmax(0,1fr))}.hr-report__chart-frame{height:clamp(150px,calc((100dvh - 420px)/2),225px)}}
+@media(max-width:900px){.hr-report__charts{grid-template-columns:repeat(2,minmax(0,1fr))}.hr-report__chart-frame{height:190px}.hr-report__top{flex-wrap:wrap}}
+@media(max-width:620px){.hr-report{padding:6px 0 16px}.hr-report__stats{grid-template-columns:repeat(2,minmax(0,1fr))}.hr-report__charts{grid-template-columns:1fr}.hr-report__chart-frame{height:200px}.hr-report__filter{width:100%;justify-content:space-between}}

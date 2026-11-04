@@ -10,6 +10,10 @@
 
     <link rel="stylesheet" href="{% static 'css/common.css' %}">
     <link rel="stylesheet" href="{% static 'css/internal.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/dashboard_shared.css' %}">
 
     {% block extra_css %}{% endblock %}
 </head>
@@ -34,6 +38,8 @@
                 <span class="search-icon">⌕</span>
 
                 <input
+                    disabled
+                    title="Tìm kiếm toàn hệ thống đang được phát triển"
                     type="search"
                     name="search"
                     placeholder="Tìm nhân viên, hợp đồng..."
@@ -46,6 +52,8 @@
                 <button
                     type="button"
                     class="notification"
+                    disabled
+                    title="Thông báo đang được phát triển"
                     aria-label="Thông báo"
                 >
                     ♧
@@ -53,7 +61,7 @@
 
                 <!-- AVATAR THEO VAI TRO -->
                 <span class="account-avatar">
-                    {% if request.user.role == 'admin' %}
+                    {% if request.user.role == 'admin' or request.user.is_superuser %}
                         QL
                     {% else %}
                         NV
@@ -67,7 +75,7 @@
                     </strong>
 
                     <small>
-                        {% if request.user.role == 'admin' %}
+                        {% if request.user.role == 'admin' or request.user.is_superuser %}
                             QUẢN LÝ
                         {% else %}
                             NHÂN VIÊN
@@ -99,10 +107,10 @@
             <nav class="sidebar-menu">
 
                 <!-- MENU QUAN LY: ADMIN -->
-                {% if request.user.role == 'admin' %}
+                {% if request.user.role == 'admin' or request.user.is_superuser %}
 
                     <a
-                        href="#"
+                        href="{% url 'accounts:dashboard' %}"
                         class="{% if active_menu == 'dashboard' %}active{% endif %}"
                     >
                         <span class="menu-icon">▦</span>
@@ -110,7 +118,7 @@
                     </a>
 
                     <a
-                        href="#"
+                        href="{% url 'accounts:module' 'employees' %}"
                         class="{% if active_menu == 'employees' %}active{% endif %}"
                     >
                         <span class="menu-icon">♙</span>
@@ -118,7 +126,7 @@
                     </a>
 
                     <a
-                        href="#"
+                        href="{% url 'accounts:module' 'recruitment' %}"
                         class="{% if active_menu == 'recruitment' %}active{% endif %}"
                     >
                         <span class="menu-icon">♧</span>
@@ -126,7 +134,7 @@
                     </a>
 
                     <a
-                        href="#"
+                        href="{% url 'accounts:module' 'contracts' %}"
                         class="{% if active_menu == 'contracts' %}active{% endif %}"
                     >
                         <span class="menu-icon">▤</span>
@@ -134,7 +142,7 @@
                     </a>
 
                     <a
-                        href="#"
+                        href="{% url 'accounts:module' 'scheduling' %}"
                         class="{% if active_menu == 'scheduling' %}active{% endif %}"
                     >
                         <span class="menu-icon">▦</span>
@@ -142,7 +150,7 @@
                     </a>
 
                     <a
-                        href="#"
+                        href="{% url 'accounts:module' 'attendance' %}"
                         class="{% if active_menu == 'attendance' %}active{% endif %}"
                     >
                         <span class="menu-icon">◷</span>
@@ -150,7 +158,7 @@
                     </a>
 
                     <a
-                        href="#"
+                        href="{% url 'payroll:management' %}"
                         class="{% if active_menu == 'payroll' %}active{% endif %}"
                     >
                         <span class="menu-icon">▤</span>
@@ -158,7 +166,7 @@
                     </a>
 
                     <a
-                        href="#"
+                        href="{% url 'accounts:module' 'training' %}"
                         class="{% if active_menu == 'training' %}active{% endif %}"
                     >
                         <span class="menu-icon">♧</span>
@@ -166,7 +174,7 @@
                     </a>
 
                     <a
-                        href="#"
+                        href="{% url 'reports:monthly_dashboard' %}"
                         class="{% if active_menu == 'reports' %}active{% endif %}"
                     >
                         <span class="menu-icon">▥</span>
@@ -177,7 +185,7 @@
                 {% elif request.user.role == 'employee' %}
 
                     <a
-                        href="#"
+                        href="{% url 'accounts:dashboard' %}"
                         class="{% if active_menu == 'dashboard' %}active{% endif %}"
                     >
                         <span class="menu-icon">▦</span>
@@ -185,7 +193,7 @@
                     </a>
 
                     <a
-                        href="#"
+                        href="{% url 'accounts:module' 'employees' %}"
                         class="{% if active_menu == 'employees' %}active{% endif %}"
                     >
                         <span class="menu-icon">♙</span>
@@ -193,7 +201,7 @@
                     </a>
 
                     <a
-                        href="#"
+                        href="{% url 'accounts:module' 'contracts' %}"
                         class="{% if active_menu == 'contracts' %}active{% endif %}"
                     >
                         <span class="menu-icon">▤</span>
@@ -201,7 +209,7 @@
                     </a>
 
                     <a
-                        href="#"
+                        href="{% url 'accounts:module' 'scheduling' %}"
                         class="{% if active_menu == 'scheduling' %}active{% endif %}"
                     >
                         <span class="menu-icon">▦</span>
@@ -209,7 +217,7 @@
                     </a>
 
                     <a
-                        href="#"
+                        href="{% url 'accounts:module' 'attendance' %}"
                         class="{% if active_menu == 'attendance' %}active{% endif %}"
                     >
                         <span class="menu-icon">◷</span>
@@ -217,7 +225,7 @@
                     </a>
 
                     <a
-                        href="#"
+                        href="{% url 'payroll:my_payslip' %}"
                         class="{% if active_menu == 'payroll' %}active{% endif %}"
                     >
                         <span class="menu-icon">▤</span>
@@ -225,7 +233,7 @@
                     </a>
 
                     <a
-                        href="#"
+                        href="{% url 'accounts:module' 'training' %}"
                         class="{% if active_menu == 'training' %}active{% endif %}"
                     >
                         <span class="menu-icon">♧</span>

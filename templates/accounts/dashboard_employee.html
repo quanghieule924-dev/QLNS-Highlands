@@ -1,0 +1,26 @@
+{% extends "base_internal.html" %}
+{% load static %}
+{% block title %}Tổng quan nhân viên | Highlands HRM{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/dashboard_new.css' %}">{% endblock %}
+{% block content %}
+<div class="dash-page">
+  <div class="dash-head"><div><div class="dash-kicker">KHÔNG GIAN NHÂN VIÊN</div><h1>Xin chào, {{ display_name }}!</h1><p>Quản lý thông tin cá nhân, lịch làm và phiếu lương của bạn.</p></div><div class="dash-date">{{ today|date:"d/m/Y" }}</div></div>
+  <section class="dash-hero-employee"><div class="dash-hero-symbol">☕</div><div><span class="dash-hero-label">TÀI KHOẢN NHÂN VIÊN</span><h2>Không gian làm việc của bạn</h2><p>Các thông tin công việc sẽ hiển thị khi tài khoản được liên kết với hồ sơ nhân viên.</p></div><a href="{% url 'accounts:module' 'employees' %}">Hồ sơ của tôi →</a></section>
+  <section class="dash-metrics" aria-label="Các khu vực cá nhân">
+    <a class="dash-metric metric-blue" href="{% url 'accounts:module' 'scheduling' %}"><span class="metric-icon">◷</span><small>Ca làm tiếp theo</small><strong class="metric-pending">Chưa có dữ liệu</strong><span>Xem lịch làm <b>↗</b></span></a>
+    <a class="dash-metric metric-teal" href="{% url 'accounts:module' 'attendance' %}"><span class="metric-icon">✓</span><small>Chấm công tháng này</small><strong class="metric-pending">Chưa có dữ liệu</strong><span>Xem chấm công <b>↗</b></span></a>
+    <a class="dash-metric metric-violet" href="{% url 'accounts:module' 'contracts' %}"><span class="metric-icon">▣</span><small>Hợp đồng của tôi</small><strong class="metric-pending">Chưa liên kết</strong><span>Xem hợp đồng <b>↗</b></span></a>
+    <a class="dash-metric metric-red" href="{% url 'payroll:my_payslip' %}"><span class="metric-icon">▤</span><small>Phiếu lương gần nhất</small><strong class="metric-pending">Chưa có dữ liệu</strong><span>Đến phiếu lương <b>↗</b></span></a>
+  </section>
+  <div class="dash-two-col">
+    <section class="dash-panel"><div class="dash-panel-head"><div><h2>Lịch làm việc của tôi</h2><p>Các ca làm theo lịch được phân công</p></div><a href="{% url 'accounts:module' 'scheduling' %}">Xem lịch →</a></div><div class="dash-empty spacious"><span>▦</span><strong>Chưa hiển thị lịch làm cá nhân</strong><small>Đang chờ kết nối tài khoản với hồ sơ nhân viên.</small></div></section>
+    <section class="dash-panel"><div class="dash-panel-head"><div><h2>Thông tin cá nhân</h2><p>Dữ liệu gắn với tài khoản đăng nhập</p></div></div><div class="dash-account-detail"><div><span>Tên đăng nhập</span><strong>{{ request.user.username }}</strong></div><div><span>Email tài khoản</span><strong>{{ request.user.email|default:"Chưa cập nhật" }}</strong></div><div><span>Vai trò</span><strong>Nhân viên</strong></div><div><span>Hồ sơ nhân sự</span><strong class="dash-warning">Chưa liên kết</strong></div></div></section>
+  </div>
+  <section class="dash-panel dash-quick"><div class="dash-panel-head"><div><h2>Truy cập nhanh</h2><p>Các chức năng dành cho nhân viên</p></div></div><div class="dash-quick-grid">
+    <a href="{% url 'accounts:module' 'employees' %}"><span>♙</span> Hồ sơ của tôi <b>→</b></a>
+    <a href="{% url 'accounts:module' 'scheduling' %}"><span>◷</span> Lịch làm việc <b>→</b></a>
+    <a href="{% url 'accounts:module' 'attendance' %}"><span>✓</span> Chấm công <b>→</b></a>
+    <a href="{% url 'payroll:my_payslip' %}"><span>▤</span> Phiếu lương <b>→</b></a>
+  </div></section>
+</div>
+{% endblock %}
