@@ -415,3 +415,11 @@ body {
     background: rgba(0, 0, 0, 0.4);
     z-index: 99999 !important;
 }
+/* ===== TYPOGRAPHY: THONG NHAT MONTSERRAT ===== */
+body,
+button,
+input,
+select,
+textarea {
+    font-family: 'Montserrat', sans-serif;
+}

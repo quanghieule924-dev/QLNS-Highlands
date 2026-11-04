@@ -260,7 +260,9 @@ def danh_sach_hop_dong(request):
     return render(
         request,
         'contracts/danh_sach_hop_dong.html',
+
         context
+
     )
 
 # =========================================================
@@ -840,7 +842,7 @@ def cham_dut_hop_dong(request, mahd):
 def gia_han_hop_dong(request, mahd):
     hop_dong_cu = get_object_or_404(HopDong, mahd=mahd)
 
-    # Kiểm tra trạng thái hợp đồng
+    # 1. Kiểm tra trạng thái hợp đồng
     if hop_dong_cu.trang_thai_hd != 'dang_hieu_luc':
         messages.error(
             request,
@@ -851,7 +853,7 @@ def gia_han_hop_dong(request, mahd):
             mahd=hop_dong_cu.mahd
         )
 
-    # Chỉ gia hạn hợp đồng có thời hạn
+    # 2. Chỉ gia hạn hợp đồng có thời hạn
     if hop_dong_cu.loai_hd != 'co_thoi_han':
         messages.error(
             request,
@@ -862,7 +864,7 @@ def gia_han_hop_dong(request, mahd):
             mahd=hop_dong_cu.mahd
         )
 
-    # Chỉ gia hạn hợp đồng sắp hết hạn
+    # 3. Chỉ gia hạn hợp đồng sắp hết hạn
     if not hop_dong_cu.sap_het_han:
         messages.error(
             request,
@@ -872,6 +874,11 @@ def gia_han_hop_dong(request, mahd):
             'contracts:chi_tiet_hop_dong',
             mahd=hop_dong_cu.mahd
         )
+
+    # Ngày bắt đầu hợp đồng mới
+    ngay_bat_dau_moi = (
+        hop_dong_cu.ngay_ket_thuc + timedelta(days=1)
+    )
 
     if request.method == 'POST':
         form = GiaHanHopDongForm(request.POST)
@@ -884,22 +891,33 @@ def gia_han_hop_dong(request, mahd):
             hop_dong_moi.hop_dong_truoc = hop_dong_cu
             hop_dong_moi.loai_hd = hop_dong_cu.loai_hd
 
-            # Ngày bắt đầu là ngày sau khi hợp đồng cũ kết thúc
-            hop_dong_moi.ngay_bat_dau = (
-                hop_dong_cu.ngay_ket_thuc + timedelta(days=1)
+            # Tự động tạo mã hợp đồng mới
+            hop_dong_moi.mahd = tao_ma_tu_dong(
+                HopDong, 'mahd', 'HD'
             )
+
+            # Ngày bắt đầu là ngày sau khi hợp đồng cũ kết thúc
+            hop_dong_moi.ngay_bat_dau = ngay_bat_dau_moi
 
             # Hợp đồng mới phải được ký
             hop_dong_moi.ngay_ky = None
             hop_dong_moi.trang_thai_hd = 'cho_ky'
 
             try:
-                hop_dong_moi.full_clean()
-                hop_dong_moi.save()
+                with transaction.atomic():
+
+                    # Lưu hợp đồng mới
+                    hop_dong_moi.full_clean()
+                    hop_dong_moi.save()
+
+                    # Lưu BHXH, phụ cấp và phúc lợi theo thông tin trên form
+                    luu_thong_tin_lien_quan(request, hop_dong_moi)
+
 
                 messages.success(
                     request,
                     'Tạo hợp đồng gia hạn thành công. '
+                    'Thông tin BHXH, phụ cấp và phúc lợi đã được kế thừa. '
                     'Nhân viên cần ký hợp đồng mới.'
                 )
 
@@ -911,25 +929,63 @@ def gia_han_hop_dong(request, mahd):
             except ValidationError as e:
                 form.add_error(None, e)
 
+
     else:
+
         form = GiaHanHopDongForm(initial={
+
             'hinh_thuc_luong': hop_dong_cu.hinh_thuc_luong,
+
             'muc_luong': hop_dong_cu.muc_luong,
+
         })
 
+    # Lấy thông tin BHXH của hợp đồng cũ
+
+    bhxh = BHXH.objects.filter(
+
+        hop_dong=hop_dong_cu
+
+    ).first()
+
+    # Lấy danh sách phụ cấp của hợp đồng cũ
+
+    danh_sach_phu_cap = PhuCap.objects.filter(
+
+        hop_dong=hop_dong_cu
+
+    )
+
+    # Lấy danh sách tất cả chế độ phúc lợi
+
+    danh_sach_che_do = CheDoPhucLoi.objects.all()
+
+    # Lấy mã các chế độ phúc lợi đang áp dụng
+
+    phuc_loi_da_chon = list(
+
+        PhucLoiHopDong.objects.filter(
+
+            hop_dong=hop_dong_cu
+
+        ).values_list('che_do_id', flat=True)
+
+    )
     return render(
         request,
         'contracts/form_gia_han_hop_dong.html',
         {
             'form': form,
             'hop_dong_cu': hop_dong_cu,
-            'ngay_bat_dau_moi': (
-                hop_dong_cu.ngay_ket_thuc + timezone.timedelta(days=1)
-            ),
+            'ngay_bat_dau_moi': ngay_bat_dau_moi,
+
+            # Thông tin kế thừa từ hợp đồng cũ
+            'bhxh': bhxh,
+            'danh_sach_phu_cap': danh_sach_phu_cap,
+            'danh_sach_che_do': danh_sach_che_do,
+            'phuc_loi_da_chon': phuc_loi_da_chon,
         }
     )
-
-
 # =========================================================
 # HÀM TẠO THÔNG BÁO HỢP ĐỒNG SẮP HẾT HẠN
 # =========================================================
@@ -1115,6 +1171,73 @@ def sua_che_do_phuc_loi(request, mapl):
             'form': form,
             'che_do': che_do,
             'tieu_de': 'Sửa chế độ phúc lợi',
+            'active_menu': 'contracts',
+        }
+    )
+
+
+
+# =========================================================
+# 11. TỔNG QUAN HỢP ĐỒNG VÀ PHÚC LỢI
+# =========================================================
+
+@role_required('admin')
+def tong_quan_hop_dong(request):
+
+    # 1. Tổng số hợp đồng
+    tong_so_hop_dong = HopDong.objects.count()
+
+    # 2. Số hợp đồng chờ ký
+    hop_dong_cho_ky = HopDong.objects.filter(
+        trang_thai_hd='cho_ky'
+    ).count()
+
+    # 3. Số hợp đồng đang hiệu lực
+    hop_dong_dang_hieu_luc = HopDong.objects.filter(
+        trang_thai_hd='dang_hieu_luc'
+    ).count()
+
+    # 4. Danh sách hợp đồng
+    danh_sach_hop_dong = HopDong.objects.select_related(
+        'nhan_vien'
+    ).order_by('-ngay_bat_dau')[:5]
+
+    # 5. Danh sách hợp đồng sắp hết hạn
+    tat_ca_hop_dong = HopDong.objects.select_related(
+        'nhan_vien'
+    ).filter(
+        trang_thai_hd='dang_hieu_luc',
+        loai_hd='co_thoi_han'
+    )
+
+    hop_dong_sap_het_han = [
+        hd for hd in tat_ca_hop_dong
+        if hd.sap_het_han
+    ]
+
+    # Sắp xếp theo ngày hết hạn gần nhất
+    hop_dong_sap_het_han.sort(
+        key=lambda hd: hd.ngay_ket_thuc
+    )
+
+    tong_hop_dong_sap_het_han = len(
+        hop_dong_sap_het_han
+    )
+
+    return render(
+        request,
+        'contracts/tong_quan_hop_dong.html',
+        {
+            'tong_so_hop_dong': tong_so_hop_dong,
+            'hop_dong_cho_ky': hop_dong_cho_ky,
+            'hop_dong_dang_hieu_luc': hop_dong_dang_hieu_luc,
+            'tong_hop_dong_sap_het_han': tong_hop_dong_sap_het_han,
+
+            'danh_sach_hop_dong': danh_sach_hop_dong,
+            'danh_sach_hop_dong_sap_het_han': (
+                hop_dong_sap_het_han[:5]
+            ),
+
             'active_menu': 'contracts',
         }
     )

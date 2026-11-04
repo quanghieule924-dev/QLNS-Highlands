@@ -1,252 +1,485 @@
-
 {% extends 'base_internal.html' %}
+{% load static %}
+
+{% block title %}
+    Gia hạn hợp đồng | HRM System
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/contracts.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4 renewal-container">
+<div class="contract-page">
 
-    <h2>Gia hạn hợp đồng</h2>
-
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5>Thông tin hợp đồng hiện tại</h5>
+    <!-- TIÊU ĐỀ -->
+    <div class="contract-page-header">
+        <div>
+            <div class="contract-breadcrumb">
+                <a href="{% url 'contracts:tong_quan_hop_dong' %}">Hợp đồng &amp; Phúc lợi</a>
+                <span>›</span>
+                <a href="{% url 'contracts:danh_sach_hop_dong' %}">Danh sách hợp đồng</a>
+                <span>›</span>
+                <span class="breadcrumb-current">Gia hạn hợp đồng</span>
+            </div>
+            <h1>Gia hạn hợp đồng lao động</h1>
         </div>
-
-        <div class="card-body">
-            <p>
-                <strong>Mã hợp đồng:</strong>
-                {{ hop_dong_cu.mahd }}
-            </p>
-
-            <p>
-                <strong>Số hợp đồng:</strong>
-                {{ hop_dong_cu.so_hd }}
-            </p>
-
-            <p>
-                <strong>Nhân viên:</strong>
-                {{ hop_dong_cu.nhan_vien }}
-            </p>
-
-            <p>
-                <strong>Ngày kết thúc:</strong>
-                {{ hop_dong_cu.ngay_ket_thuc|date:"d/m/Y" }}
-            </p>
-
-            <p>
-                <strong>Ngày bắt đầu hợp đồng mới:</strong>
-                {{ ngay_bat_dau_moi|date:"d/m/Y" }}
-            </p>
-        </div>
+        <p>Thông tin được kế thừa từ hợp đồng hiện tại.</p>
     </div>
 
-    <div class="card">
-        <div class="card-header">
-            <h5>Thông tin hợp đồng gia hạn</h5>
-        </div>
+    <form method="post" class="contract-form">
+        {% csrf_token %}
 
-        <div class="card-body">
+        {% if form.non_field_errors %}
+            <div class="contract-alert">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
 
-            <form method="POST">
-                {% csrf_token %}
+        <!-- 1. THÔNG TIN NHÂN VIÊN -->
+        <section class="contract-card">
+            <div class="contract-card-heading">
+                <h2>Thông tin nhân viên</h2>
+                <span>Kế thừa từ hợp đồng hiện tại</span>
+            </div>
 
-                {% if form.non_field_errors %}
-                    <div class="alert alert-danger">
-                        {{ form.non_field_errors }}
+            <div class="employee-grid">
+                <div class="contract-field">
+                    <label>Nhân viên</label>
+                    <input type="text"
+                           class="form-control readonly-field"
+                           value="{{ hop_dong_cu.nhan_vien }}"
+                           readonly>
+                </div>
+
+                <div class="contract-field">
+                    <label>Mã nhân viên</label>
+                    <input type="text"
+                           class="form-control readonly-field"
+                           value="{{ hop_dong_cu.nhan_vien_id }}"
+                           readonly>
+                </div>
+
+                <div class="contract-field">
+                    <label>Hợp đồng hiện tại</label>
+                    <input type="text"
+                           class="form-control readonly-field"
+                           value="{{ hop_dong_cu.mahd }}"
+                           readonly>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. THÔNG TIN HỢP ĐỒNG -->
+        <section class="contract-card">
+            <div class="contract-card-heading">
+                <h2>Thông tin hợp đồng</h2>
+                <span>Thông tin hợp đồng gia hạn</span>
+            </div>
+
+            <div class="contract-grid">
+
+                <div class="contract-field">
+                    <label for="{{ form.so_hd.id_for_label }}">
+                        Số hợp đồng mới <span class="required">*</span>
+                    </label>
+                    {{ form.so_hd }}
+                    {% for error in form.so_hd.errors %}
+                        <small class="field-error">{{ error }}</small>
+                    {% endfor %}
+                </div>
+
+                <div class="contract-field">
+                    <label>Loại hợp đồng</label>
+                    <input type="text"
+                           class="form-control readonly-field"
+                           value="{{ hop_dong_cu.get_loai_hd_display }}"
+                           readonly>
+                </div>
+
+                <div class="contract-field">
+                    <label>Ngày bắt đầu hợp đồng mới</label>
+                    <input type="text"
+                           class="form-control readonly-field"
+                           value="{{ ngay_bat_dau_moi|date:'d/m/Y' }}"
+                           readonly>
+                </div>
+
+                <div class="contract-field">
+                    <label>Ngày kết thúc mới</label>
+                    {{ form.ngay_ket_thuc }}
+                    {% for error in form.ngay_ket_thuc.errors %}
+                        <small class="field-error">{{ error }}</small>
+                    {% endfor %}
+                </div>
+
+                <div class="contract-field">
+                    <label>Hợp đồng trước</label>
+                    <input type="text"
+                           class="form-control readonly-field"
+                           value="{{ hop_dong_cu.mahd }}"
+                           readonly>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. THÔNG TIN TIỀN LƯƠNG -->
+        <section class="contract-card">
+            <div class="contract-card-heading">
+                <h2>Thông tin tiền lương</h2>
+                <span>Kế thừa mức lương từ hợp đồng cũ</span>
+            </div>
+
+            <div class="contract-grid">
+
+                <div class="contract-field">
+                    <label for="{{ form.hinh_thuc_luong.id_for_label }}">
+                        Hình thức trả lương
+                    </label>
+                    {{ form.hinh_thuc_luong }}
+                    {% for error in form.hinh_thuc_luong.errors %}
+                        <small class="field-error">{{ error }}</small>
+                    {% endfor %}
+                </div>
+
+                <div class="contract-field">
+                    <label for="{{ form.muc_luong.id_for_label }}">
+                        Mức lương cơ bản <span class="required">*</span>
+                    </label>
+                    <div class="input-suffix">
+                        {{ form.muc_luong }}
+                        <span>VND</span>
                     </div>
-                {% endif %}
+                    {% for error in form.muc_luong.errors %}
+                        <small class="field-error">{{ error }}</small>
+                    {% endfor %}
+                </div>
 
-                {% for field in form %}
-                    <div class="mb-3">
-                        <label class="form-label">
-                            {{ field.label }}
-                        </label>
+            </div>
+        </section>
 
-                        {{ field }}
+        <!-- 4. PHỤ CẤP -->
+        <section class="contract-card">
+            <div class="contract-card-heading">
+                <h2>Danh sách phụ cấp</h2>
 
-                        {% if field.errors %}
-                            <div class="text-danger">
-                                {{ field.errors }}
-                            </div>
-                        {% endif %}
+                <button type="button"
+                        id="btn-add-allowance"
+                        class="btn-add-allowance">
+                    + Thêm phụ cấp
+                </button>
+            </div>
+
+            <div class="allowance-heading">
+                <span>Loại phụ cấp</span>
+                <span>Giá trị</span>
+                <span>Tháng áp dụng</span>
+                <span></span>
+            </div>
+
+            <div id="allowance-list">
+                {% for pc in danh_sach_phu_cap %}
+                    <div class="allowance-row">
+                        <div>
+                            <input type="text"
+                                   name="loai_pc[]"
+                                   class="form-control"
+                                   placeholder="Nhập loại phụ cấp"
+                                   value="{{ pc.loai_pc }}">
+                        </div>
+
+                        <div class="input-suffix">
+                            <input type="number"
+                                   name="gia_tri_pc[]"
+                                   class="form-control"
+                                   placeholder="Nhập giá trị"
+                                   min="0"
+                                   step="0.01"
+                                   value="{{ pc.gia_tri }}">
+                            <span>VND</span>
+                        </div>
+
+                        <div>
+                            <input type="month"
+                                   name="thang_ap_dung[]"
+                                   class="form-control"
+                                   value="{{ pc.thang_ap_dung }}">
+                        </div>
+
+                        <button type="button"
+                                class="btn-remove-allowance"
+                                title="Xóa phụ cấp">×</button>
+                    </div>
+                {% empty %}
+                    <div class="allowance-row">
+                        <div>
+                            <input type="text"
+                                   name="loai_pc[]"
+                                   class="form-control"
+                                   placeholder="Nhập loại phụ cấp">
+                        </div>
+
+                        <div class="input-suffix">
+                            <input type="number"
+                                   name="gia_tri_pc[]"
+                                   class="form-control"
+                                   placeholder="Nhập giá trị"
+                                   min="0"
+                                   step="0.01">
+                            <span>VND</span>
+                        </div>
+
+                        <div>
+                            <input type="month"
+                                   name="thang_ap_dung[]"
+                                   class="form-control">
+                        </div>
+
+                        <button type="button"
+                                class="btn-remove-allowance"
+                                title="Xóa phụ cấp">×</button>
                     </div>
                 {% endfor %}
+            </div>
+        </section>
 
-                <button type="submit" class="btn btn-primary">
+        <!-- 5. CHẾ ĐỘ PHÚC LỢI -->
+        <section class="contract-card">
+            <div class="contract-card-heading">
+                <h2>Chế độ phúc lợi</h2>
+                <span>Kế thừa các chế độ đã áp dụng</span>
+            </div>
+
+            <div class="benefit-area">
+                <label class="section-label">
+                    Chọn chế độ phúc lợi áp dụng
+                </label>
+
+                <div class="benefit-options">
+                    {% for che_do in danh_sach_che_do %}
+                        <label class="benefit-option">
+                            <input type="checkbox"
+                                   name="che_do_phuc_loi[]"
+                                   value="{{ che_do.mapl }}"
+                                   {% if che_do.mapl in phuc_loi_da_chon %}
+                                       checked
+                                   {% endif %}>
+                            <span>{{ che_do.ten_pl }}</span>
+                        </label>
+                    {% empty %}
+                        <p class="empty-benefit">
+                            Chưa có chế độ phúc lợi nào.
+                        </p>
+                    {% endfor %}
+                </div>
+
+                <small class="field-hint">
+                    Có thể chọn nhiều chế độ phúc lợi.
+                </small>
+            </div>
+        </section>
+
+        <!-- 6. BẢO HIỂM XÃ HỘI -->
+        <section class="contract-card">
+            <div class="contract-card-heading">
+                <h2>Bảo hiểm xã hội (BHXH)</h2>
+
+                {% if bhxh %}
+                    <span>Đang có thông tin BHXH từ hợp đồng cũ</span>
+                {% else %}
+                    <span>Chưa có thông tin BHXH</span>
+                {% endif %}
+            </div>
+
+            <div class="bhxh-area">
+                <div class="bhxh-heading">
+                    <label for="co_tham_gia_bhxh">
+                        Có tham gia BHXH
+                    </label>
+
+                    <label class="switch">
+                        <input type="checkbox"
+                               id="co_tham_gia_bhxh"
+                               name="co_tham_gia_bhxh"
+                               {% if bhxh %}checked{% endif %}>
+                        <span class="switch-slider"></span>
+                    </label>
+                </div>
+
+                <div id="bhxh-fields"
+                     {% if not bhxh %}style="display:none"{% endif %}>
+
+                    <div class="bhxh-grid">
+
+                        <div class="contract-field">
+                            <label for="ma_so_bh">
+                                Số sổ BHXH <span class="required">*</span>
+                            </label>
+                            <input type="text"
+                                   id="ma_so_bh"
+                                   name="ma_so_bh"
+                                   class="form-control"
+                                   value="{{ bhxh.ma_so_bh|default:'' }}"
+                                   placeholder="Nhập số sổ BHXH">
+                        </div>
+
+                        <div class="contract-field">
+                            <label for="muc_dong">
+                                Mức đóng <span class="required">*</span>
+                            </label>
+                            <div class="input-suffix">
+                                <input type="number"
+                                       id="muc_dong"
+                                       name="muc_dong"
+                                       class="form-control"
+                                       min="0"
+                                       step="0.01"
+                                       value="{{ bhxh.muc_dong|default:'' }}"
+                                       placeholder="Nhập mức đóng">
+                                <span>VND / tháng</span>
+                            </div>
+                        </div>
+
+                        <div class="contract-field">
+                            <label for="ngay_tham_gia">
+                                Ngày tham gia <span class="required">*</span>
+                            </label>
+                            <input type="date"
+                                   id="ngay_tham_gia"
+                                   name="ngay_tham_gia"
+                                   class="form-control"
+                                   value="{{ bhxh.ngay_tham_gia|date:'Y-m-d'|default:'' }}">
+                        </div>
+
+                        <div class="contract-field">
+                            <label for="trang_thai_bhxh">
+                                Trạng thái BHXH
+                            </label>
+                            <select name="trang_thai_bhxh"
+                                    id="trang_thai_bhxh"
+                                    class="form-control">
+
+                                <option value="dang_tham_gia"
+                                    {% if not bhxh or bhxh.trang_thai == 'dang_tham_gia' %}
+                                        selected
+                                    {% endif %}>
+                                    Đang tham gia
+                                </option>
+
+                                <option value="tam_dung"
+                                    {% if bhxh.trang_thai == 'tam_dung' %}
+                                        selected
+                                    {% endif %}>
+                                    Tạm dừng
+                                </option>
+
+                                <option value="da_ngung"
+                                    {% if bhxh.trang_thai == 'da_ngung' %}
+                                        selected
+                                    {% endif %}>
+                                    Đã ngừng
+                                </option>
+
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GHI CHÚ VÀ NÚT LƯU -->
+        <div class="contract-bottom">
+            <div class="contract-note">
+                <span class="note-icon">ⓘ</span>
+                <div>
+                    <strong>Hợp đồng gia hạn sẽ ở trạng thái Chờ ký.</strong>
+                    <p>Hợp đồng mới được tạo riêng, không làm thay đổi hợp đồng cũ.</p>
+                </div>
+            </div>
+
+            <div class="contract-actions">
+                <a href="{% url 'contracts:chi_tiet_hop_dong' hop_dong_cu.mahd %}"
+                   class="btn-cancel">
+                    Hủy
+                </a>
+
+                <button type="submit" class="btn-save">
                     Tạo hợp đồng gia hạn
                 </button>
-
-                <a href="{% url 'contracts:chi_tiet_hop_dong' hop_dong_cu.mahd %}"
-                   class="btn btn-secondary">
-                    Quay lại
-                </a>
-            </form>
-
+            </div>
         </div>
-    </div>
 
+    </form>
 </div>
 
-<style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
-/* ===== GIA HẠN HỢP ĐỒNG ===== */
+    // Bật / tắt thông tin BHXH
+    const bhxhCheckbox = document.getElementById('co_tham_gia_bhxh');
+    const bhxhFields = document.getElementById('bhxh-fields');
 
-.renewal-container {
-    max-width: 1050px;
-    margin: 25px auto;
-    padding: 0 20px 35px;
-    color: #333;
-}
+    bhxhCheckbox.addEventListener('change', function () {
+        bhxhFields.style.display = this.checked ? 'block' : 'none';
+    });
 
-/* Tiêu đề */
-.renewal-container h2 {
-    font-size: 24px;
-    font-weight: 700;
-    color: #252525;
-    margin-bottom: 22px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid #e8e8e8;
-}
+    // Thêm và xóa phụ cấp
+    const allowanceList = document.getElementById('allowance-list');
+    const addAllowanceBtn = document.getElementById('btn-add-allowance');
 
-/* Các khung thông tin */
-.renewal-container .card {
-    border: 1px solid #e6e6e6;
-    border-radius: 9px;
-    margin-bottom: 22px;
-    background: #fff;
-    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.025);
-    overflow: hidden;
-}
-
-.renewal-container .card-header {
-    background: #fff;
-    padding: 16px 22px;
-    border-bottom: 1px solid #ededed;
-}
-
-.renewal-container .card-header h5 {
-    color: #8b1721;
-    font-size: 15px;
-    font-weight: 700;
-    margin: 0;
-}
-
-.renewal-container .card-body {
-    padding: 22px 24px;
-}
-
-/* Thông tin hợp đồng hiện tại */
-.renewal-container .card-body p {
-    margin-bottom: 14px;
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-.renewal-container .card-body p:last-child {
-    margin-bottom: 0;
-}
-
-/* Form chia 2 cột */
-.renewal-container form {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 24px;
-    row-gap: 17px;
-}
-
-/* Từng trường */
-.renewal-container form .mb-3 {
-    margin-bottom: 0 !important;
-    min-width: 0;
-}
-
-.renewal-container .form-label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: #444;
-    margin-bottom: 7px;
-}
-
-/* Ô nhập */
-.renewal-container .form-control,
-.renewal-container .form-select {
-    width: 100%;
-    height: 42px;
-    border: 1px solid #d9dce1;
-    border-radius: 6px;
-    padding: 8px 12px;
-    font-size: 14px;
-    color: #333;
-    background-color: #fff;
-    box-sizing: border-box;
-}
-
-.renewal-container .form-control:focus,
-.renewal-container .form-select:focus {
-    border-color: #8b1721;
-    box-shadow: 0 0 0 3px rgba(139, 23, 33, 0.08);
-    outline: none;
-}
-
-/* Lỗi nhập liệu */
-.renewal-container .text-danger {
-    font-size: 12px;
-    margin-top: 5px;
-}
-
-/* Thông báo lỗi toàn form */
-.renewal-container .alert {
-    grid-column: 1 / -1;
-}
-
-/* Nút hành động */
-.renewal-container form button,
-.renewal-container form a {
-    align-self: end;
-    justify-self: start;
-    margin-top: 5px;
-    min-height: 40px;
-    padding: 9px 20px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-}
-
-/* Nút tạo hợp đồng */
-.renewal-container .btn-primary {
-    background-color: #8b1721;
-    border-color: #8b1721;
-    color: #fff;
-}
-
-.renewal-container .btn-primary:hover {
-    background-color: #70121a;
-    border-color: #70121a;
-}
-
-/* Nút quay lại */
-.renewal-container .btn-secondary {
-    background: #fff;
-    border: 1px solid #d7d7d7;
-    color: #555;
-}
-
-.renewal-container .btn-secondary:hover {
-    background: #f5f5f5;
-}
-
-/* Màn hình nhỏ */
-@media (max-width: 768px) {
-    .renewal-container form {
-        grid-template-columns: 1fr;
+    function attachRemoveEvent(button) {
+        button.addEventListener('click', function () {
+            button.closest('.allowance-row').remove();
+        });
     }
 
-    .renewal-container .card-body {
-        padding: 16px;
-    }
-}
+    document.querySelectorAll('.btn-remove-allowance').forEach(function (button) {
+        attachRemoveEvent(button);
+    });
 
-</style>
+    addAllowanceBtn.addEventListener('click', function () {
+        const row = document.createElement('div');
+        row.className = 'allowance-row';
+
+        row.innerHTML = `
+            <div>
+                <input type="text"
+                       name="loai_pc[]"
+                       class="form-control"
+                       placeholder="Nhập loại phụ cấp">
+            </div>
+
+            <div class="input-suffix">
+                <input type="number"
+                       name="gia_tri_pc[]"
+                       class="form-control"
+                       placeholder="Nhập giá trị"
+                       min="0"
+                       step="0.01">
+                <span>VND</span>
+            </div>
+
+            <div>
+                <input type="month"
+                       name="thang_ap_dung[]"
+                       class="form-control">
+            </div>
+
+            <button type="button"
+                    class="btn-remove-allowance"
+                    title="Xóa phụ cấp">×</button>
+        `;
+
+        allowanceList.appendChild(row);
+
+        attachRemoveEvent(
+            row.querySelector('.btn-remove-allowance')
+        );
+    });
+
+});
+</script>
 
 {% endblock %}

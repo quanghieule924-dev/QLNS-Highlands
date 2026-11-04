@@ -1,10 +1,16 @@
 
 {% extends 'base_internal.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/contracts.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="contract-page">
 
     <!-- Tiêu đề -->
+    <div class="contract-breadcrumb"><a href="{% url 'contracts:tong_quan_hop_dong' %}">Hợp đồng &amp; Phúc lợi</a><span>›</span><span class="breadcrumb-current">Hợp đồng sắp hết hạn</span></div>
     <div class="page-header">
         <div>
             <h2>Hợp đồng sắp hết hạn</h2>

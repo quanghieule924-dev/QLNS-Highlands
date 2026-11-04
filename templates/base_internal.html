@@ -11,33 +11,253 @@
     <link rel="stylesheet" href="{% static 'css/common.css' %}">
     <link rel="stylesheet" href="{% static 'css/internal.css' %}">
     <style>
+
         .notification-wrapper {
             position: relative !important;
             display: flex !important;
             align-items: center !important;
         }
 
+        /* Nút chuông */
+        .notification-wrapper .notification {
+            position: relative !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 40px !important;
+            height: 40px !important;
+            padding: 0 !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 50% !important;
+            background: #fff !important;
+            font-size: 18px !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .notification-wrapper .notification:hover {
+            background: #fff7ed !important;
+            border-color: #f5c28b !important;
+        }
+
+        /* Số thông báo chưa đọc */
+        .notification-count {
+            position: absolute !important;
+            top: -4px !important;
+            right: -4px !important;
+            min-width: 17px !important;
+            height: 17px !important;
+            padding: 0 4px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: #dc2626 !important;
+            color: #fff !important;
+            border: 2px solid #fff !important;
+            border-radius: 20px !important;
+            font-size: 10px !important;
+            font-weight: 700 !important;
+        }
+
+        /* Khung dropdown */
         .notification-dropdown {
             display: none !important;
             position: absolute !important;
-            top: calc(100% + 10px) !important;
+            top: calc(100% + 12px) !important;
             right: 0 !important;
-
-            width: 350px !important;
-            max-height: 400px !important;
-            overflow-y: auto !important;
-
+            width: 370px !important;
+            max-height: 430px !important;
+            overflow: hidden !important;
             background: #fff !important;
-            border: 1px solid #e5e5e5 !important;
-            border-radius: 10px !important;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12) !important;
-
+            border: 1px solid #e5e7eb !important;
+            border-radius: 12px !important;
+            box-shadow: 0 10px 35px rgba(15, 23, 42, 0.14) !important;
             z-index: 99999 !important;
         }
 
         .notification-dropdown.show {
             display: block !important;
         }
+
+        /* Tiêu đề */
+        .notification-header {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 17px 18px !important;
+            border-bottom: 1px solid #f0f0f0 !important;
+            background: #fff !important;
+        }
+
+        .notification-header h3 {
+            margin: 0 0 5px !important;
+            color: #1f2937 !important;
+            font-size: 16px !important;
+            font-weight: 700 !important;
+        }
+
+        .notification-header span {
+            color: #6b7280 !important;
+            font-size: 12px !important;
+        }
+
+        .notification-header .notification-bell {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            background: #fff7ed !important;
+            color: #c46a16 !important;
+            font-size: 17px !important;
+        }
+
+        /* Danh sách thông báo */
+        .notification-list {
+            max-height: 320px !important;
+            overflow-y: auto !important;
+            padding: 5px 0 !important;
+        }
+
+        /* Từng thông báo */
+        .notification-item {
+            display: flex !important;
+            align-items: flex-start !important;
+            gap: 11px !important;
+            padding: 14px 16px !important;
+            color: #374151 !important;
+            text-decoration: none !important;
+            border-bottom: 1px solid #f1f2f4 !important;
+            transition: background 0.2s ease !important;
+        }
+
+        .notification-item:hover {
+            background: #f9fafb !important;
+        }
+
+        .notification-item.unread {
+            background: #fffaf3 !important;
+        }
+
+        .notification-item.unread:hover {
+            background: #fff4e5 !important;
+        }
+
+        /* Icon từng thông báo */
+        .notification-icon {
+            flex-shrink: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 10px !important;
+            background: #fff0db !important;
+            font-size: 17px !important;
+        }
+
+        /* Nội dung */
+        .notification-content {
+            flex: 1 !important;
+            min-width: 0 !important;
+        }
+
+        .notification-content strong {
+            display: block !important;
+            margin-bottom: 5px !important;
+            color: #263449 !important;
+            font-size: 13px !important;
+            font-weight: 700 !important;
+        }
+
+        .notification-content p {
+            margin: 0 0 6px !important;
+            color: #4b5563 !important;
+            font-size: 12px !important;
+            line-height: 1.6 !important;
+            overflow-wrap: anywhere !important;
+        }
+
+        .notification-content small {
+            display: block !important;
+            color: #9ca3af !important;
+            font-size: 11px !important;
+        }
+
+        .notification-status {
+            display: inline-block !important;
+            margin-top: 7px !important;
+            color: #9ca3af !important;
+            font-size: 10px !important;
+        }
+
+        .notification-item.unread .notification-status {
+            color: #c46a16 !important;
+            font-weight: 600 !important;
+        }
+
+        .unread-dot {
+            flex-shrink: 0 !important;
+            width: 8px !important;
+            height: 8px !important;
+            margin-top: 6px !important;
+            border-radius: 50% !important;
+            background: #e68a24 !important;
+        }
+
+        /* Khi không có thông báo */
+        .notification-empty {
+            padding: 30px 18px !important;
+            text-align: center !important;
+            color: #6b7280 !important;
+        }
+
+        .notification-empty span {
+            display: block !important;
+            margin-bottom: 10px !important;
+            font-size: 28px !important;
+        }
+
+        .notification-empty strong {
+            display: block !important;
+            margin-bottom: 6px !important;
+            color: #374151 !important;
+            font-size: 14px !important;
+        }
+
+        .notification-empty p {
+            margin: 0 !important;
+            font-size: 12px !important;
+        }
+
+        /* Chân khung */
+        .notification-footer {
+            padding: 11px 16px !important;
+            text-align: center !important;
+            background: #fafafa !important;
+            border-top: 1px solid #eeeeee !important;
+            color: #9ca3af !important;
+            font-size: 11px !important;
+        }
+
+        /* Thanh cuộn */
+        .notification-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .notification-list::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .notification-dropdown {
+                width: min(350px, calc(100vw - 30px)) !important;
+                right: -55px !important;
+            }
+        }
+
     </style>
 
     {% block extra_css %}{% endblock %}
@@ -97,7 +317,7 @@
                                     <h3>Thông báo</h3>
                                     <span>{{ so_thong_bao_chua_doc }} thông báo chưa đọc</span>
                                 </div>
-                                <span class="notification-bell">♧</span>
+                                <span class="notification-bell">🔔</span>
                             </div>
 
                             <div class="notification-list">
@@ -226,7 +446,7 @@
                     </a>
 
                     <a
-                        href="#"
+                        href="{% url 'contracts:tong_quan_hop_dong' %}"
                         class="{% if active_menu == 'contracts' %}active{% endif %}"
                     >
                         <span class="menu-icon">▤</span>

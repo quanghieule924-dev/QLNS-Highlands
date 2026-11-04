@@ -12,8 +12,9 @@
 
 {% block content %}
 
-<div class="page-container">
+<div class="contract-page">
 
+    <!-- TIÊU ĐỀ TRANG -->
     <div class="page-header">
         <div>
             <h1>Chấm dứt hợp đồng</h1>
@@ -26,53 +27,111 @@
         </a>
     </div>
 
-    <div class="contract-detail-card">
+    <form method="POST" class="contract-form">
+        {% csrf_token %}
 
-        <h3>Thông tin hợp đồng</h3>
+        <!-- 1. THÔNG TIN HỢP ĐỒNG -->
+        <section class="contract-card">
 
-        <div class="detail-grid">
-
-            <div class="detail-item">
-                <span>Mã hợp đồng</span>
-                <strong>{{ hop_dong.mahd }}</strong>
+            <div class="contract-card-heading">
+                <h2>Thông tin hợp đồng</h2>
+                <span>Thông tin hợp đồng cần chấm dứt</span>
             </div>
 
-            <div class="detail-item">
-                <span>Số hợp đồng</span>
-                <strong>{{ hop_dong.so_hd }}</strong>
+            <div class="contract-grid">
+
+                <div class="contract-field">
+                    <label>Mã hợp đồng</label>
+                    <input type="text"
+                           class="form-control"
+                           value="{{ hop_dong.mahd }}"
+                           readonly>
+                </div>
+
+                <div class="contract-field">
+                    <label>Số hợp đồng</label>
+                    <input type="text"
+                           class="form-control"
+                           value="{{ hop_dong.so_hd }}"
+                           readonly>
+                </div>
+
+                <div class="contract-field">
+                    <label>Nhân viên</label>
+                    <input type="text"
+                           class="form-control"
+                           value="{{ hop_dong.nhan_vien }}"
+                           readonly>
+                </div>
+
             </div>
 
-            <div class="detail-item">
-                <span>Nhân viên</span>
-                <strong>{{ hop_dong.nhan_vien }}</strong>
+        </section>
+
+        <!-- 2. THÔNG TIN CHẤM DỨT -->
+        <section class="contract-card">
+
+            <div class="contract-card-heading">
+                <h2>Thông tin chấm dứt</h2>
+                <span>Nhập ngày và lý do chấm dứt hợp đồng</span>
             </div>
 
-        </div>
+            <div class="contract-grid">
 
-        <hr>
+                <div class="contract-field">
+                    <label for="{{ form.ngay_cham_dut.id_for_label }}">
+                        Ngày chấm dứt <span class="required">*</span>
+                    </label>
 
-        <h3>Thông tin chấm dứt</h3>
+                    {{ form.ngay_cham_dut }}
 
-        <form method="POST">
-            {% csrf_token %}
+                    {% for error in form.ngay_cham_dut.errors %}
+                        <small class="field-error">{{ error }}</small>
+                    {% endfor %}
+                </div>
 
-            {{ form.as_p }}
+                <div class="contract-field">
+                    <label for="{{ form.ly_do_cham_dut.id_for_label }}">
+                        Lý do chấm dứt <span class="required">*</span>
+                    </label>
 
-            <button type="submit" class="btn btn-danger"
-                    onclick="return confirm('Bạn có chắc chắn muốn chấm dứt hợp đồng này không?');">
-                Xác nhận chấm dứt
-            </button>
+                    {{ form.ly_do_cham_dut }}
+
+                    {% for error in form.ly_do_cham_dut.errors %}
+                        <small class="field-error">{{ error }}</small>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="form-errors">
+                    {% for error in form.non_field_errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+        </section>
+
+        <!-- NÚT THAO TÁC -->
+        <div class="contract-bottom">
 
             <a href="{% url 'contracts:chi_tiet_hop_dong' hop_dong.mahd %}"
                class="btn btn-secondary">
                 Hủy
             </a>
 
-        </form>
+            <button type="submit"
+                    class="btn btn-danger"
+                    onclick="return confirm('Bạn có chắc chắn muốn chấm dứt hợp đồng này không?');">
+                Xác nhận chấm dứt
+            </button>
 
-    </div>
+        </div>
+
+    </form>
 
 </div>
 
 {% endblock %}
-

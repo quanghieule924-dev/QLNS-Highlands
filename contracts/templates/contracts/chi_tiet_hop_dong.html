@@ -17,9 +17,11 @@
     <div class="contract-page-header">
         <div>
             <div class="contract-breadcrumb">
-                Hợp đồng & Phúc lợi <span>›</span>
-                Danh sách hợp đồng <span>›</span>
-                Chi tiết hợp đồng
+                <a href="{% url 'contracts:tong_quan_hop_dong' %}">Hợp đồng &amp; Phúc lợi</a>
+                <span>›</span>
+                <a href="{% url 'contracts:danh_sach_hop_dong' %}">Danh sách hợp đồng</a>
+                <span>›</span>
+                <span class="breadcrumb-current">Chi tiết hợp đồng</span>
             </div>
             <h1>Chi tiết hợp đồng lao động</h1>
         </div>

@@ -98,4 +98,11 @@ urlpatterns = [
         views.sua_che_do_phuc_loi,
         name='sua_che_do_phuc_loi'
     ),
+
+    # Tổng quan hợp đồng và phúc lợi
+    path(
+        '',
+        views.tong_quan_hop_dong,
+        name='tong_quan_hop_dong'
+    ),
     ]

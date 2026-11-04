@@ -86,7 +86,6 @@ class GiaHanHopDongForm(forms.ModelForm):
     class Meta:
         model = HopDong
         fields = [
-            'mahd',
             'so_hd',
             'ngay_ket_thuc',
             'hinh_thuc_luong',
@@ -94,10 +93,6 @@ class GiaHanHopDongForm(forms.ModelForm):
         ]
 
         widgets = {
-            'mahd': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Nhập mã hợp đồng mới',
-            }),
             'so_hd': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Nhập số hợp đồng mới',
