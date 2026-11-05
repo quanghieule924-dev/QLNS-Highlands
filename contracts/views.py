@@ -534,40 +534,48 @@ def xoa_hop_dong(request, mahd):
 
 @role_required('admin', 'employee')
 def hop_dong_sap_het_han(request):
+    # Tự động gọi tạo thông báo hợp đồng sắp hết hạn nếu là admin
+    if request.user.role == 'admin':
+        tao_thong_bao_hop_dong_sap_het_han()
 
-    # Lấy các hợp đồng sắp hết hạn
-    hop_dongs = HopDong.objects.filter(
+    # Lấy toàn bộ hợp đồng đang hiệu lực, có thời hạn
+    hop_dongs_qs = HopDong.objects.select_related(
+        'nhan_vien',
+        'hop_dong_truoc'
+    ).filter(
         trang_thai_hd='dang_hieu_luc',
         loai_hd='co_thoi_han'
     ).order_by('ngay_ket_thuc')
 
     # Nhân viên chỉ xem hợp đồng của chính mình
     if request.user.role == 'employee':
-        hop_dongs = hop_dongs.filter(
+        hop_dongs_qs = hop_dongs_qs.filter(
             nhan_vien__tai_khoan=request.user
         )
 
-    # Tìm kiếm
-    tu_khoa = request.GET.get('q', '').strip()
-
-    if tu_khoa:
-        hop_dongs = hop_dongs.filter(
-            Q(mahd__icontains=tu_khoa) |
-            Q(so_hd__icontains=tu_khoa) |
-            Q(nhan_vien__ho_ten__icontains=tu_khoa)
-        )
-
-    # Chỉ giữ hợp đồng còn tối đa 30 ngày trước khi hết hạn
+    # Lọc danh sách thực tế các hợp đồng thực sự sắp hết hạn
     hop_dongs = [
-        hd for hd in hop_dongs
+        hd for hd in hop_dongs_qs
         if hd.sap_het_han
     ]
+
+    # Tìm kiếm theo từ khóa (nếu có nhập)
+    tu_khoa = request.GET.get('q', '').strip()
+    if tu_khoa:
+        tu_khoa_lower = tu_khoa.lower()
+        hop_dongs = [
+            hd for hd in hop_dongs
+            if tu_khoa_lower in str(hd.mahd).lower()
+            or tu_khoa_lower in str(hd.so_hd).lower()
+            or (hd.nhan_vien and tu_khoa_lower in str(hd.nhan_vien.ho_ten).lower())
+        ]
 
     return render(
         request,
         'contracts/hop_dong_sap_het_han.html',
         {
             'hop_dongs': hop_dongs,
+            'tu_khoa': tu_khoa,
             'active_menu': 'contracts',
         }
     )

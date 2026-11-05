@@ -17,7 +17,7 @@
       {% for item in recent_applications %}<tr><td><strong>{{ item.ma_ung_vien.ho_ten }}</strong></td><td>{{ item.ma_vi_tri.ten_vi_tri }}</td><td>{{ item.ngay_nop|date:"d/m/Y" }}</td><td><span class="dash-status">{{ item.trang_thai }}</span></td></tr>
       {% empty %}<tr><td colspan="4"><div class="dash-empty"><span>▤</span><strong>Chưa có hồ sơ ứng tuyển</strong><small>Hồ sơ mới sẽ xuất hiện tại đây khi có dữ liệu.</small></div></td></tr>{% endfor %}</tbody></table></div>
     </section>
-    <section class="dash-panel"><div class="dash-panel-head"><div><h2>Hợp đồng sắp hết hạn</h2><p>Trong 30 ngày tới</p></div><a href="{% url 'accounts:module' 'contracts' %}">Xem hợp đồng →</a></div>
+    <section class="dash-panel"><div class="dash-panel-head"><div><h2>Hợp đồng sắp hết hạn</h2><p>Trong 30 ngày tới</p></div><a href="{% url 'contracts:hop_dong_sap_het_han' %}">Xem hợp đồng →</a></div>
       <div class="dash-list">{% for item in expiring_contracts %}<div class="dash-list-row"><span class="dash-dot">!</span><div><strong>{{ item.nhan_vien.ho_ten }}</strong><small>{{ item.so_hd }}</small></div><span class="dash-deadline">{{ item.ngay_ket_thuc|date:"d/m/Y" }}</span></div>{% empty %}<div class="dash-empty"><span>✓</span><strong>Chưa có hợp đồng sắp hết hạn</strong><small>Không có hợp đồng kết thúc trong 30 ngày tới.</small></div>{% endfor %}</div>
     </section>
   </div>

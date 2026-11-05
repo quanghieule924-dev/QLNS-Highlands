@@ -67,6 +67,14 @@ def dashboard(request):
     }
 
     if role == 'admin':
+        # Lọc danh sách hợp đồng đang hiệu lực và có thời hạn để check chuẩn thuộc tính sap_het_han
+        tat_ca_hd = HopDong.objects.select_related('nhan_vien').filter(
+            trang_thai_hd='dang_hieu_luc',
+            loai_hd='co_thoi_han'
+        ).order_by('ngay_ket_thuc')
+
+        expiring_list = [hd for hd in tat_ca_hd if hd.sap_het_han]
+
         context.update({
             'employee_count': NhanVien.objects.count(),
             'application_count': HoSoUngTuyen.objects.count(),
@@ -75,10 +83,7 @@ def dashboard(request):
             'recent_applications': HoSoUngTuyen.objects.select_related(
                 'ma_ung_vien', 'ma_vi_tri'
             ).order_by('-ngay_nop', '-pk')[:5],
-            'expiring_contracts': HopDong.objects.select_related('nhan_vien').filter(
-                ngay_ket_thuc__gte=today,
-                ngay_ket_thuc__lte=today + timedelta(days=30),
-            ).order_by('ngay_ket_thuc')[:5],
+            'expiring_contracts': expiring_list[:5],  # Đồng bộ lấy top 5 chuẩn xác
         })
         template = 'accounts/dashboard_manager.html'
     else:
