@@ -53,6 +53,7 @@ class AccountLoginView(LoginView):
 
 @login_required
 def dashboard(request):
+    #print("DEBUG: ĐANG CHẠY DASHBOARD CỦA HIẾU")
     """Hai dashboard theo role; chỉ sử dụng dữ liệu thực, không dựng số giả."""
     user = request.user
     role = 'admin' if user.is_superuser else getattr(user, 'role', None)

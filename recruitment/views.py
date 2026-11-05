@@ -5,7 +5,7 @@ from django.contrib import messages
 from .models import DotTuyenDung, ViTriTuyenDung, UngVien, HoSoUngTuyen
 from django.core.paginator import Paginator
 from django.db.models import Q
-
+from employees.models import TiepNhanNhanVien
 
 @login_required
 def quan_ly_tuyen_dung(request):
@@ -469,6 +469,16 @@ def hr_ket_qua_tuyen_dung(request):
                 ho_so = HoSoUngTuyen.objects.get(ma_ho_so=ma_ho_so)
                 ho_so.trang_thai = ket_qua_danh_gia # Lưu thẳng vào CSDL để load lại không bị mất
                 ho_so.save()
+                # Nếu hồ sơ được đánh giá Đạt:
+                # Tự động đưa vào danh sách chờ tiếp nhận nhân viên.
+                if ket_qua_danh_gia.strip().casefold() == 'đạt':
+                    TiepNhanNhanVien.objects.get_or_create(
+                        ho_so=ho_so,
+                        defaults={
+                            'trang_thai': 'CHO_TIEP_NHAN',
+                            'chi_nhanh': 'Chi nhánh Bạch Đằng, Đà Nẵng',
+                        }
+                    )
                 messages.success(request, f'Đã lưu đánh giá và cập nhật kết quả cho hồ sơ {ma_ho_so}.')
                 return redirect('recruitment:hr_ket_qua_tuyen_dung')
             except HoSoUngTuyen.DoesNotExist:

@@ -1,0 +1,855 @@
+{% extends 'base_internal.html' %}
+
+{% block title %}
+Chỉnh sửa chương trình tập sự | Highlands Coffee
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .edit-page {
+        max-width: 1150px;
+        margin: 0 auto;
+        padding: 10px 0 35px;
+        color: #252525;
+    }
+
+    .edit-page .breadcrumb-text {
+        font-size: 12px;
+        color: #87919c;
+        margin-bottom: 24px;
+    }
+
+    .edit-page .breadcrumb-text a {
+        color: #87919c;
+        text-decoration: none;
+    }
+
+    .edit-page h1 {
+        font-size: 25px;
+        font-weight: 750;
+        margin-bottom: 6px;
+    }
+
+    .edit-page .subtitle {
+        font-size: 13px;
+        color: #89929c;
+        margin-bottom: 22px;
+    }
+
+    .edit-page .white-card {
+        background: white;
+        border: 1px solid #e5e8eb;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        overflow: hidden;
+    }
+
+    .edit-page .employee-info {
+        padding: 15px 17px;
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        font-size: 13px;
+    }
+
+    .edit-page .avatar {
+        width: 34px;
+        height: 34px;
+        background: #f0f1f2;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #66717b;
+    }
+
+    .edit-page .training-name {
+        margin-left: auto;
+        font-size: 12px;
+        color: #8e969e;
+    }
+
+    .edit-page .toolbar {
+        padding: 13px 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .edit-page .btn-add {
+        border: 1px solid #c8102e;
+        color: #c8102e;
+        background: #fff;
+        border-radius: 6px;
+        padding: 10px 17px;
+        font-size: 12px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .edit-page .btn-restore {
+        border: 1px solid #e0e3e6;
+        background: white;
+        border-radius: 6px;
+        padding: 10px 17px;
+        font-size: 12px;
+        color: #68727c;
+        cursor: pointer;
+    }
+
+    .edit-page .table-wrap {
+        overflow-x: auto;
+    }
+
+    .edit-page table {
+        width: 100%;
+        min-width: 900px;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+    .edit-page th {
+        padding: 13px 10px;
+        background: #f7f8f9;
+        color: #75808b;
+        font-size: 11px;
+        font-weight: 600;
+        text-align: left;
+    }
+
+    .edit-page td {
+        padding: 10px 8px;
+        border-top: 1px solid #e9ecef;
+        vertical-align: middle;
+    }
+
+    .edit-page td input,
+    .edit-page td select {
+        width: 100%;
+        background: white;
+        border: 1px solid #dde2e7;
+        border-radius: 6px;
+        padding: 9px 10px;
+        font-size: 12px;
+        color: #303740;
+    }
+
+    .edit-page td input:focus,
+    .edit-page td select:focus {
+        outline: none;
+        border-color: #c8102e;
+        box-shadow: 0 0 0 2px #ffe5e9;
+    }
+
+    .edit-page .move-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+    }
+
+    .edit-page .move-btn {
+        background: transparent;
+        border: none;
+        color: #89929b;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    .edit-page .move-btn:hover {
+        color: #c8102e;
+    }
+
+    .edit-page .delete-btn {
+        background: transparent;
+        border: none;
+        color: #777f89;
+        font-size: 12px;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .edit-page .delete-btn:hover {
+        color: #c8102e;
+    }
+
+    .edit-page .summary {
+        padding: 14px 16px;
+        background: #f7f8f9;
+        border-top: 1px solid #e9ecef;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        color: #75808b;
+        font-size: 12px;
+    }
+
+    .edit-page .note-title {
+        display: block;
+        font-size: 13px;
+        font-weight: 650;
+        margin-bottom: 9px;
+    }
+
+    .edit-page textarea {
+        width: 100%;
+        min-height: 90px;
+        border: 1px solid #e0e4e8;
+        border-radius: 7px;
+        padding: 12px;
+        font-size: 13px;
+        resize: vertical;
+    }
+
+    .edit-page .help-text {
+        margin-top: 10px;
+        margin-bottom: 18px;
+        font-size: 12px;
+        color: #969fa8;
+    }
+
+    .edit-page .bottom-actions {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .edit-page .btn-cancel {
+        display: inline-block;
+        border: 1px solid #e0e4e8;
+        padding: 12px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        color: #66717b;
+        background: white;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .edit-page .btn-save {
+        background: #c8102e;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 12px 20px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .edit-page .btn-save:hover {
+        background: #a60e27;
+    }
+
+    @media (max-width: 750px) {
+        .edit-page .employee-info {
+            flex-wrap: wrap;
+        }
+
+        .edit-page .training-name {
+            margin-left: 0;
+        }
+    }
+</style>
+
+<div class="edit-page">
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-text">
+
+        <a href="{% url 'training:dashboard_quan_ly_tap_su' %}">
+            Đào tạo
+        </a>
+
+        /
+
+        <a href="{% url 'training:duyet_chuong_trinh' chuong_trinh.pk %}">
+            Duyệt chương trình
+        </a>
+
+        / Chỉnh sửa
+    </div>
+
+    <h1>Chỉnh sửa chương trình tập sự</h1>
+
+    <div class="subtitle">
+        Tùy chỉnh nội dung, thời lượng ca OJT và thứ tự bài học
+        theo năng lực nhân viên
+    </div>
+
+    <!-- Thông tin nhân viên -->
+    <div class="white-card employee-info">
+
+        <div class="avatar">
+            {{ chuong_trinh.ma_nv.ho_ten|slice:":2"|upper }}
+        </div>
+
+        <div>
+            Nhân viên:
+            <strong>{{ chuong_trinh.ma_nv.ho_ten }}</strong>
+
+            ({{ chuong_trinh.ma_nv.manv }})
+
+            - Vị trí:
+            {{ chuong_trinh.ma_nv.vi_tri }}
+        </div>
+
+        <span class="training-name">
+            {{ chuong_trinh.ma_khung.ten_khung }}
+        </span>
+
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- FORM CHỈNH SỬA -->
+    <form method="POST" id="editForm">
+
+        {% csrf_token %}
+
+        <div class="white-card">
+
+            <!-- Thanh công cụ -->
+            <div class="toolbar">
+
+                <button type="button"
+                        id="addBtn"
+                        class="btn-add">
+                    <i class="bi bi-plus-lg"></i>
+                    Thêm bài học mới từ kho danh mục
+                </button>
+
+                <button type="button"
+                        id="restoreBtn"
+                        class="btn-restore">
+                    Khôi phục lộ trình mặc định
+                </button>
+
+            </div>
+
+            <!-- Bảng bài học -->
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th style="width:8%;">
+                                Đổi thứ tự
+                            </th>
+
+                            <th style="width:13%;">
+                                Buổi học / Thứ tự
+                            </th>
+
+                            <th style="width:37%;">
+                                Tên bài học / Thao tác OJT
+                            </th>
+
+                            <th style="width:19%;">
+                                Phân loại
+                            </th>
+
+                            <th style="width:12%;">
+                                Thời lượng
+                            </th>
+
+                            <th style="width:11%;">
+                                Hành động
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="lessonRows">
+
+                        {% for bai in ds_bai_hoc %}
+
+                        <tr>
+
+                            <!-- Đổi thứ tự -->
+                            <td>
+                                <div class="move-buttons">
+
+                                    <button type="button"
+                                            class="move-btn up"
+                                            title="Di chuyển lên">
+                                        <i class="bi bi-chevron-up"></i>
+                                    </button>
+
+                                    <button type="button"
+                                            class="move-btn down"
+                                            title="Di chuyển xuống">
+                                        <i class="bi bi-chevron-down"></i>
+                                    </button>
+
+                                </div>
+                            </td>
+
+                            <!-- Buổi học -->
+                            <td>
+                                <input type="hidden"
+                                       name="ma_bh[]"
+                                       value="{{ bai.ma_bh }}">
+
+                                <input type="number"
+                                       name="buoi_hoc[]"
+                                       min="1"
+                                       max="999"
+                                       value="{{ bai.buoi_hoc|default:1 }}"
+                                       required>
+                            </td>
+
+                            <!-- Tên bài học -->
+                            <td>
+                                <input type="text"
+                                       name="ten_bh[]"
+                                       maxlength="255"
+                                       value="{{ bai.ten_bh }}"
+                                       required>
+                            </td>
+
+                            <!-- Phân loại -->
+                            <td>
+                                <select name="loai_bh[]" required>
+
+                                    <option value="Thực hành OJT"
+                                        {% if bai.loai_bh == 'Thực hành OJT' %}selected{% endif %}>
+                                        Thực hành OJT
+                                    </option>
+
+                                    <option value="Lý thuyết & OJT"
+                                        {% if bai.loai_bh == 'Lý thuyết & OJT' %}selected{% endif %}>
+                                        Lý thuyết & OJT
+                                    </option>
+
+                                </select>
+                            </td>
+
+                            <!-- Thời lượng -->
+                            <td>
+                                <input type="number"
+                                       name="thoi_gian_hoc[]"
+                                       min="1"
+                                       max="1440"
+                                       value="{{ bai.thoi_gian_hoc|default:60 }}"
+                                       required>
+                            </td>
+
+                            <!-- Hành động -->
+                            <td>
+                                <button type="button"
+                                        class="delete-btn remove">
+                                    <i class="bi bi-trash"></i>
+                                    Xóa bài
+                                </button>
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- Tổng hợp -->
+            <div class="summary">
+
+                <span id="totals">
+                    Đang tính tổng...
+                </span>
+
+                <span>
+                    Phân loại chuẩn:
+                    Lý thuyết / Thực hành OJT
+                </span>
+
+            </div>
+
+        </div>
+
+        <!-- Ghi chú -->
+        <label for="note" class="note-title">
+            Ghi chú điều chỉnh
+        </label>
+
+        <textarea id="note"
+                  placeholder="Nhập ghi chú điều chỉnh nếu có..."></textarea>
+
+        <div class="help-text">
+            <i class="bi bi-info-circle"></i>
+            Chỉnh sửa chỉ được lưu khi bạn nhấn
+            Lưu chỉnh sửa. Sau đó hệ thống sẽ quay lại
+            màn hình duyệt chương trình.
+        </div>
+
+        <!-- Nút cuối trang -->
+        <div class="bottom-actions">
+
+            <a href="{% url 'training:duyet_chuong_trinh' chuong_trinh.pk %}"
+               class="btn-cancel">
+                Hủy thay đổi
+            </a>
+
+            <button type="submit"
+                    class="btn-save">
+                Lưu chỉnh sửa &amp; Quay lại duyệt
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+<!--
+    Danh mục bài học mẫu từ DATABASE.
+    Không hiển thị trực tiếp, dùng cho nút Thêm
+    và Khôi phục.
+-->
+<select id="catalog" hidden>
+
+    {% for bai in bai_hoc_mau %}
+
+    <option
+        value="{{ bai.ma_bhk }}"
+        data-title="{{ bai.ten_bai_hoc }}"
+        data-session="{{ bai.buoi_hoc }}"
+        data-type="{{ bai.hinh_thuc }}"
+        data-minutes="{{ bai.thoi_luong }}">
+        {{ bai.ten_bai_hoc }}
+    </option>
+
+    {% endfor %}
+
+</select>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const tbody = document.getElementById('lessonRows');
+
+    const catalog = Array.from(
+        document.querySelectorAll('#catalog option')
+    );
+
+    const totals = document.getElementById('totals');
+
+    const addBtn = document.getElementById('addBtn');
+
+    const restoreBtn = document.getElementById('restoreBtn');
+
+    const editForm = document.getElementById('editForm');
+
+
+    // ======================================
+    // ĐỌC SỐ BUỔI TỪ DỮ LIỆU DATABASE
+    // ======================================
+    function getSessionNumber(value) {
+
+        const result = String(value || '').match(/\d+/);
+
+        return result ? Number(result[0]) : 1;
+    }
+
+
+    // ======================================
+    // TÍNH TỔNG BÀI VÀ THỜI LƯỢNG
+    // ======================================
+    function updateTotals() {
+
+        const rows = Array.from(
+            tbody.querySelectorAll('tr')
+        );
+
+        let totalMinutes = 0;
+
+        rows.forEach(function (row) {
+
+            const input = row.querySelector(
+                '[name="thoi_gian_hoc[]"]'
+            );
+
+            totalMinutes += Number(input.value) || 0;
+        });
+
+        const totalHours = totalMinutes / 60;
+
+        totals.textContent =
+            rows.length + ' bài học / Ca OJT - ' +
+            'Tổng thời lượng: ' +
+            totalMinutes + ' phút (' +
+            totalHours.toLocaleString('vi-VN', {
+                maximumFractionDigits: 1
+            }) + ' giờ)';
+    }
+
+
+    // ======================================
+    // TẠO MỘT DÒNG BÀI HỌC MỚI
+    // ======================================
+    function createRow(data) {
+
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>
+                <div class="move-buttons">
+                    <button type="button"
+                            class="move-btn up">
+                        <i class="bi bi-chevron-up"></i>
+                    </button>
+
+                    <button type="button"
+                            class="move-btn down">
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                </div>
+            </td>
+
+            <td>
+                <input type="hidden"
+                       name="ma_bh[]"
+                       value="">
+
+                <input type="number"
+                       name="buoi_hoc[]"
+                       min="1"
+                       max="999"
+                       required>
+            </td>
+
+            <td>
+                <input type="text"
+                       name="ten_bh[]"
+                       maxlength="255"
+                       required>
+            </td>
+
+            <td>
+                <select name="loai_bh[]">
+                    <option value="Thực hành OJT">
+                        Thực hành OJT
+                    </option>
+
+                    <option value="Lý thuyết & OJT">
+                        Lý thuyết & OJT
+                    </option>
+                </select>
+            </td>
+
+            <td>
+                <input type="number"
+                       name="thoi_gian_hoc[]"
+                       min="1"
+                       max="1440"
+                       required>
+            </td>
+
+            <td>
+                <button type="button"
+                        class="delete-btn remove">
+                    <i class="bi bi-trash"></i>
+                    Xóa bài
+                </button>
+            </td>
+        `;
+
+        row.querySelector(
+            '[name="buoi_hoc[]"]'
+        ).value = getSessionNumber(data.session);
+
+        row.querySelector(
+            '[name="ten_bh[]"]'
+        ).value = data.title || '';
+
+        const typeSelect = row.querySelector(
+            '[name="loai_bh[]"]'
+        );
+
+        if (Array.from(typeSelect.options).some(
+            option => option.value === data.type
+        )) {
+            typeSelect.value = data.type;
+        }
+
+        row.querySelector(
+            '[name="thoi_gian_hoc[]"]'
+        ).value = Number(data.minutes) || 60;
+
+        tbody.appendChild(row);
+
+        updateTotals();
+    }
+
+
+    // ======================================
+    // XỬ LÝ XÓA VÀ ĐỔI THỨ TỰ
+    // ======================================
+    tbody.addEventListener('click', function (event) {
+
+        const button = event.target.closest('button');
+
+        if (!button) return;
+
+        const row = button.closest('tr');
+
+        if (button.classList.contains('remove')) {
+
+            if (tbody.rows.length <= 1) {
+                alert(
+                    'Chương trình cần ít nhất một bài học.'
+                );
+                return;
+            }
+
+            row.remove();
+        }
+
+        else if (button.classList.contains('up')) {
+
+            if (row.previousElementSibling) {
+                tbody.insertBefore(
+                    row,
+                    row.previousElementSibling
+                );
+            }
+        }
+
+        else if (button.classList.contains('down')) {
+
+            if (row.nextElementSibling) {
+                tbody.insertBefore(
+                    row.nextElementSibling,
+                    row
+                );
+            }
+        }
+
+        updateTotals();
+    });
+
+
+    // ======================================
+    // TỰ CẬP NHẬT THỜI LƯỢNG KHI NHẬP
+    // ======================================
+    tbody.addEventListener('input', updateTotals);
+
+
+    // ======================================
+    // THÊM BÀI HỌC TỪ DANH MỤC MẪU
+    // ======================================
+    addBtn.addEventListener('click', function () {
+
+        if (catalog.length === 0) {
+            alert(
+                'Khung đào tạo chưa có bài học mẫu.'
+            );
+            return;
+        }
+
+        const optionsText = catalog.map(
+            (option, index) =>
+                (index + 1) + '. ' +
+                option.dataset.title
+        ).join('\n');
+
+        const choice = prompt(
+            'Chọn số thứ tự bài học:\n' +
+            optionsText
+        );
+
+        if (choice === null) return;
+
+        const index = Number(choice) - 1;
+
+        if (
+            !Number.isInteger(index) ||
+            index < 0 ||
+            index >= catalog.length
+        ) {
+            alert('Số thứ tự không hợp lệ.');
+            return;
+        }
+
+        const selected = catalog[index];
+
+        createRow({
+            title: selected.dataset.title,
+            session: selected.dataset.session,
+            type: selected.dataset.type,
+            minutes: selected.dataset.minutes
+        });
+    });
+
+
+    // ======================================
+    // KHÔI PHỤC LỘ TRÌNH MẶC ĐỊNH
+    // ======================================
+    restoreBtn.addEventListener('click', function () {
+
+        if (catalog.length === 0) {
+            alert(
+                'Không có bài học mẫu để khôi phục.'
+            );
+            return;
+        }
+
+        const confirmed = confirm(
+            'Bạn có muốn thay danh sách đang sửa ' +
+            'bằng bài học mặc định của khung đào tạo?'
+        );
+
+        if (!confirmed) return;
+
+        tbody.replaceChildren();
+
+        catalog.forEach(function (option) {
+
+            createRow({
+                title: option.dataset.title,
+                session: option.dataset.session,
+                type: option.dataset.type,
+                minutes: option.dataset.minutes
+            });
+
+        });
+
+        updateTotals();
+    });
+
+
+    // ======================================
+    // KIỂM TRA TRƯỚC KHI GỬI FORM
+    // ======================================
+    editForm.addEventListener('submit', function (event) {
+
+        if (tbody.rows.length < 1) {
+
+            event.preventDefault();
+
+            alert(
+                'Chương trình phải có ít nhất một bài học.'
+            );
+        }
+    });
+
+    // Tính tổng khi trang vừa tải
+    updateTotals();
+
+});
+</script>
+
+{% endblock %}

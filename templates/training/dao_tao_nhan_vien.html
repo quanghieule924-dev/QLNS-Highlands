@@ -1,0 +1,1080 @@
+{% extends 'base_internal.html' %}
+
+{% block title %}
+Lộ trình tập sự cá nhân | Highlands Coffee
+{% endblock %}
+
+{% block extra_css %}
+
+
+<style>
+/* =========================================
+   1. BỐ CỤC CHUNG
+========================================= */
+
+.ojt-page {
+    width: 100%;
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 14px 0 35px;
+    color: #252525;
+}
+
+.ojt-breadcrumb {
+    font-size: 12px;
+    color: #8b939d;
+    margin-bottom: 18px;
+}
+
+.ojt-page h1 {
+    font-size: 24px;
+    font-weight: 750;
+    line-height: 1.4;
+    margin: 0 0 6px;
+    color: #252525;
+}
+
+.ojt-subtitle {
+    color: #89929d;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0 0 22px;
+}
+
+
+/* =========================================
+   2. THÔNG TIN NHÂN VIÊN
+========================================= */
+
+.ojt-employee-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 250px;
+    gap: 20px;
+
+    background: #ffffff;
+    border: 1px solid #e5e8eb;
+    border-left: 3px solid #c8102e;
+    border-radius: 10px;
+
+    padding: 20px;
+    margin-bottom: 23px;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.ojt-employee-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.ojt-avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 47px;
+    height: 47px;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+    background: #fff0f2;
+    color: #c8102e;
+
+    font-size: 14px;
+    font-weight: 750;
+}
+
+.ojt-name {
+    font-size: 16px;
+    font-weight: 750;
+    margin-bottom: 4px;
+    line-height: 1.4;
+    color: #252525;
+}
+
+.ojt-meta {
+    font-size: 12px;
+    color: #8a939c;
+    margin-bottom: 5px;
+    line-height: 1.5;
+}
+
+.ojt-position {
+    display: inline-block;
+    padding: 3px 7px;
+    background: #f2f3f5;
+    border-radius: 5px;
+    color: #78818c;
+}
+
+.ojt-program {
+    font-size: 13px;
+    font-weight: 650;
+    color: #252525;
+    margin-bottom: 4px;
+}
+
+
+/* =========================================
+   3. TIẾN ĐỘ OJT
+========================================= */
+
+.ojt-progress {
+    padding-left: 20px;
+    border-left: 1px solid #e5e8ec;
+    min-width: 0;
+}
+
+.ojt-progress-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #89929c;
+    margin-bottom: 5px;
+}
+
+.ojt-progress-number {
+    font-size: 27px;
+    font-weight: 800;
+    line-height: 1.4;
+    color: #c8102e;
+}
+
+.ojt-progress-number small {
+    font-size: 11px;
+    font-weight: 500;
+    color: #6d7781;
+}
+
+.ojt-progress-track {
+    width: 100%;
+    height: 7px;
+    overflow: hidden;
+
+    margin: 10px 0 7px;
+    border-radius: 20px;
+    background: #e5e6e8;
+}
+
+.ojt-progress-fill {
+    height: 100%;
+    background: #c8102e;
+    border-radius: 20px;
+    transition: width 0.3s ease;
+}
+
+.ojt-progress-detail {
+    font-size: 11px;
+    color: #8a939d;
+}
+
+
+/* =========================================
+   4. TIÊU ĐỀ CÁC PHẦN
+========================================= */
+
+.ojt-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    margin-bottom: 12px;
+}
+
+.ojt-section-header strong {
+    font-size: 15px;
+    font-weight: 700;
+    color: #252525;
+}
+
+.ojt-section-header span {
+    font-size: 12px;
+    color: #8a929b;
+}
+
+
+/* =========================================
+   5. DANH SÁCH BUỔI HỌC
+========================================= */
+
+.ojt-session {
+    overflow: hidden;
+    margin-bottom: 12px;
+
+    background: #ffffff;
+    border: 1px solid #e4e8ec;
+    border-radius: 8px;
+}
+
+.ojt-session-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+
+    padding: 14px 17px;
+    background: #ffffff;
+
+    cursor: pointer;
+    list-style: none;
+}
+
+.ojt-session-header::-webkit-details-marker {
+    display: none;
+}
+
+.ojt-session-header:hover {
+    background: #fafbfc;
+}
+
+.ojt-session-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    font-size: 13px;
+    font-weight: 700;
+    color: #252525;
+}
+
+.ojt-session-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.ojt-session-status .count {
+    color: #c8102e;
+    font-weight: 700;
+}
+
+.ojt-session-status .complete {
+    color: #258451;
+}
+
+.ojt-session-status .studying {
+    color: #c8102e;
+}
+
+.ojt-session-status .locked {
+    color: #8b949d;
+}
+
+.ojt-session-body {
+    border-top: 1px solid #e8ebee;
+}
+
+
+/* =========================================
+   6. DANH SÁCH BÀI HỌC
+========================================= */
+
+.ojt-lesson {
+    display: grid;
+    grid-template-columns:
+        80px minmax(0, 1fr) 105px 130px;
+
+    align-items: center;
+    gap: 12px;
+
+    padding: 12px 16px;
+    border-bottom: 1px solid #edf0f2;
+
+    font-size: 12px;
+}
+
+.ojt-lesson:last-child {
+    border-bottom: none;
+}
+
+.ojt-lesson-id {
+    color: #8c959e;
+    white-space: nowrap;
+}
+
+.ojt-lesson-title {
+    color: #333333;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.ojt-lesson-date {
+    color: #8b959e;
+    text-align: right;
+    font-size: 11px;
+}
+
+.ojt-lesson.failed {
+    background: #fff8f9;
+}
+
+.ojt-lesson.empty {
+    background: #fafbfc;
+}
+
+
+/* =========================================
+   7. TRẠNG THÁI BÀI HỌC
+========================================= */
+
+.ojt-status {
+    display: inline-block;
+    width: fit-content;
+
+    padding: 5px 9px;
+    border-radius: 5px;
+
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.ojt-status.dat {
+    background: #ebf6ee;
+    color: #258451;
+}
+
+.ojt-status.chua_dat {
+    background: #fff0f2;
+    color: #c8102e;
+}
+
+.ojt-status.chua_hoc {
+    background: #f1f2f4;
+    color: #78818b;
+}
+
+
+/* =========================================
+   8. THÔNG BÁO OJT
+========================================= */
+
+.ojt-alert {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin-top: 18px;
+    padding: 14px 16px;
+
+    background: #fff0f2;
+    border: 1px solid #f8dce2;
+    border-radius: 7px;
+
+    color: #c8102e;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.ojt-alert.success {
+    background: #eaf8f0;
+    border-color: #d5efdf;
+    color: #21824d;
+}
+
+
+/* =========================================
+   9. TRẠNG THÁI CHƯA CÓ DỮ LIỆU
+========================================= */
+
+.ojt-empty {
+    padding: 50px 20px;
+
+    background: #ffffff;
+    border: 1px solid #e4e7ea;
+    border-radius: 9px;
+
+    text-align: center;
+    color: #858e98;
+}
+
+.ojt-empty i {
+    display: block;
+    margin-bottom: 12px;
+
+    font-size: 32px;
+    color: #c8102e;
+}
+
+
+/* =========================================
+   10. KHỐI LỊCH THI TỔNG KẾT
+========================================= */
+
+.ojt-exam-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+
+    width: 100%;
+    margin-top: 22px;
+    padding: 22px 24px;
+
+    background: #ffffff;
+    border: 1px solid #e5e8ec;
+    border-left: 3px solid #c8102e;
+    border-radius: 10px;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.025);
+}
+
+.ojt-exam-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+    min-width: 0;
+}
+
+.ojt-exam-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+
+    background: #fff0f2;
+    color: #c8102e;
+    border-radius: 10px;
+
+    font-size: 21px;
+}
+
+.ojt-exam-text {
+    min-width: 0;
+}
+
+.ojt-exam-text h3 {
+    margin: 0 0 7px;
+    color: #252525;
+
+    font-size: 16px;
+    font-weight: 750;
+    line-height: 1.4;
+}
+
+.ojt-exam-text p {
+    margin: 0;
+
+    color: #87919d;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+
+/* =========================================
+   11. NÚT XEM LỊCH THI TỔNG KẾT
+========================================= */
+
+.ojt-exam-action {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+.ojt-page a.ojt-exam-link {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    width: fit-content;
+    min-height: 43px;
+    padding: 12px 18px;
+
+    background-color: #c8102e !important;
+    border: 1px solid #c8102e !important;
+    border-radius: 8px;
+
+    color: #ffffff !important;
+    text-decoration: none !important;
+
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+    white-space: nowrap;
+
+    box-shadow: 0 4px 12px rgba(200, 16, 46, 0.13);
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.ojt-page a.ojt-exam-link i,
+.ojt-page a.ojt-exam-link span {
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+.ojt-page a.ojt-exam-link:hover {
+    background-color: #a80d28 !important;
+    border-color: #a80d28 !important;
+    color: #ffffff !important;
+
+    box-shadow: 0 7px 16px rgba(200, 16, 46, 0.22);
+    transform: translateY(-2px);
+}
+
+.ojt-page a.ojt-exam-link:active {
+    transform: translateY(0);
+}
+
+.ojt-page a.ojt-exam-link:focus-visible {
+    outline: 3px solid rgba(200, 16, 46, 0.3);
+    outline-offset: 3px;
+}
+
+.ojt-exam-link .bi-arrow-right {
+    font-size: 14px;
+    transition: transform 0.2s ease;
+}
+
+.ojt-exam-link:hover .bi-arrow-right {
+    transform: translateX(4px);
+}
+
+
+/* =========================================
+   12. RESPONSIVE TABLET
+========================================= */
+
+@media (max-width: 850px) {
+
+    .ojt-exam-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+        padding: 20px;
+    }
+
+    .ojt-exam-action {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 800px) {
+
+    .ojt-employee-card {
+        grid-template-columns: 1fr;
+    }
+
+    .ojt-progress {
+        border-left: none;
+        border-top: 1px solid #e5e8ec;
+        padding-left: 0;
+        padding-top: 15px;
+    }
+
+    .ojt-lesson {
+        grid-template-columns: 65px 1fr;
+    }
+
+    .ojt-lesson-date {
+        text-align: left;
+    }
+
+    .ojt-section-header,
+    .ojt-alert {
+        flex-wrap: wrap;
+    }
+}
+
+
+/* =========================================
+   13. RESPONSIVE ĐIỆN THOẠI
+========================================= */
+
+@media (max-width: 480px) {
+
+    .ojt-page {
+        padding: 12px 0 25px;
+    }
+
+    .ojt-employee-card {
+        padding: 16px;
+    }
+
+    .ojt-page {
+        padding: 17px;
+        gap: 16px;
+    }
+
+    .ojt-exam-content {
+        align-items: flex-start;
+    }
+
+    .ojt-exam-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 18px;
+    }
+
+    .ojt-exam-text h3 {
+        font-size: 15px;
+    }
+
+    .ojt-exam-action {
+        width: 100%;
+    }
+
+    .ojt-page a.ojt-exam-link {
+        width: 100%;
+        padding: 13px 15px;
+    }
+
+    .ojt-session-status {
+        flex-wrap: wrap;
+        white-space: normal;
+    }
+}
+
+
+/* =========================================
+   14. HẠN CHẾ HIỆU ỨNG CHUYỂN ĐỘNG
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .ojt-page a.ojt-exam-link,
+    .ojt-exam-link .bi-arrow-right,
+    .ojt-progress-fill {
+        transition: none;
+    }
+}
+
+/* TRẠNG THÁI CHƯA CÓ ĐÀO TẠO */
+
+.training-empty-page {
+    font-family: 'Montserrat', sans-serif;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 15px 60px;
+}
+
+.training-empty-breadcrumb {
+    font-size: 12px;
+    color: #8d97a3;
+    margin-bottom: 17px;
+}
+
+.training-empty-title {
+    font-size: 25px;
+    font-weight: 800;
+    color: #202a35;
+    margin-bottom: 8px;
+}
+
+.training-empty-subtitle {
+    font-size: 12px;
+    color: #8d97a3;
+    margin-bottom: 26px;
+}
+
+.training-empty-card {
+    background: #ffffff;
+    border: 1px solid #e4e8ed;
+    border-radius: 14px;
+    padding: 65px 24px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,.025);
+}
+
+.training-empty-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 85px;
+    height: 85px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: #fff0f3;
+    color: #c8102e;
+    font-size: 35px;
+}
+
+.training-empty-card h2 {
+    font-size: 21px;
+    font-weight: 800;
+    color: #24303c;
+    margin: 0 0 12px;
+}
+
+.training-empty-card p {
+    color: #8793a0;
+    font-size: 13px;
+    line-height: 1.8;
+    max-width: 530px;
+    margin: 0 auto;
+}
+
+
+
+</style>
+
+
+{% endblock %}
+
+
+{% block content %}
+
+{% if not chuong_trinh %}
+
+<div class="training-empty-page">
+
+    <div class="training-empty-breadcrumb">
+        Không gian nhân viên / Đào tạo
+    </div>
+
+    <h1 class="training-empty-title">
+        Đào tạo
+    </h1>
+
+    <p class="training-empty-subtitle">
+        Theo dõi lộ trình đào tạo và tiến độ tập sự cá nhân.
+    </p>
+
+    <div class="training-empty-card">
+
+        <div class="training-empty-icon">
+            <i class="bi bi-journal-x"></i>
+        </div>
+
+        <h2>
+            Hiện chưa có thông tin đào tạo
+        </h2>
+
+        <p>
+            Lộ trình đào tạo của bạn hiện chưa được quản lý phê duyệt hoặc chưa được phân công.
+            Thông tin sẽ tự động hiển thị tại đây sau khi chương trình được phê duyệt.
+        </p>
+
+    </div>
+
+</div>
+{% else %}
+
+
+<div class="ojt-page">
+
+    <div class="ojt-breadcrumb">
+        Đào tạo / Lộ trình tập sự của tôi
+    </div>
+
+    <h1>Lộ trình tập sự cá nhân</h1>
+
+    <p class="ojt-subtitle">
+        Theo dõi tiến độ tích lũy OJT, danh sách bài học
+        theo ca và đánh giá từ Quản lý cửa hàng
+    </p>
+
+    {% if not nhan_vien %}
+
+        <div class="ojt-empty">
+            <i class="bi bi-person-exclamation"></i>
+
+            <h5>Chưa liên kết hồ sơ nhân viên</h5>
+
+            <p>
+                Tài khoản của bạn chưa được liên kết
+                với hồ sơ nhân viên trong hệ thống.
+            </p>
+        </div>
+
+    {% elif not chuong_trinh %}
+
+        <div class="ojt-empty">
+            <i class="bi bi-hourglass-split"></i>
+
+            <h5>Chương trình đào tạo đang chờ phê duyệt</h5>
+
+            <p>
+                Hiện chưa có chương trình tập sự được phê duyệt
+                cho {{ nhan_vien.ho_ten }}.
+            </p>
+        </div>
+
+    {% else %}
+
+        <!-- THÔNG TIN NHÂN VIÊN -->
+        <div class="ojt-employee-card">
+
+            <div class="ojt-employee-left">
+
+                <div class="ojt-avatar">
+                    {{ nhan_vien.ho_ten|slice:":2"|upper }}
+                </div>
+
+                <div>
+
+                    <div class="ojt-name">
+                        {{ nhan_vien.ho_ten }}
+                    </div>
+
+                    <div class="ojt-meta">
+                        Mã NV: {{ nhan_vien.manv }}
+
+                        {% if nhan_vien.vi_tri %}
+                            <span class="ojt-position">
+                                {{ nhan_vien.vi_tri }}
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="ojt-program">
+                        {{ chuong_trinh.ma_khung.ten_khung }}
+                    </div>
+
+                    <div class="ojt-meta">
+                        Chương trình: {{ chuong_trinh.ten_ct }}
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- TIẾN ĐỘ -->
+            <div class="ojt-progress">
+
+                <div class="ojt-progress-label">
+                    TIẾN ĐỘ OJT TÍCH LŨY
+                </div>
+
+                <div class="ojt-progress-number">
+                    {{ tien_do }}%
+                    <small>Hoàn thành</small>
+                </div>
+
+                <div class="ojt-progress-track">
+
+                    <div
+                        class="ojt-progress-fill"
+                        style="width: {{ tien_do|stringformat:'f' }}%;">
+                    </div>
+
+                </div>
+
+                <div class="ojt-progress-detail">
+                    {{ so_bai_dat }}/{{ tong_bai }}
+                    bài học đã Đạt
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- DANH SÁCH BUỔI HỌC -->
+        <div class="ojt-section-header">
+
+            <strong>Bài học trong lộ trình</strong>
+
+            <span>
+                {{ so_buoi }} buổi -
+                {{ tong_bai }} bài học
+            </span>
+
+        </div>
+
+        {% for buoi in cac_buoi %}
+
+            <details class="ojt-session"
+                     {% if forloop.first %}open{% endif %}>
+
+                <summary class="ojt-session-header">
+
+                    <div class="ojt-session-title">
+
+                        {% if buoi.trang_thai == 'hoan_thanh' %}
+                            <i class="bi bi-check-circle"
+                               style="color:#258451;"></i>
+                        {% elif buoi.trang_thai == 'dang_hoc' %}
+                            <i class="bi bi-exclamation-circle"
+                               style="color:#c8102e;"></i>
+                        {% else %}
+                            <i class="bi bi-lock"
+                               style="color:#929aa3;"></i>
+                        {% endif %}
+
+                        <span>
+                            {% if buoi.so %}
+                                Buổi {{ buoi.so }}
+                            {% else %}
+                                Chưa phân buổi
+                            {% endif %}
+
+                            {% if buoi.loai_hoc %}
+                                : {{ buoi.loai_hoc }}
+                            {% endif %}
+                        </span>
+
+                    </div>
+
+                    <div class="ojt-session-status">
+
+                        {% if buoi.trang_thai == 'hoan_thanh' %}
+
+                            <span class="complete">
+                                Hoàn thành
+                            </span>
+
+                        {% elif buoi.trang_thai == 'dang_hoc' %}
+
+                            <span class="studying">
+                                Đang học
+                            </span>
+
+                        {% else %}
+
+                            <span class="locked">
+                                Chưa bắt đầu
+                            </span>
+
+                        {% endif %}
+
+                        <span class="count">
+                            {{ buoi.so_bai_dat }}/{{ buoi.so_bai }}
+                            Bài Đạt
+                        </span>
+
+                    </div>
+
+                </summary>
+
+                <div class="ojt-session-body">
+
+                    {% for bai in buoi.bai_hoc %}
+
+                        <div class="ojt-lesson
+                            {% if bai.trang_thai == 'chua_dat' %}failed{% endif %}
+                            {% if bai.trang_thai == 'chua_hoc' %}empty{% endif %}
+                        ">
+
+                            <!-- MÃ / SỐ BÀI -->
+                            <div class="ojt-lesson-id">
+                                {% if buoi.so %}
+                                    Bài {{ buoi.so }}.{{ forloop.counter }}
+                                {% else %}
+                                    Bài {{ forloop.counter }}
+                                {% endif %}
+                            </div>
+
+                            <!-- TÊN BÀI HỌC -->
+                            <div class="ojt-lesson-title">
+                                {{ bai.ten }}
+                            </div>
+
+                            <!-- TRẠNG THÁI -->
+                            <div>
+
+                                <span class="ojt-status {{ bai.trang_thai }}">
+
+                                    {% if bai.trang_thai == 'dat' %}
+                                        <i class="bi bi-check-lg"></i>
+                                    {% elif bai.trang_thai == 'chua_dat' %}
+                                        <i class="bi bi-x-lg"></i>
+                                    {% else %}
+                                        <i class="bi bi-clock"></i>
+                                    {% endif %}
+
+                                    {{ bai.ten_trang_thai }}
+
+                                </span>
+
+                            </div>
+
+                            <!-- NGÀY ĐÁNH GIÁ -->
+                            <div class="ojt-lesson-date">
+
+                                {% if bai.ngay %}
+                                    Ngày duyệt:
+                                    {{ bai.ngay|date:"d/m/Y" }}
+                                {% else %}
+                                    Chưa đánh giá
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </details>
+
+        {% empty %}
+
+            <div class="ojt-empty">
+                Chương trình đã được duyệt nhưng chưa có bài học.
+            </div>
+
+        {% endfor %}
+
+        <!-- THÔNG BÁO CUỐI -->
+        {% if tong_bai > 0 %}
+
+            {% if so_bai_dat == tong_bai %}
+    <div class="ojt-alert success">
+        <span>
+            <i class="bi bi-check-circle"></i>
+            Bạn đã hoàn thành toàn bộ bài học OJT.
+        </span>
+        <strong>100% hoàn thành</strong>
+    </div>
+    <!-- Chỉ hiện khi hoàn thành 100% OJT -->
+
+<div class="ojt-exam-card">
+    <div class="ojt-exam-content">
+        <div class="ojt-exam-icon">
+            <i class="bi bi-calendar-check"></i>
+        </div>
+
+        <div class="ojt-exam-text">
+            <h3>Lịch thi tổng kết</h3>
+            <p>
+                Theo dõi lịch thi, ca thi và bộ đề
+                được quản lý phân công.
+            </p>
+        </div>
+    </div>
+
+    <div class="ojt-exam-action">
+        <a href="{% url 'training:lich_thi_nhan_vien' %}"
+           class="ojt-exam-link">
+            <i class="bi bi-calendar-check"></i>
+            <span>Xem lịch thi tổng kết</span>
+            <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+</div>
+
+    {% else %}
+    <div class="ojt-alert">
+        <span>
+            <i class="bi bi-exclamation-circle"></i>
+            Bạn cần hoàn thành các bài học OJT còn lại để đủ điều kiện xét thi tổng kết.
+        </span>
+        <strong>Chưa hoàn thành</strong>
+    </div>
+    {% endif %}
+    {% endif %}
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+{% endblock %}

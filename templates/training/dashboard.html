@@ -1,0 +1,369 @@
+{% extends 'base_internal.html' %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    /* 1. Tự kích hoạt màu hồng + vạch đỏ cho mục Đào tạo trên Sidebar */
+    .sidebar a[href*="training"],
+    .nav-link[href*="training"],
+    aside a[href*="training"] {
+        background-color: #fef0f2 !important;
+        color: #b81c24 !important;
+        border-left: 4px solid #b81c24 !important;
+        font-weight: 600 !important;
+    }
+    .sidebar a[href*="training"] i,
+    .nav-link[href*="training"] i {
+        color: #b81c24 !important;
+    }
+
+    /* 2. Styling cho ruột Dashboard */
+    .dashboard-container {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        color: #333;
+        background-color: #f8f9fa;
+        padding: 24px;
+    }
+    .card-custom {
+        background: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #eaecf0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .btn-highlands {
+        background-color: #b81c24 !important;
+        color: white !important;
+        border: none;
+        font-weight: 600;
+        border-radius: 8px;
+    }
+    .btn-highlands:hover {
+        background-color: #96151c !important;
+    }
+    .badge-cho-duyet { background-color: #fef0c7; color: #dc6803; border-radius: 6px; font-weight: 600; }
+    .badge-dang-ojt { background-color: #e0f2fe; color: #026aa2; border-radius: 6px; font-weight: 600; }
+    .badge-du-dieu-kien { background-color: #d1fad7; color: #0e9384; border-radius: 6px; font-weight: 600; }
+
+    .progress-bar-custom {
+        height: 6px;
+        border-radius: 3px;
+        background-color: #eaecf0;
+        overflow: hidden;
+    }
+    .progress-fill-red { background-color: #b81c24; height: 100%; }
+    .progress-fill-green { background-color: #12b76a; height: 100%; }
+
+    .avatar-circle {
+        width: 32px; height: 32px; background-color: #f2f4f7;
+        color: #475467; font-weight: 600; font-size: 12px;
+        border-radius: 50%; display: inline-flex;
+        align-items: center; justify-content: center;
+    }
+
+    /* ===== CỤM NÚT THAO TÁC ===== */
+.action-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* style chung cho tất cả nút */
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 132px;
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1.5px solid #d9dde3;
+    background: #ffffff;
+    color: #2c2f36;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+/* hover chung: mới đỏ khi rê chuột */
+.action-btn:hover {
+    background: #c81e2a;
+    border-color: #c81e2a;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(200, 30, 42, 0.18);
+}
+
+.action-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(200, 30, 42, 0.12);
+}
+
+/* nút disabled */
+.action-btn.is-disabled,
+.action-btn:disabled {
+    background: #f3f5f7;
+    color: #a0a7b4;
+    border-color: #e3e7ec;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+.action-btn.is-disabled:hover,
+.action-btn:disabled:hover {
+    background: #f3f5f7;
+    color: #a0a7b4;
+    border-color: #e3e7ec;
+    box-shadow: none;
+    transform: none;
+}
+
+/* nếu muốn nút chính nổi hơn một chút */
+.action-btn.action-btn-primary {
+    border-color: #e4b8bd;
+    color: #b51f2d;
+    background: #fff;
+}
+
+/* nếu muốn nút phụ kiểu xám nhẹ */
+.action-btn.action-btn-secondary {
+    border-color: #d8dfe6;
+    color: #58606e;
+    background: #fff;
+}
+
+.action-btn.action-btn-secondary:hover {
+    background: #c81e2a;
+    border-color: #c81e2a;
+    color: #fff;
+}
+
+/* canh giữa cột thao tác */
+td.action-cell {
+    min-width: 290px;
+}
+
+/* mobile */
+@media (max-width: 768px) {
+    .action-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .action-btn {
+        width: 100%;
+    }
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Tự động gắn class active cho menu Đào tạo bằng JS -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const trainingLinks = document.querySelectorAll('a[href*="training"]');
+        trainingLinks.forEach(link => {
+            link.classList.add('active');
+        });
+    });
+</script>
+
+<div class="dashboard-container">
+    <!-- Header Title & Breadcrumb -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 fs-7">
+                    <li class="breadcrumb-item text-muted">Đào tạo</li>
+                    <li class="breadcrumb-item active text-dark fw-semibold">Quản lý tập sự</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold text-dark mb-1 fs-3">Dashboard Quản lý Tập sự</h2>
+            <p class="text-muted small mb-0 fs-7">Cửa hàng Highlands Coffee - Chi nhánh Đà Nẵng</p>
+        </div>
+    </div>
+
+    <!-- 4 Thẻ Thống Kê (Hiển thị con số thực) -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card-custom p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted fs-7">Tổng số nhân viên tập sự</span>
+                    <span class="badge rounded-circle p-2 bg-danger-subtle text-danger"><i class="bi bi-people-fill"></i></span>
+                </div>
+                <div class="fs-2 fw-bold text-dark">{{ tong_so_tap_su|default:0 }} <span class="fs-7 fw-normal text-muted">Nhân viên</span></div>
+                <div class="text-muted fs-8 mt-1">Tại chi nhánh Đà Nẵng</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card-custom p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted fs-7">Chờ duyệt lộ trình</span>
+                    <span class="badge rounded-circle p-2 bg-warning-subtle text-warning"><i class="bi bi-folder-fill"></i></span>
+                </div>
+                <div class="fs-2 fw-bold text-dark">{{ cho_duyet_lo_trinh|default:0 }} <span class="fs-7 fw-normal text-muted">Hồ sơ</span></div>
+                <div class="text-warning fw-semibold fs-8 mt-1">Cần duyệt lộ trình đào tạo</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card-custom p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted fs-7">Đang thực hành OJT</span>
+                    <span class="badge rounded-circle p-2 bg-primary-subtle text-primary"><i class="bi bi-card-checklist"></i></span>
+                </div>
+                <div class="fs-2 fw-bold text-dark">{{ dang_thuc_hanh_ojt|default:0 }} <span class="fs-7 fw-normal text-muted">Nhân viên</span></div>
+                <div class="text-primary fw-semibold fs-8 mt-1">Đang thực hành tại cửa hàng</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card-custom p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted fs-7">Đủ điều kiện thi tổng kết</span>
+                    <span class="badge rounded-circle p-2 bg-success-subtle text-success"><i class="bi bi-check-circle-fill"></i></span>
+                </div>
+                <div class="fs-2 fw-bold text-dark">{{ du_dieu_kien_thi|default:0 }} <span class="fs-7 fw-normal text-muted">Nhân viên</span></div>
+                <div class="text-success fw-semibold fs-8 mt-1">100% OJT đã hoàn thành</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bảng Danh Sách & Bộ Lọc Dữ Liệu -->
+    <div class="card-custom p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center gap-2">
+                <h5 class="fw-bold mb-0 text-dark fs-6">Nhân viên tập sự</h5>
+                <span class="badge bg-danger-subtle text-danger rounded-pill px-2">{{ tong_so_tap_su|default:0 }}</span>
+            </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <form method="GET" class="row g-2 mb-3">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" name="search" class="form-control border-start-0 fs-7" placeholder="Tìm kiếm theo Họ tên, Mã NV (NV001...)" value="{{ request.GET.search }}">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <select name="vi_tri" aria-label="Vị trí" class="form-select fs-7">
+                    <option value="">Tất cả vị trí</option>
+                    <option value="Pha chế">Pha chế</option>
+                    <option value="Thu ngân">Thu ngân</option>
+                    <option value="Phục vụ">Phục vụ</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="hinh_thuc" aria-label="Hình thức" class="form-select fs-7">
+                    <option value="">Tất cả hình thức</option>
+                    <option value="Full-time">Full-time</option>
+                    <option value="Part-time">Part-time</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="trang_thai" aria-label="Trạng thái" class="form-select fs-7">
+                    <option value="">Trạng thái tập sự</option>
+                    <option value="Chờ duyệt">Chờ duyệt</option>
+                    <option value="Đang OJT">Đang OJT</option>
+                    <option value="Đủ điều kiện thi">Đủ điều kiện thi</option>
+                </select>
+            </div>
+        </form>
+
+        <!-- Table -->
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" style="font-size: 13px;">
+                <thead class="table-light text-muted">
+                    <tr>
+                        <th class="fw-medium">MÃ NV</th>
+                        <th class="fw-medium">HỌ & TÊN</th>
+                        <th class="fw-medium">VỊ TRÍ & HÌNH THỨC</th>
+                        <th class="fw-medium">LỘ TRÌNH ĐÀO TẠO</th>
+                        <th class="fw-medium" style="width: 15%;">TIẾN ĐỘ OJT</th>
+                        <th class="fw-medium">TRẠNG THÁI HỒ SƠ</th>
+                        <th class="fw-medium text-center">THAO TÁC TÁC VỤ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in danh_sach_tap_su %}
+                    <tr>
+                        <td class="text-secondary fw-medium">{{ item.ma_nv.manv }}</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="avatar-circle">
+                                    {{ item.ma_nv.ho_ten|slice:":2"|upper }}
+                                </div>
+                                <a href="{% url 'training:duyet_chuong_trinh' item.ma_ct %}"
+                                   class="fw-semibold text-dark text-decoration-none">{{ item.ma_nv.ho_ten }}
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-semibold text-dark">{{ item.ma_nv.vi_tri }}</div>
+                            <div class="text-muted fs-8">Part-time</div>
+                        </td>
+                        <td class="text-secondary">{{ item.ten_ct }}</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fw-bold fs-8">{{ item.tong_tien_do }}%</span>
+                                <div class="progress-bar-custom flex-grow-1">
+                                    <div class="{% if item.tong_tien_do == 100 %}progress-fill-green{% else %}progress-fill-red{% endif %}"
+                                         width="{{ item.tong_tien_do }}%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if item.trang_thai_duyet == 'Chờ duyệt' %}
+                                <span class="badge badge-cho-duyet px-2 py-1">Chờ duyệt</span>
+                            {% elif item.tong_tien_do == 100 %}
+                                <span class="badge badge-du-dieu-kien px-2 py-1">Đủ điều kiện thi</span>
+                            {% else %}
+                                <span class="badge badge-dang-ojt px-2 py-1">Đang OJT</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if item.trang_thai_duyet == 'Chờ duyệt' %}
+                            <a href="{% url 'training:duyet_chuong_trinh' item.ma_ct %}"
+                               class="btn btn-outline-danger btn-sm px-3 fs-8 fw-semibold">
+                               Duyệt lộ trình
+                            </a>
+                            {% elif item.tong_tien_do == 100 %}
+                                <a href="{% url 'training:bo_tri_thi' ma_nv=item.ma_nv.manv %}"
+                                   class="btn btn-highlands btn-sm px-3 fs-8">
+                                    Bố trí thi
+                                </a>
+                            {% else %}
+                                <a href="{% url 'training:cap_nhat_tien_do_ojt' ma_nv=item.ma_nv.manv %}"
+                                   class="btn btn-outline-secondary btn-sm px-3 fs-8 fw-semibold">
+                                    Tích checklist
+                                </a>
+                            {% endif %}
+                            <a href="{% url 'training:trang_thai_ho_so' ma_nv=item.ma_nv.manv %}"
+                               class="btn btn-outline-danger btn-sm px-3"
+                               style="margin-top: 6px; display: inline-block;">
+                                <i class="bi bi-clipboard-check"></i>
+                                Xem trạng thái hồ sơ
+                            </a>
+
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">Chưa có dữ liệu nhân viên tập sự.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

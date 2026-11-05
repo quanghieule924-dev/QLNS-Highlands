@@ -1,0 +1,829 @@
+{% extends 'base_internal.html' %}
+
+{% block title %}
+Theo dõi & Tích checklist OJT | Highlands Coffee
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ojt-check-page {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 12px 0 35px;
+        color: #24272b;
+    }
+
+    .ojt-check-page * {
+        box-sizing: border-box;
+    }
+
+    .ojt-check-breadcrumb {
+        color: #89919b;
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+
+    .ojt-check-breadcrumb a {
+        color: #89919b;
+        text-decoration: none;
+    }
+
+    .ojt-check-page h1 {
+        font-size: 25px;
+        font-weight: 750;
+        margin: 0 0 5px;
+    }
+
+    .ojt-check-subtitle {
+        color: #89929b;
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+
+    .ojt-check-card {
+        background: #fff;
+        border: 1px solid #e5e8ec;
+        border-radius: 9px;
+        margin-bottom: 17px;
+        overflow: hidden;
+    }
+
+    .ojt-check-employee {
+        padding: 19px 20px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 230px;
+        gap: 25px;
+        align-items: center;
+    }
+
+    .ojt-check-identity {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+    }
+
+    .ojt-check-avatar {
+        width: 46px;
+        height: 46px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: #ffe7ec;
+        color: #c8102e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 750;
+    }
+
+    .ojt-check-name {
+        font-size: 16px;
+        font-weight: 750;
+        margin-bottom: 5px;
+    }
+
+    .ojt-check-meta {
+        color: #8c949e;
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .ojt-check-progress {
+        border-left: 1px solid #e8eaee;
+        padding-left: 20px;
+    }
+
+    .ojt-check-progress-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: #77818b;
+    }
+
+    .ojt-check-progress-value {
+        color: #c8102e;
+        font-size: 24px;
+        font-weight: 800;
+        text-align: right;
+    }
+
+    .ojt-check-track {
+        height: 7px;
+        background: #e6e7e9;
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 6px 0;
+    }
+
+    .ojt-check-fill {
+        height: 100%;
+        width: 0;
+        background: #c8102e;
+        border-radius: 10px;
+        transition: width 0.2s ease;
+    }
+
+    .ojt-check-table-wrap {
+        overflow-x: auto;
+    }
+
+    .ojt-check-table {
+        width: 100%;
+        min-width: 1050px;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+    .ojt-check-table th {
+        background: #f7f8f9;
+        color: #707b86;
+        font-weight: 650;
+        text-align: left;
+        font-size: 10px;
+        padding: 13px 10px;
+        white-space: nowrap;
+        border-bottom: 1px solid #e5e8eb;
+    }
+
+    .ojt-check-table td {
+        padding: 10px;
+        border-bottom: 1px solid #edf0f2;
+        vertical-align: middle;
+    }
+
+    .ojt-check-table .session-row td {
+        background: #fafbfc;
+        font-weight: 700;
+        border-top: 1px solid #e6e9ec;
+        padding: 13px 12px;
+    }
+
+    .ojt-check-table .session-row .session-summary {
+        color: #c8102e;
+        float: right;
+        font-size: 11px;
+    }
+
+    .ojt-check-table .lesson-code {
+        color: #89929b;
+        white-space: nowrap;
+    }
+
+    .ojt-check-table .lesson-name {
+        font-weight: 550;
+    }
+
+    .ojt-check-type {
+        display: inline-block;
+        padding: 5px 7px;
+        border-radius: 4px;
+        color: #c8102e;
+        background: #fff0f2;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .ojt-check-statuses {
+        display: flex;
+        gap: 12px;
+        white-space: nowrap;
+        align-items: center;
+    }
+
+    .ojt-check-statuses label {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        cursor: pointer;
+        font-size: 11px;
+    }
+
+    .ojt-check-statuses input {
+        accent-color: #c8102e;
+        cursor: pointer;
+    }
+
+    .ojt-check-input {
+        width: 100%;
+        border: 1px solid #dfe3e8;
+        border-radius: 5px;
+        padding: 8px;
+        background: #fff;
+        color: #343a40;
+        font-size: 12px;
+    }
+
+    .ojt-check-input:focus {
+        outline: none;
+        border-color: #c8102e;
+        box-shadow: 0 0 0 2px #ffe2e8;
+    }
+
+    .ojt-check-lesson.failed {
+        background: #fff7f8;
+    }
+
+    .ojt-check-footer {
+        padding: 17px 19px;
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 20px;
+        align-items: start;
+        background: #fafbfc;
+    }
+
+    .ojt-check-count {
+        color: #c8102e;
+        font-size: 21px;
+        font-weight: 800;
+        margin-top: 6px;
+    }
+
+    .ojt-check-note-title {
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .ojt-check-note {
+        width: 100%;
+        min-height: 76px;
+        resize: vertical;
+        border: 1px solid #e0e4e8;
+        border-radius: 6px;
+        font-size: 12px;
+        padding: 11px;
+    }
+
+    .ojt-check-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .ojt-check-help {
+        font-size: 12px;
+        color: #89929b;
+    }
+
+    .ojt-check-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+    }
+
+    .ojt-check-btn {
+        border: 1px solid #dce1e5;
+        border-radius: 6px;
+        background: #fff;
+        color: #343a40;
+        text-decoration: none;
+        padding: 11px 15px;
+        font-size: 12px;
+        font-weight: 650;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    .ojt-check-btn-gray {
+        background: #737b83;
+        color: #fff;
+        border-color: #737b83;
+    }
+
+    .ojt-check-btn-red {
+        color: white;
+        background: #c8102e;
+        border-color: #c8102e;
+    }
+
+    .ojt-check-btn-red:hover {
+        background: #ac0e28;
+    }
+
+    .ojt-check-empty {
+        padding: 35px;
+        text-align: center;
+        color: #89929b;
+    }
+
+    @media (max-width: 800px) {
+        .ojt-check-employee,
+        .ojt-check-footer {
+            grid-template-columns: 1fr;
+        }
+
+        .ojt-check-progress {
+            border-left: none;
+            padding-left: 0;
+            border-top: 1px solid #e8eaee;
+            padding-top: 14px;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="ojt-check-page">
+
+    <div class="ojt-check-breadcrumb">
+        <a href="{% url 'training:dashboard_quan_ly_tap_su' %}">
+            Đào tạo
+        </a>
+        /
+        Quản lý Tập sự
+        /
+        Theo dõi & Tích checklist OJT
+    </div>
+
+    <h1>Theo dõi & Tích checklist OJT</h1>
+
+    <p class="ojt-check-subtitle">
+        Đánh giá chi tiết từng bài học/thao tác thực tế
+        theo từng buổi OJT tại cửa hàng
+    </p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- THÔNG TIN NHÂN VIÊN -->
+    <div class="ojt-check-card ojt-check-employee">
+
+        <div class="ojt-check-identity">
+
+            <div class="ojt-check-avatar">
+                {{ nhan_vien.ho_ten|slice:":2"|upper }}
+            </div>
+
+            <div>
+                <div class="ojt-check-name">
+                    {{ nhan_vien.ho_ten }}
+                </div>
+
+                <div class="ojt-check-meta">
+                    Mã NV: {{ nhan_vien.manv }}
+                    · {{ nhan_vien.vi_tri }}
+                </div>
+
+                <div class="ojt-check-meta">
+                    {{ chuong_trinh.ma_khung.ten_khung }}
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="ojt-check-progress">
+
+            <div class="ojt-check-progress-label">
+                Tiến độ OJT tích lũy
+            </div>
+
+            <div class="ojt-check-progress-value">
+                <span id="progressNumber">{{ tien_do }}</span>%
+            </div>
+
+            <div class="ojt-check-track">
+                <div id="progressFill"
+                     class="ojt-check-fill"
+                     style="width:{{ tien_do }}%;">
+                </div>
+            </div>
+
+            <div class="ojt-check-meta" style="text-align:right;">
+                <span id="progressCount">
+                    {{ so_bai_dat }}/{{ tong_bai }}
+                </span>
+                bài học đã Đạt
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FORM ĐÁNH GIÁ -->
+    <form method="POST" id="checklistForm">
+        {% csrf_token %}
+
+        <div class="ojt-check-card">
+
+            <div class="ojt-check-table-wrap">
+
+                <table class="ojt-check-table">
+
+                    <thead>
+                        <tr>
+                            <th style="width:6%;">BÀI HỌC</th>
+                            <th style="width:26%;">THAO TÁC THỰC TẾ</th>
+                            <th style="width:11%;">HÌNH THỨC</th>
+                            <th style="width:17%;">KẾT QUẢ ĐÁNH GIÁ</th>
+                            <th style="width:15%;">NGÀY ĐÁNH GIÁ</th>
+                            <th style="width:25%;">NHẬN XÉT NHANH</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for buoi in cac_buoi %}
+
+                            <!-- TIÊU ĐỀ BUỔI -->
+                            <tr class="session-row">
+                                <td colspan="6">
+                                    <i class="bi bi-chevron-down"></i>
+
+                                    {% if buoi.so %}
+                                        Buổi {{ buoi.so }}
+                                    {% else %}
+                                        Chưa phân buổi
+                                    {% endif %}
+
+                                    <span class="session-summary">
+                                        {{ buoi.so_bai_dat }}/{{ buoi.so_bai }}
+                                        bài Đạt
+                                    </span>
+                                </td>
+                            </tr>
+
+                            {% for bai in buoi.bai_hoc %}
+
+                            <tr class="ojt-check-lesson
+                                {% if bai.trang_thai == 'Chưa đạt' %}failed{% endif %}
+                            ">
+
+                                <!-- SỐ BÀI -->
+                                <td class="lesson-code">
+                                    {% if buoi.so %}
+                                        {{ buoi.so }}.{{ forloop.counter }}
+                                    {% else %}
+                                        {{ forloop.counter }}
+                                    {% endif %}
+                                </td>
+
+                                <!-- TÊN BÀI HỌC -->
+                                <td>
+                                    <span class="lesson-name">
+                                        {{ bai.ten }}
+                                    </span>
+                                </td>
+
+                                <!-- HÌNH THỨC -->
+                                <td>
+                                    <span class="ojt-check-type">
+                                        {{ bai.loai|default:"OJT" }}
+                                    </span>
+                                </td>
+
+                                <!-- ĐÁNH GIÁ -->
+                                <td>
+                                    <div class="ojt-check-statuses">
+                                        <label class="ojt-radio-label">
+                                            <input type="radio"
+                                                   name="trang_thai_{{ bai.ma_bh }}"
+                                                   value="Đạt"
+                                                   class="ojt-radio"
+                                                   data-status="{{ bai.trang_thai }}">
+                                            <span>Đạt</span>
+                                        </label>
+                                        <label class="ojt-radio-label">
+                                            <input type="radio"
+                                                   name="trang_thai_{{ bai.ma_bh }}"
+                                                   value="Chưa đạt"
+                                                   class="ojt-radio"
+                                                   data-status="{{ bai.trang_thai }}">
+                                            <span>Chưa đạt</span>
+                                        </label>
+                                    </div>
+
+                                </td>
+
+                                <!-- NGÀY ĐÁNH GIÁ -->
+                                <td>
+                                    <input type="date"
+                                           class="ojt-check-input evaluation-date"
+                                           name="ngay_{{ bai.ma_bh }}"
+                                           value="{{ bai.ngay|date:'Y-m-d' }}">
+                                </td>
+
+                                <!-- NHẬN XÉT -->
+                                <td>
+                                    <input type="text"
+                                           class="ojt-check-input"
+                                           name="nhan_xet_{{ bai.ma_bh }}"
+                                           maxlength="2000"
+                                           value="{{ bai.nhan_xet|default:'' }}"
+                                           placeholder="Nhập nhận xét (không bắt buộc)">
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+                        {% empty %}
+
+                            <tr>
+                                <td colspan="6" class="ojt-check-empty">
+                                    Chương trình chưa có bài học OJT.
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- NHẬN XÉT CHUNG -->
+            <div class="ojt-check-footer">
+
+                <div>
+                    <div class="ojt-check-meta">
+                        Tổng số bài học đã Đạt
+                    </div>
+
+                    <div class="ojt-check-count">
+                        <span id="totalPassed">
+                            {{ so_bai_dat }}
+                        </span>
+                        / {{ tong_bai }} Bài học
+                    </div>
+                </div>
+
+                <div>
+                    <div class="ojt-check-note-title">
+                        Nhận xét chung của Quản lý
+                    </div>
+
+                    <textarea
+                        name="nhan_xet_chung"
+                        maxlength="5000"
+                        class="ojt-check-note"
+                        placeholder="Nhập nhận xét tổng quan về nội dung cần hướng dẫn thêm...">{{ nhan_xet_chung }}</textarea>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- NÚT ĐIỀU KHIỂN -->
+        <div class="ojt-check-bottom">
+
+            <div class="ojt-check-help">
+                <i class="bi bi-info-circle"></i>
+                Tiến độ cập nhật sau khi lưu đánh giá
+            </div>
+
+            <div class="ojt-check-buttons">
+
+                <a href="{% url 'training:dashboard_quan_ly_tap_su' %}"
+                   class="ojt-check-btn">
+                    Hủy / Quay lại
+                </a>
+
+                <button
+                    type="submit"
+                    name="action"
+                    value="luu_tam"
+                    class="ojt-check-btn ojt-check-btn-gray">
+                    Lưu tạm tiến độ
+                </button>
+
+                <button
+                    type="submit"
+                    name="action"
+                    value="xac_nhan"
+                    class="ojt-check-btn ojt-check-btn-red">
+                    Xác nhận & Lưu đánh giá
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+document.querySelectorAll('.ojt-check-statuses').forEach(
+    function (group) {
+
+        const radios = group.querySelectorAll(
+            'input[type="radio"]'
+        );
+
+        if (radios.length === 0) return;
+
+        const savedStatus = radios[0].dataset.status;
+
+        // Chỉ tích sẵn nếu thực sự đã có kết quả
+        if (savedStatus === 'Đạt' || savedStatus === 'Chưa đạt') {
+            radios.forEach(function (radio) {
+                radio.checked = radio.value === savedStatus;
+            });
+        } else {
+            radios.forEach(function (radio) {
+                radio.checked = false;
+            });
+        }
+    }
+);
+
+
+    const form = document.getElementById('checklistForm');
+
+    const totalPassed = document.getElementById('totalPassed');
+    const progressNumber = document.getElementById('progressNumber');
+    const progressCount = document.getElementById('progressCount');
+    const progressFill = document.getElementById('progressFill');
+
+    const lessonRows = Array.from(
+        document.querySelectorAll('.ojt-check-lesson')
+    );
+
+    const totalLessons = lessonRows.length;
+
+    // Ngày hôm nay theo giờ địa phương
+    function todayLocal() {
+        const now = new Date();
+
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
+
+    // Cập nhật tiến độ trên màn hình
+    function updateProgress() {
+
+        let passed = 0;
+
+        lessonRows.forEach(function (row) {
+
+            const selected = row.querySelector(
+                'input[type="radio"]:checked'
+            );
+
+            if (selected && selected.value === 'Đạt') {
+                passed++;
+            }
+
+            row.classList.toggle(
+                'failed',
+                selected !== null &&
+                selected.value === 'Chưa đạt'
+            );
+        });
+
+        const percent = totalLessons > 0
+            ? (passed / totalLessons * 100)
+            : 0;
+
+        const formattedPercent = percent.toLocaleString(
+            'vi-VN',
+            {maximumFractionDigits: 1}
+        );
+
+        totalPassed.textContent = passed;
+
+        progressNumber.textContent = formattedPercent;
+
+        progressCount.textContent =
+            `${passed}/${totalLessons}`;
+
+        progressFill.style.width = percent + '%';
+
+        // Cập nhật số bài Đạt trong từng buổi
+        document.querySelectorAll('.session-row').forEach(
+            function (sessionRow) {
+
+                let passedInSession = 0;
+                let totalInSession = 0;
+
+                let row = sessionRow.nextElementSibling;
+
+                while (
+                    row &&
+                    !row.classList.contains('session-row')
+                ) {
+
+                    if (row.classList.contains('ojt-check-lesson')) {
+
+                        totalInSession++;
+
+                        const selected = row.querySelector(
+                            'input[type="radio"]:checked'
+                        );
+
+                        if (
+                            selected &&
+                            selected.value === 'Đạt'
+                        ) {
+                            passedInSession++;
+                        }
+                    }
+
+                    row = row.nextElementSibling;
+                }
+
+                const summary = sessionRow.querySelector(
+                    '.session-summary'
+                );
+
+                if (summary) {
+                    summary.textContent =
+                        `${passedInSession}/${totalInSession} bài Đạt`;
+                }
+            }
+        );
+    }
+
+    // Khi quản lý đánh giá một bài
+    form.addEventListener('change', function (event) {
+
+        if (
+            event.target.type === 'radio'
+        ) {
+
+            const row = event.target.closest(
+                '.ojt-check-lesson'
+            );
+
+            const dateInput = row.querySelector(
+                '.evaluation-date'
+            );
+
+            // Nếu chưa có ngày đánh giá, tự điền hôm nay
+            if (dateInput && !dateInput.value) {
+                dateInput.value = todayLocal();
+            }
+
+            updateProgress();
+        }
+    });
+
+    // Kiểm tra trước khi gửi
+    form.addEventListener('submit', function (event) {
+
+        for (const row of lessonRows) {
+
+            const selected = row.querySelector(
+                'input[type="radio"]:checked'
+            );
+
+            const dateInput = row.querySelector(
+                '.evaluation-date'
+            );
+
+            if (
+                selected &&
+                dateInput &&
+                !dateInput.value
+            ) {
+                event.preventDefault();
+
+                alert(
+                    'Vui lòng nhập ngày đánh giá ' +
+                    'cho các bài đã được tích checklist.'
+                );
+
+                dateInput.focus();
+                return;
+            }
+        }
+    });
+
+document.querySelectorAll('.ojt-check-statuses').forEach(
+    function (group) {
+
+        const radios = group.querySelectorAll(
+            'input[type="radio"]'
+        );
+
+        if (radios.length === 0) return;
+
+        const savedStatus = radios[0].dataset.status;
+
+        // Chỉ tích sẵn nếu thực sự đã có kết quả
+        if (savedStatus === 'Đạt' || savedStatus === 'Chưa đạt') {
+            radios.forEach(function (radio) {
+                radio.checked = radio.value === savedStatus;
+            });
+        } else {
+            radios.forEach(function (radio) {
+                radio.checked = false;
+            });
+        }
+    }
+);
+
+    // Hiển thị tiến độ từ dữ liệu đã lưu
+    updateProgress();
+});
+</script>
+
+{% endblock %}

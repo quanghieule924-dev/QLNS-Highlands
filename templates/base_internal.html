@@ -607,7 +607,7 @@
                         <span>Tổng quan</span>
                     </a>
 
-                    <a href="{% url 'accounts:module' 'employees' %}" class="{% if active_menu == 'employees' %}active{% endif %}">
+                    <a href="{% url 'employees:quan_ly_ho_so' %}" class="{% if active_menu == 'employees' %}active{% endif %}">
                         <span class="menu-icon">♙</span>
                         <span>Quản lý nhân viên</span>
                     </a>
@@ -647,11 +647,25 @@
                         <span class="menu-icon">▤</span>
                         <span>Quản lý lương</span>
                     </a>
-
-                    <a href="{% url 'accounts:module' 'training' %}" class="{% if active_menu == 'training' %}active{% endif %}">
-                        <span class="menu-icon">♧</span>
-                        <span>Đào tạo</span>
-                    </a>
+                {% if request.user.is_superuser or request.user.role == 'admin' %}
+                <!-- QUẢN LÝ: DASHBOARD ĐÀO TẠO -->
+                <a href="{% url 'training:dashboard_quan_ly_tap_su' %}"
+                   class="{% if active_menu == 'training' %}active{% endif %}">
+                    <span class="menu-icon">
+                        <i class="bi bi-mortarboard"></i>
+                    </span>
+                    <span>Đào tạo</span>
+                </a>
+                {% elif request.user.role == 'employee' %}
+                <!-- NHÂN VIÊN: LỘ TRÌNH ĐÀO TẠO -->
+                <a href="{% url 'training:dao_tao_nhan_vien' %}"
+                   class="{% if active_menu == 'training' %}active{% endif %}">
+                    <span class="menu-icon">
+                        <i class="bi bi-mortarboard"></i>
+                    </span>
+                    <span>Đào tạo</span>
+                </a>
+                {% endif %}
 
                     <a href="{% url 'reports:monthly_dashboard' %}" class="{% if active_menu == 'reports' %}active{% endif %}">
                         <span class="menu-icon">▥</span>
@@ -665,7 +679,7 @@
                         <span>Tổng quan</span>
                     </a>
 
-                    <a href="{% url 'accounts:module' 'employees' %}" class="{% if active_menu == 'employees' %}active{% endif %}">
+                    <a href="{% url 'employees:ho_so_cua_toi' %}" class="{% if active_menu == 'employees' %}active{% endif %}">
                         <span class="menu-icon">♙</span>
                         <span>Hồ sơ của tôi</span>
                     </a>
@@ -698,7 +712,7 @@
                         <span>Phiếu lương</span>
                     </a>
 
-                    <a href="{% url 'accounts:module' 'training' %}" class="{% if active_menu == 'training' %}active{% endif %}">
+                    <a href="{% url 'training:dao_tao_nhan_vien' %}" class="{% if active_menu == 'training' %}active{% endif %}">
                         <span class="menu-icon">♧</span>
                         <span>Đào tạo</span>
                     </a>
