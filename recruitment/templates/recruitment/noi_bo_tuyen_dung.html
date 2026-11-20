@@ -659,7 +659,7 @@
     <div class="modal-container">
         <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #111;">Tạo đợt tuyển dụng mới</h2>
 
-        <form method="POST" action="/recruitment/noi-bo/">
+        <form method="POST" action="{% url 'recruitment:quan_ly_tuyen_dung' %}">
             {% csrf_token %}
             <div class="form-row">
                 <div class="form-group">

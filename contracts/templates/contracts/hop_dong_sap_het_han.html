@@ -14,7 +14,6 @@
     <div class="page-header">
         <div>
             <h2>Hợp đồng sắp hết hạn</h2>
-            <p>Theo dõi các hợp đồng lao động sắp đến ngày kết thúc.</p>
         </div>
 
         <a href="{% url 'contracts:danh_sach_hop_dong' %}"
@@ -129,14 +128,15 @@
 </div>
 
 <style>
+/* ===== KHUNG TRANG ===== */
 .contract-page {
     padding: 26px 32px;
-    background: #f7f7f7;
+    background: transparent;
     min-height: calc(100vh - 70px);
     color: #263445;
 }
 
-/* Tiêu đề */
+/* ===== TIÊU ĐỀ ===== */
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -157,26 +157,29 @@
     font-size: 14px;
 }
 
+/* ===== NÚT QUAY LẠI ===== */
 .btn-back {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     padding: 11px 20px;
-    border: 1px solid #ddd;
+    border: 1px solid #e5d8d8;
     border-radius: 8px;
     background: #fff;
-    color: #263445;
+    color: #8b1721;
     text-decoration: none;
     font-size: 14px;
     font-weight: 500;
 }
 
 .btn-back:hover {
-    background: #f8f8f8;
+    background: #fbf3f3;
+    border-color: #8b1721;
+    color: #8b1721;
 }
 
-/* Bộ lọc */
+/* ===== BỘ LỌC ===== */
 .filter-card {
     background: #fff;
     border: 1px solid #e5e5e5;
@@ -216,13 +219,14 @@
 }
 
 .filter-group input:focus {
-    border-color: #ce1235;
+    border-color: #8b1721;
 }
 
 .filter-group input::placeholder {
     color: #a0a0a0;
 }
 
+/* ===== NÚT TÌM KIẾM VÀ ĐẶT LẠI ===== */
 .btn-search,
 .btn-reset {
     height: 42px;
@@ -240,22 +244,29 @@
 }
 
 .btn-search {
-    background: #ce1235;
-    color: white;
-    border: 1px solid #ce1235;
+    background: #8b1721;
+    color: #fff;
+    border: 1px solid #8b1721;
 }
 
 .btn-search:hover {
-    background: #b50e2d;
+    background: #70121a;
+    border-color: #70121a;
 }
 
 .btn-reset {
-    background: white;
-    color: #333;
+    background: #fff;
+    color: #555;
     border: 1px solid #ddd;
 }
 
-/* Bảng */
+.btn-reset:hover {
+    background: #f8f5f3;
+    border-color: #8b1721;
+    color: #8b1721;
+}
+
+/* ===== KHUNG BẢNG ===== */
 .table-card {
     background: #fff;
     border: 1px solid #e5e5e5;
@@ -322,40 +333,44 @@
     background: #fdfdfd;
 }
 
+/* ===== MÃ HỢP ĐỒNG ===== */
 .contract-code {
     font-weight: 700;
     color: #202b38 !important;
 }
 
+/* ===== SỐ NGÀY CÒN LẠI ===== */
 .days-badge {
     display: inline-block;
     padding: 6px 10px;
     border-radius: 20px;
-    background: #fff0f0;
-    color: #ce1235;
+    background: #fbebed;
+    color: #8b1721;
     font-size: 12px;
     font-weight: 600;
 }
 
+/* ===== NÚT CHI TIẾT ===== */
 .btn-detail {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 7px 12px;
-    border: 1px solid #f2b8c3;
+    border: 1px solid #8b1721;
     border-radius: 6px;
-    color: #ce1235;
-    background: white;
+    color: #8b1721;
+    background: #fff;
     text-decoration: none;
     font-size: 12px;
     font-weight: 600;
 }
 
 .btn-detail:hover {
-    background: #ce1235;
-    color: white;
+    background: #8b1721;
+    color: #fff;
 }
 
+/* ===== TRẠNG THÁI RỖNG ===== */
 .empty-state {
     text-align: center !important;
     padding: 45px 15px !important;
@@ -373,6 +388,7 @@
     margin: 0;
 }
 
+/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
     .contract-page {
         padding: 18px;
@@ -390,5 +406,123 @@
         gap: 12px;
     }
 }
+
+
+/* =================================
+   TĂNG ĐỘ RÕ CHỮ - HỢP ĐỒNG SẮP HẾT HẠN
+   ================================= */
+
+/* Tiêu đề trang */
+.contract-page .page-header h2 {
+    font-size: 26px;
+    font-weight: 750;
+    color: #292929;
+    letter-spacing: -0.3px;
+}
+
+.contract-page .page-header p {
+    font-size: 14px;
+    font-weight: 400;
+    color: #77716d;
+}
+
+/* Breadcrumb */
+.contract-page .contract-breadcrumb {
+    font-size: 13px;
+    font-weight: 500;
+    color: #817b77;
+}
+
+.contract-page .contract-breadcrumb a {
+    color: #817b77;
+    text-decoration: none;
+}
+
+.contract-page .contract-breadcrumb .breadcrumb-current {
+    color: #292929;
+    font-weight: 650;
+}
+
+/* Tiêu đề tìm kiếm */
+.contract-page .filter-group label {
+    font-size: 14px;
+    font-weight: 650;
+    color: #292929;
+}
+
+/* Nội dung ô tìm kiếm */
+.contract-page .filter-group input {
+    font-size: 14px;
+    font-weight: 400;
+    color: #292929;
+}
+
+.contract-page .filter-group input::placeholder {
+    color: #99918c;
+    opacity: 1;
+}
+
+/* Các nút */
+.contract-page .btn-back,
+.contract-page .btn-search,
+.contract-page .btn-reset {
+    font-size: 14px;
+    font-weight: 650;
+}
+
+/* Tiêu đề khung danh sách */
+.contract-page .table-header h3 {
+    font-size: 17px;
+    font-weight: 750;
+    color: #292929;
+}
+
+.contract-page .table-header span {
+    font-size: 13px;
+    font-weight: 500;
+    color: #817b77;
+}
+
+/* Tiêu đề cột */
+.contract-page .contract-table th {
+    font-size: 13px;
+    font-weight: 700;
+    color: #393431;
+}
+
+/* Nội dung bảng */
+.contract-page .contract-table td {
+    font-size: 14px;
+    font-weight: 450;
+    color: #49433f;
+}
+
+/* Mã hợp đồng */
+.contract-page .contract-code {
+    font-size: 14px;
+    font-weight: 750;
+    color: #292929 !important;
+}
+
+/* Số ngày còn lại */
+.contract-page .days-badge {
+    font-size: 13px;
+    font-weight: 700;
+    color: #8b1721;
+}
+
+/* Nút chi tiết */
+.contract-page .btn-detail {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* Trạng thái không có dữ liệu */
+.contract-page .empty-state p {
+    font-size: 14px;
+    font-weight: 500;
+    color: #77716d;
+}
+
 </style>
 {% endblock %}

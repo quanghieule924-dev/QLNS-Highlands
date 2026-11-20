@@ -1,0 +1,124 @@
+
+{% extends 'base_internal.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/contracts.css' %}">
+{% endblock %}
+
+{% block title %}
+    Phúc lợi của tôi | HRM System
+{% endblock %}
+
+{% block content %}
+
+<div class="page-container contract-list-page">
+
+    <!-- Breadcrumb -->
+    <div class="contract-breadcrumb">
+        <a href="{% url 'contracts:tong_quan_hop_dong' %}">
+            Hợp đồng &amp; Phúc lợi
+        </a>
+        <span>›</span>
+        <span class="breadcrumb-current">Phúc lợi của tôi</span>
+    </div>
+
+    <!-- Tiêu đề -->
+    <div class="page-header">
+        <div>
+            <h1>Phúc lợi của tôi</h1>
+            <p>Các chế độ phúc lợi được áp dụng trong hợp đồng đang có hiệu lực.</p>
+        </div>
+
+        <div class="page-header-actions">
+            <a href="{% url 'contracts:danh_sach_hop_dong' %}"
+               class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Quay lại hợp đồng
+            </a>
+        </div>
+    </div>
+
+    <!-- Danh sách phúc lợi -->
+    <div class="table-container">
+
+        <div class="table-header">
+            <h3>Danh sách chế độ phúc lợi được hưởng</h3>
+            <span>Tổng số: {{ phuc_lois|length }} chế độ</span>
+        </div>
+
+        {% if phuc_lois %}
+
+            <div class="benefit-list">
+
+                {% for item in phuc_lois %}
+
+                    <div class="benefit-card">
+
+                        <div class="benefit-card-header">
+                            <h3>{{ item.che_do.ten_pl }}</h3>
+                            <span class="benefit-status">
+                                Đang áp dụng
+                            </span>
+                        </div>
+
+                        <div class="benefit-card-body">
+
+                            <div class="benefit-info">
+                                <span class="benefit-label">Mã hợp đồng</span>
+                                <strong>{{ item.hop_dong.mahd }}</strong>
+                            </div>
+
+                            <div class="benefit-info">
+                                <span class="benefit-label">Số hợp đồng</span>
+                                <strong>{{ item.hop_dong.so_hd }}</strong>
+                            </div>
+
+                            <div class="benefit-info">
+                                <span class="benefit-label">Giá trị được hưởng</span>
+                                <strong>
+                                    {% if item.gia_tri != None %}
+                                        {{ item.gia_tri|floatformat:0 }} VNĐ
+                                    {% else %}
+                                        Theo chính sách áp dụng
+                                    {% endif %}
+                                </strong>
+                            </div>
+
+                            <div class="benefit-info">
+                                <span class="benefit-label">Mô tả</span>
+                                <p>
+                                    {{ item.che_do.mo_ta|default:"Chưa có mô tả." }}
+                                </p>
+                            </div>
+
+                            <div class="benefit-info">
+                                <span class="benefit-label">Điều kiện hưởng</span>
+                                <p>
+                                    {{ item.che_do.dieu_kien_huong|default:"Theo quy định của công ty." }}
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-message">
+                <i class="fas fa-gift"></i>
+                <p>{{ thong_bao|default:"Bạn chưa có chế độ phúc lợi được áp dụng." }}</p>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -6,13 +6,548 @@
 
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/payroll_v4.css' %}">
-<link rel="stylesheet" href="{% static 'css/payroll_color_upgrade.css' %}">
+<link rel="stylesheet" href="{% static 'css/payroll_v4.css' %}?v=20261108-layoutfix">
+<link rel="stylesheet" href="{% static 'css/payroll_color_upgrade.css' %}?v=20261108-layoutfix">
+<style id="hl-payroll-layout-recovery">
+/* Restored base layout missing from merged project. Existing color_upgrade.css overrides color and visual tone. */
+.hl-payroll{width:100%;max-width:100%;min-width:0;box-sizing:border-box;display:block;position:relative;margin:0;padding:0 0 32px;font-family:'Montserrat',Arial,sans-serif;font-size:13px;color:#243047}
+.internal-main:has(.hl-payroll){min-width:0;width:auto;max-width:none;padding-top:24px!important}
+.hl-payroll *{box-sizing:border-box}
+.hl-payroll .hl-hidden{display:none!important}
+.hl-payroll .hl-titlebar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:0 0 22px;padding:0}
+.hl-payroll .hl-titlebar h1{font-size:28px;line-height:1.3;font-weight:800;margin:0}
+.hl-payroll .hl-titlebar p{margin:6px 0 0}
+.hl-payroll .hl-top-controls{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin:0 0 17px}
+.hl-payroll label{display:flex;flex-direction:column;gap:7px;font-weight:600;min-width:0}
+.hl-payroll select,.hl-payroll input:not([type=checkbox]){background:#fff;border:1px solid #dce2ea;border-radius:9px;min-height:40px;padding:9px 13px;font:inherit;max-width:100%;color:inherit}
+.hl-payroll .hl-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid transparent;min-height:39px;padding:9px 16px;border-radius:10px;background:#fff;cursor:pointer;font:inherit;font-weight:700;white-space:normal;text-align:center}
+.hl-payroll .hl-btn:disabled,.hl-payroll .hl-action:disabled{opacity:.48;cursor:not-allowed}
+.hl-payroll .hl-primary{background:#c8102e;color:#fff}
+.hl-payroll .hl-outline{background:#fff;color:#374151;border-color:#dce2ea}
+.hl-payroll .hl-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:0 0 20px;padding:0}
+.hl-payroll .hl-step{min-width:0;display:flex;align-items:center;gap:12px;cursor:pointer;text-align:left}
+.hl-payroll .hl-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}
+.hl-payroll .hl-kpis article{background:white;border:1px solid #e1e6ed;border-radius:14px;padding:18px;min-width:0}
+.hl-payroll .hl-kpis article small{display:block;color:#64748b;font-size:11px;margin-bottom:12px;line-height:1.4}
+.hl-payroll .hl-kpis article strong{display:block;overflow-wrap:anywhere;font-size:19px}
+.hl-payroll .hl-panel{display:block;min-width:0;max-width:100%;padding:24px;background:#fff;border:1px solid #e2e8f0;border-radius:16px;margin:0 0 18px}
+.hl-payroll .hl-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin:0 0 19px}
+.hl-payroll .hl-panel-head h2{font-size:18px;font-weight:800;line-height:1.4;margin:0 0 6px}
+.hl-payroll .hl-panel-head p{margin:0;color:#64748b;line-height:1.6}
+.hl-payroll .hl-toolbar{display:flex;align-items:flex-end;flex-wrap:wrap;gap:15px;margin-bottom:18px}
+.hl-payroll .hl-toolbar .hl-search{flex:1 1 230px}
+.hl-payroll .hl-toolbar .hl-search input{width:100%}
+.hl-payroll .hl-table-scroll{display:block;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+.hl-payroll .hl-table{width:100%;min-width:560px;border-collapse:collapse;font-size:12px}
+.hl-payroll .hl-table th,.hl-payroll .hl-table td{padding:14px 12px;text-align:left;border-bottom:1px solid #edf0f5;vertical-align:middle;white-space:nowrap}
+.hl-payroll .hl-table th{font-size:11px;font-weight:800}
+.hl-payroll .hl-table td small{display:block;color:#64748b;font-size:10px;margin-top:5px}
+.hl-payroll .hl-panel-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:17px}
+.hl-payroll .hl-panel-footer>div{display:flex;gap:10px;flex-wrap:wrap}
+.hl-payroll .hl-footnote{margin:16px 0 0;color:#718096;font-size:11px;line-height:1.6}
+.hl-payroll .hl-state,.hl-payroll .hl-tag{display:inline-block;border-radius:20px;padding:7px 11px;background:#fff3de;color:#9c5b08;font-weight:700;font-size:11px;white-space:nowrap}
+.hl-payroll .hl-tag.ok,.hl-payroll .hl-success{background:#e9f8ef;color:#147d48}
+.hl-payroll .hl-tag.blue{background:#eef4ff;color:#315fba}
+.hl-payroll .hl-tag.danger{background:#fff0f2;color:#b91c1c}
+.hl-payroll .hl-tag.neutral{background:#f1f5f9;color:#64748b}
+.hl-payroll .hl-alert,.hl-payroll .hl-notice{background:#fff8ed;border:1px solid #ffe4b6;border-radius:10px;padding:12px 15px;line-height:1.6;margin-bottom:16px}
+.hl-payroll .hl-muted{color:#64748b;text-align:center}
+.hl-payroll .hl-action{cursor:pointer;border:1px solid #dce2ea;border-radius:8px;padding:8px 10px;background:#fff;color:#334155;font:inherit;font-weight:700}
+.hl-payroll .hl-modal-back{position:fixed;inset:0;background:rgba(21,32,49,.52);z-index:1500;display:flex;align-items:center;justify-content:center;padding:20px}
+.hl-payroll .hl-modal{width:min(100%,530px);max-height:90vh;overflow:auto;background:#fff;padding:26px;border-radius:16px;box-shadow:0 25px 70px #10213a40}
+.hl-payroll .hl-modal h2{font-size:18px;margin:0 0 12px}.hl-payroll .hl-modal p{line-height:1.7}
+.hl-payroll .hl-modal-meta{white-space:pre-wrap;padding:13px;background:#f6f7fa;border-radius:9px;line-height:1.7;margin:12px 0}
+.hl-payroll .hl-payment-fields{display:grid;gap:10px;margin:15px 0}
+.hl-payroll .hl-modal-actions,.hl-payroll .hl-receipt-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;margin-top:20px}
+.hl-payroll .hl-toast{position:fixed;bottom:22px;right:20px;background:#243047;color:#fff;padding:13px 19px;border-radius:11px;z-index:1600;max-width:360px}
+.hl-payroll .hl-profile{display:grid;gap:9px;padding:15px;background:#f8f9fc;border-radius:12px;margin-bottom:16px}
+.hl-payroll .hl-slip-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.hl-payroll .hl-slip-cols>section{border:1px solid #e6e9ee;border-radius:12px;padding:15px;min-width:0}
+.hl-payroll .hl-slip-cols h3{font-size:14px;margin:0 0 15px}
+.hl-payroll .hl-line{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #eef1f6;padding:12px 0;line-height:1.4}
+.hl-payroll .hl-line b{text-align:right;white-space:nowrap}
+.hl-payroll .hl-slip-final{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:20px;margin-top:16px;background:#fff4f6;border-radius:12px;font-weight:700}
+.hl-payroll .hl-slip-final strong{font-size:20px}
+@media(max-width:980px){.hl-payroll .hl-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.hl-payroll .hl-steps{gap:9px}.hl-payroll .hl-panel{padding:16px}}
+@media(max-width:720px){.internal-main:has(.hl-payroll){max-width:100%;padding:16px!important}.hl-payroll .hl-steps{grid-template-columns:1fr}.hl-payroll .hl-slip-cols{grid-template-columns:1fr}.hl-payroll .hl-panel-head{flex-wrap:wrap}}
+@media print{.internal-header,.internal-sidebar,.hl-top-controls,.hl-receipt,.hl-modal-back,.hl-toast{display:none!important}.internal-main:has(.hl-payroll){margin:0!important;max-width:100%!important}.hl-payroll .hl-panel{border:0}}
+
+/* Layout recovery for projects where global CSS styles affect buttons/selects. */
+.hl-payroll .hl-step{appearance:none;-webkit-appearance:none;display:flex;align-items:center;justify-content:flex-start;width:100%;font-family:inherit;line-height:1.4}
+.hl-payroll .hl-top-controls select{min-width:190px;width:auto;max-width:100%;appearance:auto}
+.hl-payroll .hl-top-controls label{width:auto;max-width:100%}
+.hl-payroll .hl-steps .hl-step b{flex-shrink:0}
+.hl-payroll .hl-panel{overflow-wrap:break-word}
+@media(max-width:720px){.hl-payroll .hl-top-controls select{min-width:160px}.internal-main:has(.hl-payroll){max-width:none}}
+
+/* Payroll UI visual refresh. Add AFTER payroll_v4.css. No HTML IDs or JS changed. */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+.hl-payroll[data-page="manager"] {
+  --p-red:#c8102e; --p-text:#1d2939; --p-muted:#64748b;
+  --p-line:#e5eaf2; --p-shadow:0 9px 28px rgba(40,54,80,.055);
+  color:var(--p-text);font-family:'Montserrat',Arial,sans-serif;
+}
+.hl-payroll[data-page="manager"] :is(button,input,select,table){font-family:inherit}
+
+/* Header: compact and elegant, with a brand accent */
+.hl-payroll[data-page="manager"] .hl-titlebar{position:relative;padding:0 0 4px 17px;margin-bottom:20px}
+.hl-payroll[data-page="manager"] .hl-titlebar::before{content:"";position:absolute;top:4px;bottom:8px;left:0;width:4px;border-radius:9px;background:linear-gradient(180deg,#c8102e,#ee6c77)}
+.hl-payroll[data-page="manager"] .hl-titlebar h1{color:#202637;font-size:clamp(25px,2vw,31px);font-weight:800;letter-spacing:-.9px}
+.hl-payroll[data-page="manager"] .hl-titlebar p{color:#73819a;font-size:12px}
+
+/* Period actions */
+.hl-payroll[data-page="manager"] .hl-top-controls{gap:16px;margin-bottom:17px}
+.hl-payroll[data-page="manager"] .hl-top-controls label{font-size:11px;font-weight:700;color:#58657a}
+.hl-payroll[data-page="manager"] .hl-top-controls select{border-radius:11px;border-color:#dfe6ef;min-height:42px;background:#fff;box-shadow:0 3px 12px rgba(30,50,75,.025)}
+.hl-payroll[data-page="manager"] .hl-btn{border-radius:10px;min-height:40px;font-weight:700;transition:transform .15s ease,box-shadow .15s ease,background .15s ease}
+.hl-payroll[data-page="manager"] .hl-btn:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(25,37,57,.1)}
+.hl-payroll[data-page="manager"] .hl-primary{background:linear-gradient(115deg,#c8102e,#df2445);color:#fff;box-shadow:0 5px 13px rgba(200,16,46,.14)}
+.hl-payroll[data-page="manager"] .hl-outline{background:#fff;color:#344158;border-color:#dbe3ee}
+
+/* Three process steps with clear active state */
+.hl-payroll[data-page="manager"] .hl-steps{gap:13px;margin-bottom:18px}
+.hl-payroll[data-page="manager"] .hl-step{position:relative;min-height:70px;border:1px solid #dfe6ef;border-radius:15px;padding:14px 16px;gap:12px;background:linear-gradient(145deg,#fff,#f9fafc);box-shadow:var(--p-shadow);transition:border-color .18s, transform .18s, background .18s}
+.hl-payroll[data-page="manager"] .hl-step:hover{border-color:#e5aab5;transform:translateY(-1px)}
+.hl-payroll[data-page="manager"] .hl-step b{display:inline-flex;align-items:center;justify-content:center;flex:0 0 35px;height:35px;background:#fff0f3;color:#c8102e;border-radius:10px;font-size:13px;font-weight:800}
+.hl-payroll[data-page="manager"] .hl-step strong{color:#253248;font-size:12px;font-weight:700;line-height:1.5}
+.hl-payroll[data-page="manager"] .hl-step:nth-child(2) b{background:#eaf2ff;color:#2563eb}
+.hl-payroll[data-page="manager"] .hl-step:nth-child(3) b{background:#e7f7f1;color:#0c9773}
+.hl-payroll[data-page="manager"] .hl-step.active{background:linear-gradient(115deg,#fff0f3,#fffafa);border-color:#dc5a71;box-shadow:0 8px 21px rgba(200,16,46,.085)}
+.hl-payroll[data-page="manager"] .hl-step.active::after{content:"";position:absolute;left:15px;right:15px;bottom:-1px;height:3px;border-radius:7px;background:#c8102e}
+.hl-payroll[data-page="manager"] .hl-step:nth-child(2).active{background:linear-gradient(115deg,#eaf2ff,#fff);border-color:#87b3f8;box-shadow:0 8px 21px rgba(37,99,235,.08)}
+.hl-payroll[data-page="manager"] .hl-step:nth-child(2).active::after{background:#2563eb}
+.hl-payroll[data-page="manager"] .hl-step:nth-child(3).active{background:linear-gradient(115deg,#e8faf3,#fff);border-color:#86d8bd;box-shadow:0 8px 21px rgba(5,150,105,.08)}
+.hl-payroll[data-page="manager"] .hl-step:nth-child(3).active::after{background:#0c9773}
+
+/* Distinct KPI cards. KPI content remains generated by existing JS. */
+.hl-payroll[data-page="manager"] .hl-kpis{gap:13px;margin-bottom:20px}
+.hl-payroll[data-page="manager"] .hl-kpis article{position:relative;overflow:hidden;min-height:118px;padding:17px 18px;border:1px solid #f3d9df;border-radius:16px;background:linear-gradient(125deg,#fff7f8,#fff 83%);box-shadow:var(--p-shadow);justify-content:space-between}
+.hl-payroll[data-page="manager"] .hl-kpis article::before{content:"";position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:0 8px 8px 0;background:#d01438}
+.hl-payroll[data-page="manager"] .hl-kpis article::after{content:"";position:absolute;top:-34px;right:-34px;width:104px;height:104px;border-radius:50%;background:rgba(200,16,46,.045);pointer-events:none}
+.hl-payroll[data-page="manager"] .hl-kpis article:nth-child(2){background:linear-gradient(125deg,#f0f6ff,#fff 83%);border-color:#dceafd}
+.hl-payroll[data-page="manager"] .hl-kpis article:nth-child(2)::before{background:#3477df}
+.hl-payroll[data-page="manager"] .hl-kpis article:nth-child(2)::after{background:rgba(52,119,223,.065)}
+.hl-payroll[data-page="manager"] .hl-kpis article:nth-child(3){background:linear-gradient(125deg,#f0edff,#fff 83%);border-color:#e5defe}
+.hl-payroll[data-page="manager"] .hl-kpis article:nth-child(3)::before{background:#8061ca}
+.hl-payroll[data-page="manager"] .hl-kpis article:nth-child(3)::after{background:rgba(128,97,202,.06)}
+.hl-payroll[data-page="manager"] .hl-kpis article:nth-child(4){background:linear-gradient(125deg,#eaf9f3,#fff 83%);border-color:#d7f2e5}
+.hl-payroll[data-page="manager"] .hl-kpis article:nth-child(4)::before{background:#11966e}
+.hl-payroll[data-page="manager"] .hl-kpis article:nth-child(4)::after{background:rgba(17,150,110,.065)}
+.hl-payroll[data-page="manager"] .hl-kpis article small{color:#66738a;font-size:11px;font-weight:650;position:relative;z-index:1}
+.hl-payroll[data-page="manager"] .hl-kpis article strong{font-size:clamp(18px,1.7vw,25px);font-weight:800;color:#243148;line-height:1.25;position:relative;z-index:1;overflow-wrap:anywhere}
+.hl-payroll[data-page="manager"] .hl-kpis article:nth-child(1) strong{color:#c8102e}
+.hl-payroll[data-page="manager"] .hl-kpis article:nth-child(2) strong{color:#2464be}
+.hl-payroll[data-page="manager"] .hl-kpis article:nth-child(3) strong{color:#7654bd}
+.hl-payroll[data-page="manager"] .hl-kpis article:nth-child(4) strong{color:#098462}
+
+/* Main panels, filtering, tables */
+.hl-payroll[data-page="manager"] .hl-panel{background:#fff;border:1px solid var(--p-line);border-radius:17px;box-shadow:var(--p-shadow)}
+.hl-payroll[data-page="manager"] .hl-panel-head{background:linear-gradient(115deg,#fff,#fafbfe);border-bottom:1px solid #eef1f6;padding:19px 21px}
+.hl-payroll[data-page="manager"] .hl-panel-head h2{font-size:16px;font-weight:800;color:#263248}
+.hl-payroll[data-page="manager"] .hl-panel-head p{font-size:11px;color:#75839a}
+.hl-payroll[data-page="manager"] .hl-toolbar{padding:15px 20px;gap:13px}
+.hl-payroll[data-page="manager"] .hl-toolbar label{font-size:11px;font-weight:650;color:#63718a}
+.hl-payroll[data-page="manager"] .hl-toolbar :is(input,select){height:39px;border-radius:10px;border-color:#dce4ef}
+.hl-payroll[data-page="manager"] .hl-table th{background:#f2f5fa;color:#5a6c85;font-weight:800;border-color:#e4eaf3}
+.hl-payroll[data-page="manager"] .hl-table td{border-color:#ecf0f5}
+.hl-payroll[data-page="manager"] .hl-table tbody tr:nth-child(even){background:#fbfcff}
+.hl-payroll[data-page="manager"] .hl-table tbody tr:hover td{background:#f6f9ff}
+.hl-payroll[data-page="manager"] .hl-table tfoot td{background:#fff1f4}
+.hl-payroll[data-page="manager"] .hl-panel-footer{border-top:1px solid #edf1f5;background:#fbfcfe;padding:14px 20px}
+.hl-payroll[data-page="manager"] .hl-alert{background:#fff9ec;border-color:#f4deb4;color:#8d641b;border-radius:11px}
+.hl-payroll[data-page="manager"] .hl-footnote{color:#7a879b}
+.hl-payroll[data-page="manager"] .hl-tag{font-weight:750}
+
+/* Dialog + focus */
+.hl-payroll[data-page="manager"] .hl-modal{border-radius:18px;box-shadow:0 28px 70px rgba(15,23,42,.22)}
+.hl-payroll[data-page="manager"] :is(input,select,button):focus-visible{outline:2px solid #c8102e;outline-offset:2px}
+
+@media(max-width:1100px){.hl-payroll[data-page="manager"] .hl-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:670px){.hl-payroll[data-page="manager"] .hl-kpis{grid-template-columns:1fr}.hl-payroll[data-page="manager"] .hl-step{min-height:56px}.hl-payroll[data-page="manager"] .hl-titlebar h1{font-size:24px}}
+@media(prefers-reduced-motion:reduce){.hl-payroll[data-page="manager"] :is(.hl-step,.hl-btn){transition:none}}
+@media print{.hl-payroll[data-page="manager"] .hl-kpis article,.hl-payroll[data-page="manager"] .hl-panel{box-shadow:none}}
+
+
+/* =============================================
+   HIGHLANDS HRM - PAYROLL COLOR UPGRADE
+   Đồng bộ màu theo từng bước
+   Font: Montserrat
+============================================= */
+
+.hl-payroll {
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* =============================================
+   1. THANH CHUYỂN BƯỚC
+============================================= */
+
+.hl-payroll .hl-steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+/* Thiết lập chung */
+
+.hl-payroll .hl-step {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 84px;
+    padding: 18px 20px;
+    border-radius: 18px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #243047;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    overflow: hidden;
+}
+
+.hl-payroll .hl-step strong {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.hl-payroll .hl-step b {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+/* Bước 1 - ĐỎ */
+
+.hl-payroll .hl-step[data-tab="review"] b {
+    color: #cc092f;
+    background: #fff0f3;
+}
+
+.hl-payroll .hl-step[data-tab="review"]:hover,
+.hl-payroll .hl-step[data-tab="review"].active {
+    background: #fff4f6;
+    border-color: #df3150;
+}
+
+.hl-payroll .hl-step[data-tab="review"].active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 18px;
+    right: 18px;
+    height: 4px;
+    background: #cc092f;
+    border-radius: 4px 4px 0 0;
+}
+
+/* Bước 2 - XANH DƯƠNG */
+
+.hl-payroll .hl-step[data-tab="finalize"] b {
+    color: #2563eb;
+    background: #eaf2ff;
+}
+
+.hl-payroll .hl-step[data-tab="finalize"]:hover,
+.hl-payroll .hl-step[data-tab="finalize"].active {
+    background: #f0f6ff;
+    border-color: #5894f5;
+}
+
+.hl-payroll .hl-step[data-tab="finalize"].active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 18px;
+    right: 18px;
+    height: 4px;
+    background: #2563eb;
+    border-radius: 4px 4px 0 0;
+}
+
+/* Bước 3 - XANH NGỌC */
+
+.hl-payroll .hl-step[data-tab="payment"] b {
+    color: #059669;
+    background: #e7f8f1;
+}
+
+.hl-payroll .hl-step[data-tab="payment"]:hover,
+.hl-payroll .hl-step[data-tab="payment"].active {
+    background: #effcf6;
+    border-color: #40b99a;
+}
+
+.hl-payroll .hl-step[data-tab="payment"].active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 18px;
+    right: 18px;
+    height: 4px;
+    background: #059669;
+    border-radius: 4px 4px 0 0;
+}
+
+/* =============================================
+   2. KHUNG DỮ LIỆU CHUNG
+============================================= */
+
+.hl-payroll .hl-panel {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.hl-payroll .hl-panel-head {
+    padding: 22px 24px;
+}
+
+.hl-payroll .hl-panel-head h2 {
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.hl-payroll .hl-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.hl-payroll .hl-table thead th {
+    padding: 16px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.hl-payroll .hl-table tbody td {
+    padding: 17px 16px;
+    border-bottom: 1px solid #e9edf3;
+}
+
+.hl-payroll .hl-table tbody tr {
+    transition: background 0.2s;
+}
+
+/* =============================================
+   3. BƯỚC 1 - BẢNG CÔNG MÀU ĐỎ
+============================================= */
+
+.hl-payroll #hl-panel-review {
+    border: 1px solid #f3cbd3;
+    border-top: 4px solid #cc092f;
+    background: #ffffff;
+}
+
+.hl-payroll #hl-panel-review .hl-panel-head {
+    background: #fff3f5;
+}
+
+.hl-payroll #hl-panel-review .hl-panel-head h2 {
+    color: #b40a2b;
+}
+
+.hl-payroll #hl-panel-review .hl-toolbar {
+    background: #fffafb;
+}
+
+.hl-payroll #hl-panel-review .hl-table thead th {
+    background: #ffe9ee;
+    color: #a60c2c;
+    border-bottom: 1px solid #f1c5ce;
+}
+
+.hl-payroll #hl-panel-review .hl-table tbody tr:nth-child(even) {
+    background: #fffbfc;
+}
+
+.hl-payroll #hl-panel-review .hl-table tbody tr:hover {
+    background: #fff0f3;
+}
+
+.hl-payroll #hl-panel-review .hl-btn.hl-primary {
+    background: #cc092f;
+    border-color: #cc092f;
+    color: #ffffff;
+}
+
+.hl-payroll #hl-panel-review .hl-btn.hl-primary:hover {
+    background: #a90727;
+}
+
+/* =============================================
+   4. BƯỚC 2 - BẢNG LƯƠNG XANH DƯƠNG
+============================================= */
+
+.hl-payroll #hl-panel-finalize {
+    border: 1px solid #cbdcf9;
+    border-top: 4px solid #2563eb;
+    background: #ffffff;
+}
+
+.hl-payroll #hl-panel-finalize .hl-panel-head {
+    background: #eff5ff;
+}
+
+.hl-payroll #hl-panel-finalize .hl-panel-head h2 {
+    color: #1d4ed8;
+}
+
+.hl-payroll #hl-panel-finalize .hl-toolbar {
+    background: #f8fbff;
+}
+
+.hl-payroll #hl-panel-finalize .hl-table thead th {
+    background: #eaf2ff;
+    color: #1d4ed8;
+    border-bottom: 1px solid #cbdcf9;
+}
+
+.hl-payroll #hl-panel-finalize .hl-table tbody tr:nth-child(even) {
+    background: #f9fbff;
+}
+
+.hl-payroll #hl-panel-finalize .hl-table tbody tr:hover {
+    background: #eef5ff;
+}
+
+.hl-payroll #hl-panel-finalize .hl-alert {
+    background: #f0f6ff;
+    color: #2856ad;
+    border: 1px solid #cbdcf9;
+}
+
+.hl-payroll #hl-panel-finalize .hl-btn.hl-primary {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+}
+
+.hl-payroll #hl-panel-finalize .hl-btn.hl-primary:hover {
+    background: #1d4ed8;
+}
+
+/* =============================================
+   5. BƯỚC 3 - PHÁT HÀNH & CHI TRẢ XANH NGỌC
+============================================= */
+
+.hl-payroll #hl-panel-payment {
+    border: 1px solid #c8ebdc;
+    border-top: 4px solid #059669;
+    background: #ffffff;
+}
+
+.hl-payroll #hl-panel-payment .hl-panel-head {
+    background: #effcf6;
+}
+
+.hl-payroll #hl-panel-payment .hl-panel-head h2 {
+    color: #047857;
+}
+
+.hl-payroll #hl-panel-payment .hl-toolbar {
+    background: #f7fefb;
+}
+
+.hl-payroll #hl-panel-payment .hl-table thead th {
+    background: #e5f8ef;
+    color: #047857;
+    border-bottom: 1px solid #c8ebdc;
+}
+
+.hl-payroll #hl-panel-payment .hl-table tbody tr:nth-child(even) {
+    background: #f9fefb;
+}
+
+.hl-payroll #hl-panel-payment .hl-table tbody tr:hover {
+    background: #eaf9f1;
+}
+
+.hl-payroll #hl-panel-payment .hl-btn.hl-primary {
+    background: #059669;
+    border-color: #059669;
+    color: #ffffff;
+}
+
+.hl-payroll #hl-panel-payment .hl-btn.hl-primary:hover {
+    background: #047857;
+}
+
+/* =============================================
+   6. INPUT VÀ BỘ LỌC THEO MÀU
+============================================= */
+
+.hl-payroll #hl-panel-review input:focus {
+    border-color: #cc092f;
+    box-shadow: 0 0 0 3px rgba(204, 9, 47, 0.10);
+    outline: none;
+}
+
+.hl-payroll #hl-panel-finalize input:focus,
+.hl-payroll #hl-panel-finalize select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+    outline: none;
+}
+
+.hl-payroll #hl-panel-payment input:focus,
+.hl-payroll #hl-panel-payment select:focus {
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.10);
+    outline: none;
+}
+
+/* =============================================
+   7. RESPONSIVE
+============================================= */
+
+@media (max-width: 900px) {
+    .hl-payroll .hl-steps {
+        grid-template-columns: 1fr;
+    }
+
+    .hl-payroll .hl-step {
+        min-height: 66px;
+        padding: 12px 16px;
+    }
+
+    .hl-payroll .hl-panel-head {
+        padding: 18px;
+    }
+
+    .hl-payroll .hl-table-scroll {
+        overflow-x: auto;
+    }
+}
+
+/* Xóa thanh đỏ bên trái tiêu đề Quản lý lương */
+.hl-payroll .hl-titlebar::before,
+.hl-payroll .hl-titlebar h1::before {
+    content: none !important;
+    display: none !important;
+    border: none !important;
+}
+
+/* Xóa đường viền đỏ nếu được tạo từ border */
+.hl-payroll .hl-titlebar,
+.hl-payroll .hl-titlebar h1 {
+    border-left: none !important;
+}
+
+</style>
 {% endblock %}
 
 
 {% block content %}
-<div class="hl-payroll" id="hl-payroll" data-page="manager">
+<form style="display:none" aria-hidden="true">{% csrf_token %}</form>
+<div class="hl-payroll" id="hl-payroll" data-page="manager" data-api="{% url 'payroll:data' %}" data-action="{% url 'payroll:action' %}">
 
     <!-- TIÊU ĐỀ -->
     <header class="hl-titlebar">
@@ -26,15 +561,14 @@
         <label>
             Kỳ lương
             <select id="hl-period">
-                <option value="2026-10">Tháng 10/2026</option>
-                <option value="2026-09">Tháng 09/2026</option>
+                <option value="">Đang tải kỳ lương...</option>
             </select>
         </label>
 
         <button type="button"
                 class="hl-btn hl-outline"
                 id="hl-reset-demo">
-            Đặt lại dữ liệu
+            Làm mới dữ liệu
         </button>
     </div>
 
@@ -75,7 +609,7 @@
     <div class="hl-empty-period hl-panel hl-hidden"
          id="hl-period-empty">
 
-        <h2>Chưa có bảng công cho kỳ này</h2>
+        <h2>Chưa có dữ liệu cho kỳ này</h2>
 
         <p>
             Vui lòng chọn kỳ lương có dữ liệu hoặc
@@ -160,7 +694,7 @@
         </div>
 
         <p class="hl-footnote">
-            Nếu có sai sót về giờ làm việc, vui lòng kiểm tra
+            Giờ OT chưa được tự động phê duyệt; nếu có sai sót, vui lòng kiểm tra
             và cập nhật tại module Chấm công trước khi chốt.
         </p>
 
@@ -228,8 +762,8 @@
         </div>
 
         <p class="hl-footnote">
-            Lương thực nhận được xác định dựa trên lương chính,
-            lương làm thêm giờ, phụ cấp và các khoản khấu trừ.
+            Các khoản tính toán là dự kiến theo hợp đồng và cấu hình lương;
+            chỉ chốt khi đã đủ điều kiện và kiểm tra công, phụ cấp, khấu trừ.
         </p>
 
         <div class="hl-panel-footer">
@@ -489,6 +1023,137 @@
 
 </div>
 
-<script src="{% static 'js/payroll_v4.js' %}" defer></script>
+<!-- Payroll script embedded to prevent stale/missing static JS from leaving the page empty. -->
+<script>
+/* Highland HRM payroll: live Django data, never store confidential salaries in localStorage. */
+(() => {
+'use strict';
+const root = document.querySelector('.hl-payroll'); if (!root) return;
+const $ = id => document.getElementById(id);
+const money = n => Number(n||0).toLocaleString('vi-VN',{maximumFractionDigits:0})+' ₫';
+const esc = n => String(n??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => Number(n||0).toLocaleString('vi-VN',{maximumFractionDigits:2});
+const today = () => new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
+const currentPeriod = () => today().slice(0,7);
+const csrf = () => document.querySelector('[name=csrfmiddlewaretoken]')?.value || document.cookie.split('; ').find(x=>x.startsWith('csrftoken='))?.split('=')[1] || '';
+async function api(url,options={}) {
+ const response = await fetch(url,{credentials:'same-origin',cache:'no-store', ...options,headers:{'Accept':'application/json',...(options.body?{'Content-Type':'application/json','X-CSRFToken':decodeURIComponent(csrf())}:{}),...(options.headers||{})}});
+ let result;try{result=await response.json()}catch(_){throw Error('Không đọc được phản hồi từ máy chủ. Hãy đăng nhập lại và thử lại.');}
+ if(!response.ok)throw Error(result.error || `Lỗi máy chủ (${response.status})`);
+ return result;
+}
+function toast(message){const el=$('hl-toast');el.textContent=message;el.classList.remove('hl-hidden');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.add('hl-hidden'),4800)}
+const badge=(txt,type)=>`<span class="hl-tag ${type}">${esc(txt)}</span>`;
+const monthName=v=>{let [y,m]=v.split('-');return `Tháng ${m}/${y}`};
+if(root.dataset.page==='manager'){
+ const period=$('hl-period');const selected=new Set();let rows=[],locked=false,tab='review',handler=null;
+ period.innerHTML=''; // Remove the server-side loading placeholder once JS starts.
+ [0,1,2,3,4,5].forEach(i=>{const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-i);const val=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;period.add(new Option(monthName(val),val))});
+ const filtered=type=>{const q=$(`hl-${type}-search`).value.trim().toLowerCase();let filtered=rows.filter(r=>(r.id+' '+r.name).toLowerCase().includes(q));if(type==='payment')filtered=filtered.filter(r=>($('hl-issued-filter').value==='all'||($('hl-issued-filter').value==='issued')===r.issued)&&($('hl-paid-filter').value==='all'||($('hl-paid-filter').value==='paid')===r.paid)&&($('hl-feedback-filter').value==='all'||$('hl-feedback-filter').value===r.feedback));return filtered};
+ function render(){
+  const canLock=!!rows.length && rows.every(r=>r.ready);
+  root.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);if(b.dataset.tab===tab)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current')});
+  $('hl-period-empty').classList.toggle('hl-hidden',!!rows.length);
+  ['review','finalize','payment'].forEach(n=>$('hl-panel-'+n).classList.toggle('hl-hidden',!rows.length||tab!==n));
+  const kpi=[['Nhân viên trong kỳ',rows.length],['Trạng thái bảng công',locked?'Đã chốt':'Chưa chốt'],['Tổng lương dự kiến',money(rows.reduce((a,r)=>a+r.net,0))],['Đã phát hành / phản hồi',`${rows.filter(r=>r.issued).length}/${rows.length} · ${rows.filter(r=>r.feedback&&r.feedback!=='none').length} phản hồi`]];
+  $('hl-kpis').innerHTML=kpi.map(([label,value])=>`<article><small>${esc(label)}</small><strong>${esc(value)}</strong></article>`).join('');
+  $('hl-review-state').textContent=locked?'Đã chốt':'Chưa chốt';
+  const review=filtered('review');$('hl-review-rows').innerHTML=review.map(r=>`<tr><td>${esc(r.id)}</td><td><strong>${esc(r.name)}</strong><small>${esc(r.position)}</small>${r.ready?'':`<small style="color:#ba1d37">${esc(r.issues.join('; '))}</small>`}</td><td>${fmt(r.regular)} giờ</td><td>${fmt(r.ot)} giờ</td></tr>`).join('')||'<tr><td colspan="4" class="hl-muted">Không có dữ liệu phù hợp.</td></tr>';
+  $('hl-review-count').textContent=`${review.length}/${rows.length} nhân viên · ${rows.filter(r=>!r.ready).length} hồ sơ chưa đủ điều kiện`;
+  $('hl-go-finalize').disabled=!rows.length;
+  $('hl-final-rows').innerHTML=rows.map(r=>`<tr><td>${esc(r.id)}</td><td><strong>${esc(r.name)}</strong><small>${esc(r.position)}</small></td><td>${money(r.rate)}</td><td>${fmt(r.regular)}</td><td>${fmt(r.ot)}</td><td>${money(r.main)}</td><td>${money(r.overtime)}</td><td>${money(r.allowance)}</td><td>${money(r.deduct)}</td><td><strong>${money(r.net)}</strong>${r.ready?'':`<small style="color:#ba1d37">Thiếu điều kiện</small>`}</td></tr>`).join('');
+  $('hl-final-total').innerHTML=`<tr><td colspan="9">Tổng lương dự kiến</td><td><strong>${money(rows.reduce((a,r)=>a+r.net,0))}</strong></td></tr>`;
+  $('hl-final-state').textContent=locked?'Đã chốt':'Chưa chốt';
+  $('hl-final-hint').textContent=locked?'Bảng lương đã chốt và lưu trong cơ sở dữ liệu.':canLock?'Đã có đủ cấu hình cơ bản để chốt. Hãy kiểm tra lại công và chính sách lương trước khi xác nhận.':`Có ${rows.filter(r=>!r.ready).length} nhân viên thiếu thông tin (hợp đồng, cấu hình lương hoặc công chờ duyệt). Không thể chốt kỳ.`;
+  $('hl-lock-demo').disabled=locked||!canLock;
+  const payRows=filtered('payment');
+  $('hl-payment-rows').innerHTML=payRows.map(r=>`<tr><td><input type="checkbox" data-select="${esc(r.id)}" aria-label="Chọn ${esc(r.name)}" ${selected.has(r.id)?'checked':''} ${!locked?'disabled':''}></td><td>${esc(r.id)}</td><td><strong>${esc(r.name)}</strong><small>${esc(r.position)}</small></td><td><strong>${money(r.net)}</strong></td><td>${badge(r.issued?'Đã phát hành':'Chưa phát hành',r.issued?'blue':'amber')}</td><td>${badge(r.paid?'Đã ghi nhận':'Chưa ghi nhận',r.paid?'ok':'amber')}${r.paid?`<small>${esc(r.paidDate)}</small>`:''}</td><td>${badge(r.feedback==='received'?'Đã nhận lương':r.feedback==='issue'?'Báo chưa nhận':'Chưa phản hồi',r.feedback==='received'?'ok':r.feedback==='issue'?'danger':'neutral')}</td><td><button type="button" class="hl-action" data-slip="${esc(r.id)}">Xem phiếu</button></td></tr>`).join('')||'<tr><td colspan="8" class="hl-muted">Không có dữ liệu phù hợp.</td></tr>';
+  $('hl-payment-summary').textContent=`${rows.filter(r=>r.issued).length}/${rows.length} phát hành · ${rows.filter(r=>r.paid).length} chi trả · ${rows.filter(r=>r.feedback==='received').length} đã nhận · ${rows.filter(r=>r.feedback==='issue').length} báo chưa nhận`;
+  $('hl-payment-state').textContent=locked?'Đã lập bảng lương':'Chờ chốt công';
+  $('hl-select-all').disabled=!locked||!payRows.length;
+  $('hl-select-all').checked=!!payRows.length&&payRows.every(r=>selected.has(r.id));
+  $('hl-bulk-issue').disabled=!locked||!rows.some(r=>selected.has(r.id)&&!r.issued);
+  $('hl-bulk-pay').disabled=!locked||!rows.some(r=>selected.has(r.id)&&r.issued&&!r.paid);
+ }
+ const switchTab=t=>{tab=t;render()};
+ let loading=false;
+ async function load({silent=false}={}){
+  if(loading) return;
+  loading=true;
+  const requestedPeriod=period.value;
+  try {
+   const result=await api(`${root.dataset.api}?period=${encodeURIComponent(requestedPeriod)}`);
+   if(period.value!==requestedPeriod) return; // Đổi kỳ trong lúc tải: không đè dữ liệu kỳ khác.
+   rows=result.rows;
+   locked=result.locked;
+   // Giữ lựa chọn của quản lý trong khi đồng bộ tự động.
+   const ids=new Set(rows.map(r=>String(r.id)));
+   for(const id of selected) if(!ids.has(String(id))) selected.delete(id);
+   render();
+  } catch(e) {
+   const empty = $('hl-period-empty');
+   if (empty) {
+    empty.classList.remove('hl-hidden');
+    const heading = empty.querySelector('h2');
+    const message = empty.querySelector('p');
+    if (heading) heading.textContent = 'Không tải được dữ liệu bảng lương';
+    if (message) message.textContent = e.message + ' — Kiểm tra API kỳ lương và thử lại.';
+   }
+   if(!silent) toast(e.message);
+  } finally {loading=false;}
+ }
+ function closeModal(){$('hl-modal').classList.add('hl-hidden');handler=null}
+ function showModal({title,message,details='',button='Xác nhận',payment=false,action=null}){
+  $('hl-modal-title').textContent=title;$('hl-modal-body').textContent=message;$('hl-modal-meta').textContent=details;$('hl-modal-meta').classList.toggle('hl-hidden',!details);
+  $('hl-payment-fields').classList.toggle('hl-hidden',!payment);$('hl-modal-confirm').classList.toggle('hl-hidden',!action);$('hl-modal-confirm').textContent=button;
+  if(payment){$('hl-method').value='Chuyển khoản';$('hl-pay-date').value=today();$('hl-pay-ref').value=''}
+  handler=action;$('hl-modal').classList.remove('hl-hidden');$('hl-modal-cancel').focus();
+ }
+ async function mutate(action,ids=[],more={}){try{await api(root.dataset.action,{method:'POST',body:JSON.stringify({action,period:period.value,ids,...more})});await load();toast('Đã cập nhật dữ liệu trên hệ thống.')}catch(e){toast(e.message)}}
+ $('hl-modal-cancel').onclick=closeModal;$('hl-modal').onclick=e=>{if(e.target===$('hl-modal'))closeModal()};
+ $('hl-modal-confirm').onclick=()=>{const callback=handler;if(!callback)return;const payment=!$('hl-payment-fields').classList.contains('hl-hidden');const more={method:$('hl-method').value,paidDate:$('hl-pay-date').value,reference:$('hl-pay-ref').value.trim()};if(payment&&!more.paidDate)return toast('Chọn ngày chi trả.');closeModal();callback(more)};
+ $('hl-go-finalize').onclick=()=>switchTab('finalize');$('hl-back-review').onclick=()=>switchTab('review');
+ $('hl-review-search').oninput=render;['hl-payment-search','hl-issued-filter','hl-paid-filter','hl-feedback-filter'].forEach(id=>$(id).addEventListener(id.includes('search')?'input':'change',render));
+ $('hl-lock-demo').onclick=()=>showModal({title:'Chốt công và lập bảng lương?',message:'Lưu bản chụp lương theo dữ liệu công, hợp đồng và cấu hình hiện có. Sau khi chốt, các thay đổi ở module khác không làm thay đổi phiếu đã chốt.',button:'Chốt kỳ lương',action:()=>mutate('lock')});
+ $('hl-payment-rows').onchange=e=>{const id=e.target.dataset.select;if(!id||!locked)return;e.target.checked?selected.add(id):selected.delete(id);render()};
+ $('hl-select-all').onchange=e=>{filtered('payment').forEach(r=>e.target.checked?selected.add(r.id):selected.delete(r.id));render()};
+ $('hl-payment-rows').onclick=e=>{const button=e.target.closest('[data-slip]');if(!button)return;const r=rows.find(x=>x.id===button.dataset.slip);if(!r)return;showModal({title:`Phiếu lương: ${r.id}`,message:`${r.name} · ${monthName(period.value)}`,details:`Lương chính: ${money(r.main)}\nLương OT: ${money(r.overtime)}\nPhụ cấp: ${money(r.allowance)}\nKhấu trừ: ${money(r.deduct)}\nThực nhận: ${money(r.net)}\nPhát hành: ${r.issued?'Đã':'Chưa'}\nChi trả: ${r.paid?'Đã ghi nhận':'Chưa ghi nhận'}\nPhản hồi: ${r.feedback}`})};
+ $('hl-bulk-issue').onclick=()=>{const ids=rows.filter(r=>selected.has(r.id)&&!r.issued).map(r=>r.id);if(ids.length)showModal({title:'Phát hành phiếu lương?',message:`Phát hành ${ids.length} phiếu đã chọn cho nhân viên xem.`,button:'Phát hành',action:()=>mutate('issue',ids)})};
+ $('hl-bulk-pay').onclick=()=>{const ids=rows.filter(r=>selected.has(r.id)&&r.issued&&!r.paid).map(r=>r.id);if(ids.length)showModal({title:'Ghi nhận chi trả?',message:'Chỉ ghi nhận sau khi thực sự thanh toán bên ngoài hệ thống. Thao tác này KHÔNG chuyển tiền ngân hàng.',details:`${ids.length} nhân viên · ${money(rows.filter(r=>ids.includes(r.id)).reduce((a,r)=>a+r.net,0))}`,button:'Ghi nhận đã chi trả',payment:true,action:more=>mutate('pay',ids,more)})};
+ $('hl-reset-demo').onclick=load;period.onchange=()=>{switchTab('review');load()};root.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+ // Tự đọc lại giờ công sau checkout, kể cả khi quản lý để trang đang mở.
+ // Không refresh khi tab trình duyệt bị ẩn hoặc đang mở hộp thoại xác nhận.
+ setInterval(()=>{
+  if(document.hidden || !$('hl-modal').classList.contains('hl-hidden')) return;
+  load({silent:true});
+ }, 15000);
+ document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden) load({silent:true});
+ });
+ load();
+} else if(root.dataset.page==='employee') {
+ const picker=$('hl-employee-period');let slips=[];let pending=null;
+ const row=()=>slips.find(s=>s.period===picker.value);
+ async function load(){try{const data=await api(root.dataset.api);slips=data.rows;const previous=picker.value;picker.innerHTML='';const periods=[...new Set([currentPeriod(),...slips.map(s=>s.period)])].sort().reverse();periods.forEach(p=>picker.add(new Option(monthName(p),p)));picker.value=periods.includes(previous)?previous:periods[0];render()}catch(e){toast(e.message)}}
+ function render(){const r=row();$('hl-slip').classList.toggle('hl-hidden',!r);$('hl-receipt-panel').classList.toggle('hl-hidden',!r);$('hl-no-slip').classList.toggle('hl-hidden',!!r);$('hl-print-slip').disabled=!r;if(!r)return;
+ $('hl-slip-heading').textContent=`Phiếu lương ${monthName(r.period)}`;$('hl-slip-issued').textContent='Đã phát hành';$('hl-slip-paid-detail').textContent=r.paid?'Đã ghi nhận':'Chưa ghi nhận';
+ $('hl-slip-profile').innerHTML=`<strong>${esc(r.id)} · ${esc(r.name)}</strong><span>${esc(r.position)} · ${monthName(r.period)}</span><span>Trạng thái chi trả: <strong>${r.paid?'Đã ghi nhận':'Chưa ghi nhận'}</strong></span>`;
+ $('hl-slip-net').textContent=money(r.net);$('hl-slip-hours').textContent=`${fmt(r.regular+r.ot)} giờ`;
+ $('hl-slip-main-label').textContent=`Lương giờ chuẩn (${fmt(r.regular)} giờ × ${money(r.rate)})`;
+ $('hl-slip-main').textContent=money(r.main);$('hl-slip-ot').textContent=money(r.overtime);$('hl-slip-allowance').textContent=money(r.allowance);$('hl-slip-income').textContent=money(r.main+r.overtime+r.allowance);$('hl-slip-deduction').textContent=money(r.deduct);$('hl-slip-deduction-total').textContent=money(r.deduct);$('hl-slip-final').textContent=money(r.net);
+ const status=r.feedback==='received'?'Đã nhận đủ':r.feedback==='issue'?'Báo chưa nhận':r.paid?'Chờ phản hồi':'Chờ chi trả';$('hl-receipt-status').textContent=status;
+ $('hl-receipt-message').textContent=r.feedback==='received'?'Bạn đã xác nhận nhận đủ lương.':r.feedback==='issue'?'Bạn đã báo chưa nhận lương.':r.paid?'Kiểm tra tài khoản thực tế trước khi phản hồi.':'Quản lý chưa ghi nhận chi trả.';
+ $('hl-confirm-received').disabled=!r.paid||r.feedback!=='none';$('hl-report-issue').disabled=!r.paid||r.feedback!=='none';
+ }
+ const close=()=>{$('hl-employee-modal').classList.add('hl-hidden');pending=null};
+ function confirm(kind){const r=row();if(!r||!r.paid||r.feedback!=='none')return;pending=kind;$('hl-employee-modal-title').textContent=kind==='received'?'Xác nhận đã nhận đủ lương?':'Báo chưa nhận được lương?';$('hl-employee-modal-message').textContent=`${monthName(r.period)} · ${money(r.net)}. Xác nhận theo số tiền thực tế đã nhận.`;$('hl-employee-modal').classList.remove('hl-hidden')}
+ $('hl-confirm-received').onclick=()=>confirm('received');$('hl-report-issue').onclick=()=>confirm('issue');$('hl-employee-cancel').onclick=close;$('hl-employee-modal').onclick=e=>{if(e.target===$('hl-employee-modal'))close()};
+ $('hl-employee-confirm').onclick=async()=>{if(!pending)return;try{await api(root.dataset.feedback,{method:'POST',body:JSON.stringify({period:picker.value,feedback:pending})});close();await load();toast('Đã ghi nhận phản hồi trên hệ thống.')}catch(e){toast(e.message)}};
+ picker.onchange=render;$('hl-print-slip').onclick=()=>window.print();load();
+}
+})();
+
+</script>
 
 {% endblock %}

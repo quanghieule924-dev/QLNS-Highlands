@@ -105,4 +105,18 @@ urlpatterns = [
         views.tong_quan_hop_dong,
         name='tong_quan_hop_dong'
     ),
+
+
+path(
+    'nhan-vien/<str:manv>/thong-tin/',
+    views.lay_thong_tin_nhan_vien,
+    name='lay_thong_tin_nhan_vien'
+),
+
+# Nhân viên xem phúc lợi của mình
+path(
+    'phuc-loi-cua-toi/',
+    views.phuc_loi_cua_toi,
+    name='phuc_loi_cua_toi'
+),
     ]

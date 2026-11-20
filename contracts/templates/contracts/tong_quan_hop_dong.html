@@ -9,313 +9,504 @@
    TỔNG QUAN HỢP ĐỒNG
 ============================== */
 
+
+/* =========================================
+   HIGHLANDS HRM - CONTRACT DASHBOARD
+   Chỉ áp dụng cho trang Hợp đồng & Phúc lợi
+========================================= */
+
 .contract-dashboard {
-    padding: 24px;
-    background: #f8f9fb;
+    width: 100%;
+    max-width: 1600px;
     min-height: calc(100vh - 70px);
-    color: #252525;
+    margin: 0 auto;
+    padding: 28px 30px 40px;
+    background: #f8f6f1;
+    color: #292929;
 }
+
+/* =========================================
+   HEADER
+========================================= */
 
 .dashboard-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    gap: 16px;
+    margin-bottom: 26px;
 }
 
 .dashboard-header h2 {
-    font-size: 25px;
-    font-weight: 700;
-    margin: 0 0 6px;
+    margin: 0;
+    color: #292929;
+    font-size: 27px;
+    font-weight: 750;
+    letter-spacing: -.4px;
 }
 
 .dashboard-header p {
-    color: #777;
+    margin: 7px 0 0;
+    color: #888;
     font-size: 13px;
-    margin: 0;
 }
 
-/* THỐNG KÊ */
+/* =========================================
+   STATISTICS
+========================================= */
 
 .contract-stat-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 14px;
-    margin-bottom: 25px;
+    gap: 18px;
+    margin-bottom: 29px;
 }
 
 .contract-stat-card {
+    position: relative;
+    min-width: 0;
+    min-height: 155px;
+    padding: 21px 22px 18px;
     background: #fff;
-    border: 1px solid #e8e8e8;
-    border-radius: 11px;
-    padding: 17px 19px;
-    min-height: 112px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    border: 1px solid #eae7e2;
+    border-radius: 15px;
+    box-shadow: 0 2px 7px rgba(35, 25, 15, .025);
+    transition: transform .2s ease, box-shadow .2s ease;
+    overflow: hidden;
+}
+
+.contract-stat-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 23px;
+    width: 4px;
+    height: 43px;
+    border-radius: 0 5px 5px 0;
+    background: #991b24;
+}
+
+.contract-stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 9px 24px rgba(35, 25, 15, .07);
 }
 
 .stat-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
+    margin-bottom: 13px;
     color: #666;
-    font-size: 13px;
-    margin-bottom: 12px;
+    font-size: 12px;
+    font-weight: 650;
 }
 
 .stat-icon {
-    width: 31px;
-    height: 31px;
-    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
     display: flex;
-    align-items: center;
     justify-content: center;
-    font-size: 16px;
+    align-items: center;
+    border-radius: 11px;
+    font-size: 19px;
 }
 
 .stat-icon.total {
-    background: #f1f1f1;
-    color: #555;
+    background: #fff0f1;
+    color: #991b24;
 }
 
 .stat-icon.pending {
-    background: #fff3df;
-    color: #e99a20;
+    background: #fff4e5;
+    color: #d58a22;
 }
 
 .stat-icon.active {
-    background: #e5f6ec;
-    color: #209653;
+    background: #eaf7ee;
+    color: #23834a;
 }
 
 .stat-icon.expiring {
-    background: #fff0df;
-    color: #e58a18;
+    background: #fff0e8;
+    color: #d66a32;
 }
 
 .stat-number {
-    font-size: 29px;
-    font-weight: 700;
+    margin-bottom: 6px;
+    color: #292929;
+    font-size: 32px;
+    font-weight: 750;
     line-height: 1.2;
-    margin-bottom: 5px;
+    letter-spacing: -.6px;
 }
 
 .stat-description {
-    font-size: 11px;
     color: #999;
+    font-size: 11px;
+    line-height: 1.5;
 }
 
-/* THAO TÁC NHANH */
+/* =========================================
+   SECTION TITLE
+========================================= */
 
 .dashboard-section-title {
-    font-size: 15px;
-    font-weight: 700;
-    margin: 0 0 13px;
+    margin: 0 0 14px;
+    color: #292929;
+    font-size: 16px;
+    font-weight: 750;
 }
+
+/* =========================================
+   QUICK ACTIONS
+========================================= */
 
 .quick-action-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 14px;
-    margin-bottom: 25px;
+    gap: 16px;
+    margin-bottom: 27px;
 }
 
 .quick-action-card {
-    background: #fff;
-    border: 1px solid #e8e8e8;
-    border-radius: 10px;
-    padding: 12px;
-    min-height: 91px;
+    min-width: 0;
+    min-height: 125px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: 0.2s;
+    padding: 16px;
+    background: #fff;
+    border: 1px solid #eae7e2;
+    border-radius: 13px;
+    transition: transform .2s ease, box-shadow .2s ease;
 }
 
 .quick-action-card:hover {
-    border-color: #ef9aa6;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(35, 25, 15, .06);
 }
 
 .quick-action-icon {
-    color: #d20b2e;
-    font-size: 18px;
-    margin-bottom: 8px;
+    width: 39px;
+    height: 39px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    background: #fff0f1;
+    color: #991b24;
+    font-size: 20px;
 }
 
 .quick-action-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 100%;
-    min-height: 37px;
-    padding: 8px 10px;
-    border: 1px solid #e5e5e5;
-    border-radius: 7px;
+    min-height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 9px 12px;
+    border: 1px solid #e8e5e1;
+    border-radius: 8px;
     background: #fff;
-    color: #333;
+    color: #444;
     font-size: 12px;
-    font-weight: 600;
-    text-decoration: none;
+    font-weight: 650;
+    text-decoration: none !important;
     text-align: center;
-    transition: 0.2s;
+    transition: all .2s ease;
 }
 
 .quick-action-btn:hover {
-    background: #fff4f5;
-    border-color: #d20b2e;
-    color: #d20b2e;
+    border-color: #991b24;
+    background: #fff7f7;
+    color: #991b24;
 }
 
 .quick-action-btn.primary {
-    background: #d20b2e;
+    border-color: #991b24;
+    background: #991b24;
     color: #fff;
-    border-color: #d20b2e;
 }
 
 .quick-action-btn.primary:hover {
-    background: #b90827;
+    border-color: #7e141c;
+    background: #7e141c;
     color: #fff;
 }
 
-/* DANH SÁCH */
+/* =========================================
+   CONTRACT LIST PANELS
+========================================= */
 
 .contract-list-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px;
+    align-items: stretch;
 }
 
 .contract-list-card {
-    background: #fff;
-    border: 1px solid #e8e8e8;
-    border-radius: 11px;
-    overflow: hidden;
     min-width: 0;
+    background: #fff;
+    border: 1px solid #eae7e2;
+    border-radius: 15px;
+    box-shadow: 0 2px 7px rgba(35, 25, 15, .025);
+    overflow: hidden;
 }
 
 .contract-list-header {
-    padding: 15px 16px 12px;
-    border-bottom: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 21px 16px;
+    border-bottom: 1px solid #f0eeeb;
 }
 
 .contract-list-header h3 {
+    margin: 0;
+    color: #292929;
     font-size: 15px;
-    font-weight: 700;
-    margin: 0 0 5px;
+    font-weight: 750;
 }
 
 .contract-list-header p {
-    font-size: 11px;
+    margin: 7px 0 0;
     color: #999;
-    margin: 0;
+    font-size: 11px;
 }
 
 .contract-list-header .count {
     display: inline-flex;
-    align-items: center;
     justify-content: center;
-    min-width: 21px;
-    height: 21px;
-    padding: 0 6px;
-    border-radius: 20px;
-    background: #f1f1f1;
-    color: #555;
+    align-items: center;
+    min-width: 24px;
+    height: 24px;
+    margin-left: 6px;
+    padding: 0 7px;
+    border-radius: 8px;
+    background: #fff0f1;
+    color: #991b24;
     font-size: 11px;
-    margin-left: 5px;
+    font-weight: 750;
+    vertical-align: middle;
 }
 
+/* CONTRACT ROW */
+
 .contract-row {
+    min-height: 72px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
-    padding: 11px 15px;
-    border-bottom: 1px solid #f0f0f0;
-    text-decoration: none;
-    color: inherit;
-    transition: 0.2s;
+    gap: 12px;
+    padding: 13px 20px;
+    border-bottom: 1px solid #f1efec;
+    color: inherit !important;
+    text-decoration: none !important;
+    transition: background .18s ease;
 }
 
 .contract-row:hover {
-    background: #fafafa;
-    color: inherit;
+    background: #fff9f8;
 }
 
 .contract-info {
     min-width: 0;
+    flex: 1;
 }
 
 .contract-employee {
+    margin-bottom: 6px;
+    color: #303030;
     font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 5px;
+    font-weight: 700;
 }
 
 .contract-meta {
-    font-size: 10px;
     color: #999;
+    font-size: 10px;
+    line-height: 1.5;
 }
 
 .contract-right {
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: flex-end;
+    gap: 9px;
     flex-shrink: 0;
 }
 
-
-
 .contract-arrow {
     color: #aaa;
-    font-size: 17px;
+    font-size: 20px;
+    transition: transform .2s ease, color .2s ease;
 }
 
+.contract-row:hover .contract-arrow {
+    color: #991b24;
+    transform: translateX(3px);
+}
+
+/* =========================================
+   CONTRACT STATUS
+========================================= */
+
+.contract-status,
+.status-badge {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.status-cho-ky {
+    background: #fff4df;
+    color: #b7791f;
+}
+
+.status-cho-hieu-luc {
+    background: #edf3ff;
+    color: #3468b5;
+}
+
+.status-dang-hieu-luc {
+    background: #eaf7ee;
+    color: #23834a;
+}
+
+.status-da-het-han {
+    background: #fff0f0;
+    color: #c43d43;
+}
+
+.status-da-cham-dut {
+    background: #f0f0f0;
+    color: #666;
+}
+
+.status-expiring {
+    background: #fff0e8;
+    color: #c45b2a;
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
 .contract-list-footer {
+    min-height: 48px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 15px;
-    font-size: 10px;
+    gap: 10px;
+    padding: 12px 20px;
+    background: #fff;
     color: #999;
+    font-size: 10px;
 }
 
 .contract-list-footer a {
-    color: #d20b2e;
-    font-weight: 600;
+    color: #991b24;
+    font-size: 11px;
+    font-weight: 700;
     text-decoration: none;
+    white-space: nowrap;
 }
 
 .contract-list-footer a:hover {
+    color: #74131b;
     text-decoration: underline;
 }
 
+/* =========================================
+   EMPTY STATE
+========================================= */
+
 .contract-empty {
-    text-align: center;
-    padding: 28px 12px;
+    min-height: 145px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 25px 15px;
     color: #999;
     font-size: 12px;
+    text-align: center;
 }
 
-/* RESPONSIVE */
+.contract-empty::before {
+    content: "▤";
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    border-radius: 50%;
+    background: #f6f5f2;
+    color: #aaa;
+    font-size: 18px;
+}
 
-@media (max-width: 1000px) {
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1100px) {
     .contract-stat-grid,
     .quick-action-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 700px) {
-    .contract-dashboard {
-        padding: 15px;
     }
 
     .contract-list-grid {
         grid-template-columns: 1fr;
     }
+}
+
+@media (max-width: 650px) {
+    .contract-dashboard {
+        padding: 20px 14px 30px;
+    }
 
     .dashboard-header h2 {
-        font-size: 21px;
+        font-size: 22px;
+    }
+
+    .contract-stat-grid,
+    .quick-action-grid {
+        gap: 12px;
+    }
+
+    .contract-stat-card {
+        min-height: 140px;
+        padding: 17px;
+    }
+
+    .stat-number {
+        font-size: 27px;
+    }
+
+    .quick-action-card {
+        padding: 12px;
+    }
+
+    .contract-list-header {
+        padding: 17px 15px;
+    }
+
+    .contract-row {
+        padding: 12px 14px;
+    }
+
+    .contract-list-footer {
+        padding: 12px 14px;
     }
 }
 
@@ -324,62 +515,35 @@
     .quick-action-grid {
         grid-template-columns: 1fr;
     }
+
+    .contract-right {
+        gap: 5px;
+    }
+
+    .status-badge,
+    .contract-status {
+        padding: 5px 8px;
+        font-size: 9px;
+    }
+}
+
+/* Căn lề trang Hợp đồng giống trang Tổng quan quản lý */
+.contract-dashboard {
+    margin-left: -30px;
+    width: calc(100% + 60px);
+    margin-top: -20px;
+}
+
+/* Giữ khoảng cách nội dung bên trong cân đối */
+@media (max-width: 700px) {
+    .contract-dashboard {
+        margin-left: 0;
+        width: 100%;
+        margin-top: 0;
+    }
 }
 
 
-/* Nhãn trạng thái hợp đồng - dùng chung toàn module */
-.contract-status {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 7px 13px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-/* Chờ ký */
-.status-cho-ky {
-    background: #fff3df;
-    color: #d97706;
-}
-
-/* Đã ký - Chờ hiệu lực */
-.status-cho-hieu-luc {
-    background: #eaf2ff;
-    color: #2563eb;
-}
-
-/* Đang hiệu lực */
-.status-dang-hieu-luc {
-    background: #e7f6ec;
-    color: #16803c;
-}
-
-/* Đã hết hạn */
-.status-da-het-han {
-    background: #feecec;
-    color: #dc2626;
-}
-
-/* Đã chấm dứt */
-.status-da-cham-dut {
-    background: #f0f0f0;
-    color: #666;
-}
-
-.status-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-    line-height: 1.5;
-}
 </style>
 
 

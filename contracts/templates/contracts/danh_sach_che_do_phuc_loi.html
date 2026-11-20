@@ -11,6 +11,90 @@
 
 {% block content %}
 <div class="page-container benefit-page">
+    {% if mo_popup %}
+<div class="benefit-modal-overlay">
+
+    <div class="benefit-modal">
+
+        <div class="benefit-modal-header">
+            <div>
+                <h2>{{ tieu_de }}</h2>
+
+                <p>
+                    {% if che_do %}
+                        Cập nhật thông tin chế độ phúc lợi trong danh mục của chi nhánh.
+                    {% else %}
+                        Nhập thông tin để tạo chế độ phúc lợi cho chi nhánh.
+                    {% endif %}
+                </p>
+            </div>
+
+            <a href="{% url 'contracts:danh_sach_che_do_phuc_loi' %}?page={{ page_obj.number }}"
+               class="benefit-modal-close">
+                ×
+            </a>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="benefit-form-group">
+                <label for="{{ form.ten_pl.id_for_label }}">
+                    Tên phúc lợi <span>*</span>
+                </label>
+
+                {{ form.ten_pl }}
+
+                {% for error in form.ten_pl.errors %}
+                    <small class="error-message">{{ error }}</small>
+                {% endfor %}
+            </div>
+
+            <div class="benefit-form-group">
+                <label for="{{ form.mo_ta.id_for_label }}">
+                    Mô tả
+                </label>
+
+                {{ form.mo_ta }}
+
+                {% for error in form.mo_ta.errors %}
+                    <small class="error-message">{{ error }}</small>
+                {% endfor %}
+            </div>
+
+            <div class="benefit-form-group">
+                <label for="{{ form.dieu_kien_huong.id_for_label }}">
+                    Điều kiện hưởng
+                </label>
+
+                {{ form.dieu_kien_huong }}
+
+                {% for error in form.dieu_kien_huong.errors %}
+                    <small class="error-message">{{ error }}</small>
+                {% endfor %}
+            </div>
+
+            <div class="benefit-modal-actions">
+                <a href="{% url 'contracts:danh_sach_che_do_phuc_loi' %}?page={{ page_obj.number }}"
+                   class="btn btn-secondary">
+                    Hủy
+                </a>
+
+                <button type="submit" class="btn btn-primary">
+                    {% if che_do %}Lưu thay đổi{% else %}Lưu{% endif %}
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+{% endif %}
 
     <!-- Tiêu đề trang -->
     <div class="contract-breadcrumb"><a href="{% url 'contracts:tong_quan_hop_dong' %}">Hợp đồng &amp; Phúc lợi</a><span>›</span><span class="breadcrumb-current">Quản lý chế độ phúc lợi</span></div>
@@ -19,7 +103,7 @@
             <h1>Quản lý chế độ phúc lợi</h1>
         </div>
 
-        <a href="{% url 'contracts:them_che_do_phuc_loi' %}"
+        <a href="{% url 'contracts:them_che_do_phuc_loi' %}?page={{ page_obj.number }}"
            class="btn btn-primary">
             + Thêm chế độ mới
         </a>
@@ -69,7 +153,7 @@
                         </td>
 
                         <td>
-                            <a href="{% url 'contracts:sua_che_do_phuc_loi' che_do.mapl %}"
+                            <a href="{% url 'contracts:sua_che_do_phuc_loi' che_do.mapl %}?page={{ page_obj.number }}"
                                class="benefit-edit-link">
                                 Sửa
                             </a>

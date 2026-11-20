@@ -17,7 +17,7 @@ from django.views.decorators.http import require_POST
 from recruitment.models import HoSoUngTuyen
 from .models import NhanVien, TiepNhanNhanVien
 from training.models import KhungChuongTrinh, BaiHocKhungMau, ChuongTrinhTapSu,BaiHoc, TienDoTapSu
-
+from contracts.models import HopDong
 
 @login_required
 def tao_ma_nhan_vien():
@@ -35,156 +35,226 @@ def tao_ma_nhan_vien():
     return f'NV{so_lon_nhat + 1:03d}'
 
 
+
 @login_required
 def quan_ly_ho_so_nhan_vien(request):
-    # Chỉ quản lý được xem danh sách hồ sơ
+    # 1. Phân quyền
     if not (
         request.user.is_superuser
-        or getattr(request.user, 'role', None) == 'admin'
+        or getattr(request.user, "role", None) == "admin"
     ):
         raise PermissionDenied(
-            'Bạn không có quyền quản lý hồ sơ nhân viên.'
+            "Chỉ quản lý được xem danh sách nhân viên."
         )
 
-    ds_ho_so = TiepNhanNhanVien.objects.select_related(
-        'ho_so',
-        'ho_so__ma_ung_vien',
-        'ho_so__ma_vi_tri',
-        'nhan_vien'
+    hom_nay = timezone.localdate()
+
+    # 2. Lấy điều kiện lọc
+    tu_khoa = request.GET.get("q", "").strip()
+    vi_tri = request.GET.get("vi_tri", "").strip()
+    nhom = request.GET.get("nhom", "tat_ca").strip()
+
+    if nhom not in (
+        "tat_ca",
+        "tap_su",
+        "chinh_thuc",
+        "nghi_viec"
+    ):
+        nhom = "tat_ca"
+
+    # 3. Lấy tất cả nhân viên
+    ds_nhan_vien = list(
+        NhanVien.objects.all().order_by(
+            "ho_ten", "manv"
+        )
     )
 
-    q = request.GET.get('q', '').strip()
-    trang_thai = request.GET.get('trang_thai', '').strip()
+    # 4. Lấy hợp đồng hiện có
+    # Dùng khóa ngoại nhan_vien từ app contracts
+    # để không phụ thuộc tên related_name.
+    hop_dongs = (
+        HopDong.objects
+        .select_related("nhan_vien")
+        .order_by("-ngay_bat_dau", "-mahd")
+    )
 
-    # ========================================
-    # BỘ LỌC DANH SÁCH HỒ SƠ
-    # ========================================
+    hop_dong_theo_nv = {}
 
-    q = request.GET.get('q', '').strip()
-    vi_tri = request.GET.get('vi_tri', '').strip()
-    ma_ho_so = request.GET.get('ma_ho_so', '').strip()
-    trang_thai = request.GET.get('trang_thai', '').strip()
-    ngay_nop = request.GET.get('ngay_nop', '').strip()
+    for hd in hop_dongs:
+        hop_dong_theo_nv.setdefault(
+            hd.nhan_vien_id, []
+        ).append(hd)
 
-    # ==============================================
-    # THỐNG KÊ 4 Ô - LẤY TỪ DATABASE
-    # Tính trước khi lọc danh sách để số liệu
-    # không bị thay đổi theo ô đang chọn.
-    # ==============================================
+    # 5. Phân loại nhân viên
+    so_tap_su = 0
+    so_chinh_thuc = 0
+    so_nghi_viec = 0
 
-    tat_ca_ho_so = TiepNhanNhanVien.objects.all()
+    danh_sach_goc = []
 
-    tong_ho_so = tat_ca_ho_so.count()
+    trang_thai_nghi_viec = {
+        "nghỉ việc",
+        "đã nghỉ việc",
+        "nghi_viec",
+        "da_nghi_viec",
+    }
 
-    so_cho_tiep_nhan = tat_ca_ho_so.filter(
-        trang_thai='CHO_TIEP_NHAN'
-    ).count()
+    for nv in ds_nhan_vien:
+        ds_hd = hop_dong_theo_nv.get(nv.pk, [])
 
-    so_da_tao_ho_so = tat_ca_ho_so.filter(
-        trang_thai='DA_TAO_HO_SO'
-    ).count()
-
-    so_da_chuyen_dao_tao = tat_ca_ho_so.filter(
-        trang_thai='DA_CHUYEN_DAO_TAO'
-    ).count()
-
-    # 1. Tìm tên, số điện thoại, email
-    if q:
-        dieu_kien = (
-                Q(ho_so__ma_ung_vien__ho_ten__icontains=q)
-                | Q(ho_so__ma_ung_vien__email__icontains=q)
+        # Hợp đồng thực sự đang có hiệu lực
+        hd_hieu_luc = next(
+            (
+                hd for hd in ds_hd
+                if (
+                    hd.trang_thai_hd == "dang_hieu_luc"
+                    and hd.ngay_bat_dau <= hom_nay
+                    and (
+                        hd.ngay_ket_thuc is None
+                        or hd.ngay_ket_thuc >= hom_nay
+                    )
+                )
+            ),
+            None
         )
 
-        # Tự nhận biết tên trường điện thoại của model ứng viên
-        UngVien = HoSoUngTuyen._meta.get_field(
-            'ma_ung_vien'
-        ).remote_field.model
+        hd_gan_nhat = (
+            ds_hd[0] if ds_hd else None
+        )
 
-        ten_cac_truong = {
-            field.name for field in UngVien._meta.fields
-        }
+        trang_thai_nv = (
+            str(nv.trang_thai or "")
+            .strip()
+            .casefold()
+        )
 
-        if 'sdt' in ten_cac_truong:
-            dieu_kien |= Q(
-                ho_so__ma_ung_vien__sdt__icontains=q
+        da_nghi = (
+            trang_thai_nv in trang_thai_nghi_viec
+        )
+
+        # Nếu hợp đồng cuối đã chấm dứt,
+        # không còn hợp đồng có hiệu lực
+        # thì xếp vào nhóm nghỉ việc.
+        if (
+            not da_nghi
+            and hd_hieu_luc is None
+            and hd_gan_nhat is not None
+            and hd_gan_nhat.trang_thai_hd
+                == "da_cham_dut"
+        ):
+            da_nghi = True
+
+        if da_nghi:
+            nv.nhom_hien_thi = "nghi_viec"
+            nv.ten_nhom = "Đã nghỉ việc"
+            so_nghi_viec += 1
+
+        elif hd_hieu_luc is not None:
+            nv.nhom_hien_thi = "chinh_thuc"
+            nv.ten_nhom = "Chính thức"
+            so_chinh_thuc += 1
+
+        else:
+            nv.nhom_hien_thi = "tap_su"
+            nv.ten_nhom = "Tập sự"
+            so_tap_su += 1
+
+        nv.hop_dong_hien_tai = hd_hieu_luc
+        nv.hop_dong_gan_nhat = hd_gan_nhat
+
+        danh_sach_goc.append(nv)
+
+    # 6. Thống kê
+    # Tổng số nhân viên = tập sự + chính thức
+    tong_so_nhan_vien = (
+        so_tap_su + so_chinh_thuc
+    )
+
+    # 7. Lọc theo nhóm
+    if nhom == "tat_ca":
+        danh_sach_nhan_vien = [
+            nv for nv in danh_sach_goc
+            if nv.nhom_hien_thi != "nghi_viec"
+        ]
+    else:
+        danh_sach_nhan_vien = [
+            nv for nv in danh_sach_goc
+            if nv.nhom_hien_thi == nhom
+        ]
+
+    # 8. Tìm kiếm
+    if tu_khoa:
+        q = tu_khoa.casefold()
+
+        danh_sach_nhan_vien = [
+            nv for nv in danh_sach_nhan_vien
+            if (
+                q in (nv.ho_ten or "").casefold()
+                or q in (nv.manv or "").casefold()
+                or q in (nv.email or "").casefold()
+                or q in (nv.sdt or "").casefold()
             )
+        ]
 
-        elif 'so_dien_thoai' in ten_cac_truong:
-            dieu_kien |= Q(
-                ho_so__ma_ung_vien__so_dien_thoai__icontains=q
-            )
-
-        ds_ho_so = ds_ho_so.filter(dieu_kien)
-
-    # 2. Lọc vị trí
+    # 9. Lọc vị trí
     if vi_tri:
-        ds_ho_so = ds_ho_so.filter(
-            ho_so__ma_vi_tri_id=vi_tri
+        danh_sach_nhan_vien = [
+            nv for nv in danh_sach_nhan_vien
+            if nv.vi_tri == vi_tri
+        ]
+
+    danh_sach_vi_tri = [
+    "Phục vụ",
+    "Pha chế",
+    "Thu ngân",
+]
+
+    # 10. Giữ khu vực tiếp nhận ứng viên
+    # để không làm đứt luồng Tuyển dụng -> Đào tạo
+    ds_ho_so_cho = (
+        TiepNhanNhanVien.objects
+        .select_related(
+            "ho_so",
+            "ho_so__ma_ung_vien",
+            "ho_so__ma_vi_tri",
         )
-
-    # 3. Tìm mã hồ sơ
-    if ma_ho_so:
-        ds_ho_so = ds_ho_so.filter(
-            ho_so__ma_ho_so__icontains=ma_ho_so
+        .filter(
+            trang_thai="CHO_TIEP_NHAN"
         )
-
-    # 4. Lọc trạng thái
-    if trang_thai:
-        ds_ho_so = ds_ho_so.filter(
-            trang_thai=trang_thai
-        )
-
-    # 5. Lọc ngày nộp
-    if ngay_nop:
-        ds_ho_so = ds_ho_so.filter(
-            ho_so__ngay_nop=ngay_nop
-        )
-
-    # Lấy danh sách vị trí từ model đang liên kết với hồ sơ
-    ViTriModel = HoSoUngTuyen._meta.get_field(
-        'ma_vi_tri'
-    ).remote_field.model
-
-    ds_vi_tri = ViTriModel.objects.order_by(
-        'ten_vi_tri'
+        .order_by("pk")
     )
 
-    FormClass = tao_form_chinh_sua_ung_vien(request)
-    for item in ds_ho_so:
-        item.form_chinh_sua = FormClass(
-            instance=item.ho_so.ma_ung_vien
-        )
+    # 11. Truyền dữ liệu sang giao diện
     context = {
-        'active_menu': 'employees',
-        'ds_ho_so': ds_ho_so,
-        'q': q,
-        'trang_thai': trang_thai,
-        'tong_ho_so': TiepNhanNhanVien.objects.count(),
-        'cho_tiep_nhan': TiepNhanNhanVien.objects.filter(
-            trang_thai='CHO_TIEP_NHAN'
-        ).count(),
-        'da_tao_ho_so': TiepNhanNhanVien.objects.filter(
-            trang_thai='DA_TAO_HO_SO'
-        ).count(),
-        'da_chuyen_dao_tao': TiepNhanNhanVien.objects.filter(
-            trang_thai='DA_CHUYEN_DAO_TAO'
-        ).count(),
-        'ds_vi_tri': ds_vi_tri,
-        'vi_tri': vi_tri,
-        'ma_ho_so': ma_ho_so,
-        'ngay_nop': ngay_nop,
-        'tong_ho_so': tong_ho_so,
-        'so_cho_tiep_nhan': so_cho_tiep_nhan,
-        'so_da_tao_ho_so': so_da_tao_ho_so,
-        'so_da_chuyen_dao_tao': so_da_chuyen_dao_tao,
+        "active_menu": "employees",
+
+        "tong_so_nhan_vien": tong_so_nhan_vien,
+        "so_tap_su": so_tap_su,
+        "so_chinh_thuc": so_chinh_thuc,
+        "so_nghi_viec": so_nghi_viec,
+
+        "danh_sach_nhan_vien":
+            danh_sach_nhan_vien,
+
+        "so_ket_qua":
+            len(danh_sach_nhan_vien),
+
+        "danh_sach_vi_tri":
+            danh_sach_vi_tri,
+
+        "tu_khoa": tu_khoa,
+        "vi_tri_selected": vi_tri,
+        "nhom_selected": nhom,
+
+        "ds_ho_so_cho": ds_ho_so_cho,
+        "so_ho_so_cho": ds_ho_so_cho.count(),
     }
 
     return render(
         request,
-        'employees/quan_ly_ho_so.html',
+        "employees/quan_ly_ho_so.html",
         context
     )
-
 
 @login_required
 @require_POST

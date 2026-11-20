@@ -19,12 +19,12 @@ from .exam_flow import lay_trang_thai_thi
 # ----------------------------------------------------
 GIO_CA_THI = {
     'Sang': (9, 0, 10, 0),
-    'Chieu': (14, 0, 15, 0),
+    'Chieu': (12, 0, 15, 0),
     'Toi': (19, 0, 20, 0),
 
     # Hỗ trợ dữ liệu cũ đã lưu tên đầy đủ
     'Ca Sáng (09:00 - 10:00)': (9, 0, 10, 0),
-    'Ca Chiều (14:00 - 15:00)': (14, 0, 15, 0),
+    'Ca Chiều (12:00 - 15:00)': (12, 0, 15, 0),
     'Ca Tối (19:00 - 20:00)': (19, 0, 20, 0),
 }
 
@@ -409,204 +409,48 @@ def dashboard_quan_ly_tap_su(request):
     )
 
 
+# 3. HÀM HIỂN THỊ KẾT QUẢ THI
+# ----------------------------------------------------
+
 @login_required
-def tao_ho_so_tap_su(request):
+def ket_qua_thi(request, ma_kq):
 
-    # Chỉ quản lý được tạo hồ sơ tập sự
-    if request.user.role != 'admin':
-        raise PermissionDenied
-
-    # Lấy các khung đào tạo từ database
-    ds_khung = KhungChuongTrinh.objects.all().order_by('vi_tri')
-
-    if request.method == 'POST':
-
-        # 1. Lấy thông tin từ form
-        ho_ten = request.POST.get('ho_ten', '').strip()
-        ngay_sinh = request.POST.get('ngay_sinh') or None
-        sdt = request.POST.get('sdt', '').strip()
-        email = request.POST.get('email', '').strip()
-        gioi_tinh = request.POST.get('gioi_tinh', 'Nữ')
-        dia_chi = request.POST.get('dia_chi', '').strip()
-        vi_tri = request.POST.get('vi_tri', '').strip()
-
-        # 2. Kiểm tra thông tin
-        if not ho_ten or not vi_tri:
-            messages.error(
-                request,
-                'Vui lòng nhập họ tên và vị trí làm việc.'
-            )
-            return redirect('training:tao_ho_so_tap_su')
-
-        # 3. Tìm khung đào tạo tương ứng với vị trí
-        khung = KhungChuongTrinh.objects.filter(
-            vi_tri__iexact=vi_tri
-        ).first()
-
-        if khung is None:
-            messages.error(
-                request,
-                f'Chưa có khung đào tạo cho vị trí {vi_tri}.'
-            )
-            return redirect('training:tao_ho_so_tap_su')
-
-        # 4. Lấy bài học từ khung mẫu trong database
-        bai_hoc_mau = list(
-            BaiHocKhungMau.objects.filter(
-                ma_khung=khung
-            ).order_by('buoi_hoc', 'ma_bhk')
-        )
-
-        if not bai_hoc_mau:
-            messages.error(
-                request,
-                'Khung đào tạo này chưa có bài học mẫu.'
-            )
-            return redirect('training:tao_ho_so_tap_su')
-
-        # 5. Tạo hồ sơ, chương trình và bài học cùng lúc
-        with transaction.atomic():
-
-            # Tìm mã nhân viên tiếp theo chưa được sử dụng
-            cac_ma_nv = NhanVien.objects.values_list(
-                'manv', flat=True
-            )
-
-            so_lon_nhat = 0
-
-            for ma in cac_ma_nv:
-                ket_qua = re.fullmatch(
-                    r'NV(\d+)', ma or ''
-                )
-
-                if ket_qua:
-                    so_lon_nhat = max(
-                        so_lon_nhat,
-                        int(ket_qua.group(1))
-                    )
-
-            ma_nv_moi = f'NV{so_lon_nhat + 1:03d}'
-
-            # Tạo nhân viên
-            nv = NhanVien.objects.create(
-                manv=ma_nv_moi,
-                ho_ten=ho_ten,
-                ngay_sinh=ngay_sinh,
-                sdt=sdt,
-                email=email,
-                gioi_tinh=gioi_tinh,
-                dia_chi=dia_chi,
-                vi_tri=vi_tri,
-                trang_thai='Tap_su'
-            )
-
-            # Tạo chương trình tập sự
-            ma_ct_moi = 'CT' + uuid.uuid4().hex[:16]
-
-            chuong_trinh = ChuongTrinhTapSu.objects.create(
-                ma_ct=ma_ct_moi,
-                ma_nv=nv,
-                ma_khung=khung,
-                ten_ct=khung.ten_khung,
-                trang_thai_duyet='Chờ duyệt',
-                tong_tien_do=0
-            )
-
-            # Sao chép bài học từ khung mẫu
-            ds_bai_hoc_moi = []
-
-            for bai_mau in bai_hoc_mau:
-
-                # "Buổi 1" -> 1, "Buổi 2" -> 2
-                ket_qua = re.search(
-                    r'\d+', bai_mau.buoi_hoc or ''
-                )
-
-                so_buoi = (
-                    int(ket_qua.group())
-                    if ket_qua else None
-                )
-
-                ds_bai_hoc_moi.append(
-                    BaiHoc(
-                        ma_bh='BH' + uuid.uuid4().hex[:16],
-                        ma_ct=chuong_trinh,
-                        ten_bh=bai_mau.ten_bai_hoc,
-                        loai_bh=bai_mau.hinh_thuc,
-                        buoi_hoc=so_buoi,
-                        thoi_gian_hoc=bai_mau.thoi_luong
-                    )
-                )
-
-            BaiHoc.objects.bulk_create(
-                ds_bai_hoc_moi
-            )
-
-        messages.success(
-            request,
-            f'Đã lưu hồ sơ {nv.ho_ten} ({nv.manv}). '
-            'Vui lòng kiểm tra và phê duyệt chương trình.'
-        )
-
-        # 6. Chuyển thẳng đến trang duyệt chương trình
-        return redirect(
-            'training:duyet_chuong_trinh',
-            pk=chuong_trinh.pk
-        )
-
-    # GET: Hiển thị form tạo hồ sơ
-    cac_ma_nv = NhanVien.objects.values_list(
-        'manv', flat=True
+    ket_qua = get_object_or_404(
+        KetQuaThi.objects.select_related(
+            'ma_lt__ma_nv'
+        ),
+        pk=ma_kq
     )
 
-    so_lon_nhat = 0
+    la_quan_ly = (
+        request.user.is_superuser
+        or getattr(request.user, 'role', None) == 'admin'
+    )
 
-    for ma in cac_ma_nv:
-        ket_qua = re.fullmatch(r'NV(\d+)', ma or '')
-        if ket_qua:
-            so_lon_nhat = max(
-                so_lon_nhat, int(ket_qua.group(1))
-            )
+    la_chu_so_huu = (
+        getattr(request.user, 'role', None) == 'employee'
+        and ket_qua.ma_lt.ma_nv.tai_khoan_id == request.user.pk
+    )
 
-    context = {
-        'ma_nv_du_kien': f'NV{so_lon_nhat + 1:03d}',
-        'ds_khung': ds_khung,
-        'active_menu': 'training',
-    }
+    if not (la_quan_ly or la_chu_so_huu):
+        raise PermissionDenied(
+            'Bạn không có quyền xem kết quả thi này.'
+        )
 
     return render(
         request,
-        'training/tao_ho_so.html',
-        context
+        'training/ket_qua_thi.html',
+        {'ket_qua': ket_qua}
     )
-
-
-# ----------------------------------------------------
-# 2. HÀM HIỂN THỊ LỘ TRÌNH ĐÀO TẠO OJT
-# ----------------------------------------------------
-def lo_trinh_tap_su(request, ma_ct):
-    chuong_trinh = get_object_or_404(ChuongTrinhTapSu, pk=ma_ct)
-    ds_tien_do = TienDoTapSu.objects.filter(ma_ct=chuong_trinh).select_related('ma_bai_hoc')
-    context = {
-        'chuong_trinh': chuong_trinh,
-        'ds_tien_do': ds_tien_do,
-    }
-    return render(request, 'training/lo_trinh.html', context)
-
-# ----------------------------------------------------
-# 3. HÀM HIỂN THỊ KẾT QUẢ THI
-# ----------------------------------------------------
-@login_required
-def ket_qua_thi(request, ma_kq):
-    ket_qua = get_object_or_404(KetQuaThi, pk=ma_kq)
-    return render(request, 'training/ket_qua_thi.html', {'ket_qua': ket_qua})
 
 
 @login_required
 def duyet_chuong_trinh(request, pk):
 
-    # Chỉ quản lý được truy cập
-    if request.user.role != 'admin':
+    if not (
+        request.user.is_superuser
+        or getattr(request.user, "role", None) == "admin"
+    ):
         raise PermissionDenied
 
     # Lấy chương trình từ database
@@ -704,13 +548,71 @@ def duyet_chuong_trinh(request, pk):
 # ----------------------------------------------------
 # 4. HÀM THAO TÁC: DUYỆT LỘ TRÌNH
 # ----------------------------------------------------
+
 @login_required
 def duyet_lo_trinh(request, ma_ct):
-    chuong_trinh = get_object_or_404(ChuongTrinhTapSu, pk=ma_ct)
+
+    # 1. Kiểm tra quyền quản lý / superuser
+    if not (
+        request.user.is_superuser
+        or getattr(request.user, 'role', None) == 'admin'
+    ):
+        raise PermissionDenied(
+            'Chỉ quản lý được duyệt lộ trình đào tạo.'
+        )
+
+    # 2. Chỉ cho phép duyệt bằng phương thức POST
+    if request.method != 'POST':
+        return redirect(
+            'training:duyet_chuong_trinh',
+            pk=ma_ct
+        )
+
+    # 3. Lấy chương trình cần duyệt
+    chuong_trinh = get_object_or_404(
+        ChuongTrinhTapSu,
+        pk=ma_ct
+    )
+
+    # 4. Kiểm tra chương trình có bài học chưa
+    if not BaiHoc.objects.filter(
+        ma_ct=chuong_trinh
+    ).exists():
+        messages.error(
+            request,
+            'Chương trình chưa có bài học nên không thể duyệt.'
+        )
+        return redirect(
+            'training:duyet_chuong_trinh',
+            pk=ma_ct
+        )
+
+    # 5. Nếu chương trình đã duyệt
+    if chuong_trinh.trang_thai_duyet == 'Đã duyệt':
+        messages.info(
+            request,
+            'Chương trình này đã được phê duyệt trước đó.'
+        )
+        return redirect(
+            'training:duyet_chuong_trinh',
+            pk=ma_ct
+        )
+
+    # 6. Cập nhật trạng thái duyệt
     chuong_trinh.trang_thai_duyet = 'Đã duyệt'
-    chuong_trinh.save()
-    messages.success(request, f"Đã duyệt lộ trình đào tạo cho NV {chuong_trinh.ma_nv.ho_ten}!")
-    return redirect('training:dashboard_quan_ly_tap_su')
+    chuong_trinh.save(
+        update_fields=['trang_thai_duyet']
+    )
+
+    messages.success(
+        request,
+        f'Đã duyệt lộ trình đào tạo cho nhân viên '
+        f'{chuong_trinh.ma_nv.ho_ten}!'
+    )
+
+    return redirect(
+        'training:dashboard_quan_ly_tap_su'
+    )
 
 # ----------------------------------------------------
 # 5. HÀM THAO TÁC: TÍCH CHECKLIST TĂNG TIẾN ĐỘ OJT
@@ -720,8 +622,14 @@ def duyet_lo_trinh(request, ma_ct):
 def cap_nhat_tien_do_ojt(request, ma_nv):
 
     # 1. Chỉ quản lý được đánh giá OJT
-    if request.user.role != 'admin':
-        raise PermissionDenied
+
+    if not (
+            request.user.is_superuser
+            or getattr(request.user, 'role', None) == 'admin'
+    ):
+        raise PermissionDenied(
+            'Chỉ quản lý được đánh giá OJT.'
+        )
 
     # 2. Lấy chương trình đã duyệt của nhân viên
     chuong_trinh = (
@@ -1058,7 +966,7 @@ def bo_tri_thi(request, ma_nv):
 
     CA_THI = {
         "Sang": "Ca Sáng (09:00 - 10:00)",
-        "Chieu": "Ca Chiều (14:00 - 15:00)",
+        "Chieu": "Ca Chiều (12:00 - 15:00)",
         "Toi": "Ca Tối (19:00 - 20:00)",
     }
 
@@ -1383,18 +1291,25 @@ def bo_tri_thi(request, ma_nv):
         context
     )
 
-
 @login_required
 def dao_tao(request):
-    if request.user.role == 'admin':
-        return redirect('training:dashboard_quan_ly_tap_su')
 
-    elif request.user.role == 'employee':
-        return redirect('training:dao_tao_nhan_vien')
+    if (
+        request.user.is_superuser
+        or getattr(request.user, 'role', None) == 'admin'
+    ):
+        return redirect(
+            'training:dashboard_quan_ly_tap_su'
+        )
 
-    raise PermissionDenied
+    elif getattr(request.user, 'role', None) == 'employee':
+        return redirect(
+            'training:dao_tao_nhan_vien'
+        )
 
-
+    raise PermissionDenied(
+        'Bạn không có quyền truy cập phân hệ Đào tạo.'
+    )
 
 @login_required
 def dao_tao_nhan_vien(request):
@@ -1576,8 +1491,14 @@ def dao_tao_nhan_vien(request):
 def chinh_sua_chuong_trinh(request, pk):
 
     # Chỉ quản lý được chỉnh sửa
-    if request.user.role != 'admin':
-        raise PermissionDenied
+
+    if not (
+            request.user.is_superuser
+            or getattr(request.user, 'role', None) == 'admin'
+    ):
+        raise PermissionDenied(
+            'Chỉ quản lý được chỉnh sửa chương trình đào tạo.'
+        )
 
     # Lấy chương trình theo mã từ database
     chuong_trinh = get_object_or_404(
@@ -2003,7 +1924,7 @@ def lich_thi_nhan_vien(request):
     # Các ca thi đang sử dụng trong hệ thống
     GIO_CA_THI = {
         'Ca Sáng (09:00 - 10:00)': (9, 0, 10, 0),
-        'Ca Chiều (14:00 - 15:00)': (14, 0, 15, 0),
+        'Ca Chiều (12:00 - 15:00)': (12, 0, 15, 0),
         'Ca Tối (19:00 - 20:00)': (19, 0, 20, 0),
     }
 

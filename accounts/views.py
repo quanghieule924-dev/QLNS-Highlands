@@ -14,6 +14,8 @@ from employees.models import NhanVien
 from recruitment.models import HoSoUngTuyen
 from contracts.models import HopDong
 from scheduling.models import LichLamViec
+from attendance.models import DuLieuChamCong, YeuCauDieuChinhCong
+from training.models import ChuongTrinhTapSu
 
 
 # ==========================================
@@ -68,33 +70,72 @@ def dashboard(request):
     }
 
     if role == 'admin':
-        # Lọc danh sách hợp đồng đang hiệu lực và có thời hạn để check chuẩn thuộc tính sap_het_han
-        tat_ca_hd = HopDong.objects.select_related('nhan_vien').filter(
+        # Số liệu lấy trực tiếp từ các module dùng chung, không có dữ liệu mẫu.
+        expiring_qs = HopDong.objects.select_related('nhan_vien').filter(
             trang_thai_hd='dang_hieu_luc',
-            loai_hd='co_thoi_han'
+            loai_hd='co_thoi_han',
+            ngay_ket_thuc__gte=today,
+            ngay_ket_thuc__lte=today + timedelta(days=30),
         ).order_by('ngay_ket_thuc')
-
-        expiring_list = [hd for hd in tat_ca_hd if hd.sap_het_han]
-
+        month_start = today.replace(day=1)
         context.update({
             'employee_count': NhanVien.objects.count(),
             'application_count': HoSoUngTuyen.objects.count(),
             'contract_count': HopDong.objects.count(),
-            'shifts_today': LichLamViec.objects.filter(ngay_lam=today).count(),
+            'shifts_today': LichLamViec.objects.filter(ngay_lam=today, is_published=True).count(),
             'recent_applications': HoSoUngTuyen.objects.select_related(
                 'ma_ung_vien', 'ma_vi_tri'
             ).order_by('-ngay_nop', '-pk')[:5],
-            'expiring_contracts': expiring_list[:5],  # Đồng bộ lấy top 5 chuẩn xác
+            'expiring_contracts': expiring_qs[:5],
+            'expiring_contract_count': expiring_qs.count(),
+            'attendance_today': DuLieuChamCong.objects.filter(
+                ma_lich_lam__ngay_lam=today, time_checkin__isnull=False,
+            ).count(),
+            'pending_attendance_requests': YeuCauDieuChinhCong.objects.filter(
+                trang_thai='Cho_duyet'
+            ).count(),
+            'new_employees_month': NhanVien.objects.filter(
+                ngay_vao_lam__gte=month_start, ngay_vao_lam__lte=today
+            ).count(),
+            'training_program_count': ChuongTrinhTapSu.objects.count(),
         })
         template = 'accounts/dashboard_manager.html'
     else:
-        # Chưa có FK giữa accounts.User và employees.NhanVien.
-        # Không ghép hồ sơ bằng tên/email vì có thể lộ lịch/phiếu của người khác.
-        # Khi nhóm tạo liên kết 1-1 đáng tin cậy, mới lấy dữ liệu cá nhân thật.
+        # Ràng buộc duy nhất bằng khóa OneToOne tai_khoan, không đối chiếu tên/email.
+        employee = NhanVien.objects.filter(tai_khoan=user).first()
         context.update({
-            'display_name': user.get_full_name() or user.username,
-            'employee_profile_linked': False,
+            'display_name': employee.ho_ten if employee else (user.get_full_name() or user.username),
+            'employee_profile_linked': employee is not None,
+            'employee': employee,
+            'next_shift': None,
+            'month_attendance': 0,
+            'my_contract': None,
+            'my_training': None,
+            'recent_shifts': [],
+            'payslip_available': False,  # payroll/models.py chưa có model phiếu lương.
         })
+        if employee is not None:
+            upcoming = LichLamViec.objects.filter(
+                ma_nv=employee, ngay_lam__gte=today, is_published=True
+            ).select_related('ma_ca_lam').order_by('ngay_lam', 'ma_ca_lam__start_time')
+            active_contract = HopDong.objects.filter(
+                nhan_vien=employee, trang_thai_hd='dang_hieu_luc',
+                ngay_bat_dau__lte=today,
+            ).filter(Q(ngay_ket_thuc__isnull=True) | Q(ngay_ket_thuc__gte=today)).order_by('-ngay_bat_dau').first()
+            if active_contract is None:
+                active_contract = HopDong.objects.filter(nhan_vien=employee).order_by('-ngay_bat_dau').first()
+            month_start = today.replace(day=1)
+            context.update({
+                'next_shift': upcoming.first(),
+                'recent_shifts': list(upcoming[:5]),
+                'month_attendance': DuLieuChamCong.objects.filter(
+                    ma_lich_lam__ma_nv=employee,
+                    ma_lich_lam__ngay_lam__range=(month_start, today),
+                    time_checkin__isnull=False,
+                ).count(),
+                'my_contract': active_contract,
+                'my_training': ChuongTrinhTapSu.objects.filter(ma_nv=employee).order_by('-pk').first(),
+            })
         template = 'accounts/dashboard_employee.html'
 
     return render(request, template, context)
