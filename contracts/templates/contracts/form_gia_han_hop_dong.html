@@ -43,7 +43,9 @@
                 <span>Kế thừa từ hợp đồng hiện tại</span>
             </div>
 
+
             <div class="employee-grid">
+
                 <div class="contract-field">
                     <label>Nhân viên</label>
                     <input type="text"
@@ -53,21 +55,47 @@
                 </div>
 
                 <div class="contract-field">
-                    <label>Mã nhân viên</label>
+                    <label>Ngày sinh</label>
                     <input type="text"
                            class="form-control readonly-field"
-                           value="{{ hop_dong_cu.nhan_vien_id }}"
+                           value="{{ hop_dong_cu.nhan_vien.ngay_sinh|date:'d/m/Y' }}"
                            readonly>
                 </div>
 
                 <div class="contract-field">
-                    <label>Hợp đồng hiện tại</label>
+                    <label>Giới tính</label>
                     <input type="text"
                            class="form-control readonly-field"
-                           value="{{ hop_dong_cu.mahd }}"
+                           value="{{ hop_dong_cu.nhan_vien.gioi_tinh }}"
                            readonly>
                 </div>
+
+                <div class="contract-field">
+                    <label>Vị trí</label>
+                    <input type="text"
+                           class="form-control readonly-field"
+                           value="{{ hop_dong_cu.nhan_vien.vi_tri }}"
+                           readonly>
+                </div>
+
+                <div class="contract-field">
+                    <label>Số điện thoại</label>
+                    <input type="text"
+                           class="form-control readonly-field"
+                           value="{{ hop_dong_cu.nhan_vien.sdt }}"
+                           readonly>
+                </div>
+
+                <div class="contract-field">
+                    <label>Email</label>
+                    <input type="text"
+                           class="form-control readonly-field"
+                           value="{{ hop_dong_cu.nhan_vien.email }}"
+                           readonly>
+                </div>
+
             </div>
+
         </section>
 
         <!-- 2. THÔNG TIN HỢP ĐỒNG -->

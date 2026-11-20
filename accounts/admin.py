@@ -9,7 +9,10 @@ from employees.models import NhanVien
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
-
+    """
+    Kế thừa UserAdmin chuẩn của Django kết hợp logic phân quyền
+    và liên kết hồ sơ nhân viên từ nhánh tiếp-nhận-và-đào-tạo.
+    """
     def get_fieldsets(self, request, obj=None):
         fieldsets = super().get_fieldsets(request, obj)
 
@@ -73,11 +76,10 @@ class CustomUserAdmin(UserAdmin):
                     'nhan_vien_lien_ket'
                 ].queryset = ds_nhan_vien.distinct()
 
+                # Đã sửa lỗi bị ngắt dòng ở tên nhân viên từ nhánh Loan
                 self.fields[
                     'nhan_vien_lien_ket'
-                ].label_from_instance = (
-                    lambda nv: f'{nv.manv} - {nv.ho_ten}'
-                )
+                ].label_from_instance = lambda nv: f'{nv.manv} - {nv.ho_ten}'
 
             def clean(self):
                 cleaned_data = super().clean()

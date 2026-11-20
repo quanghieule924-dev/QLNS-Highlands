@@ -21,7 +21,7 @@
       </div>
     </form>
   </div>
-  <div class="hr-report__notice">Dữ liệu minh họa · Chưa kết nối SQLite</div>
+  <div class="hr-report__notice">Dữ liệu từ các phân hệ Highlands HRM · Cập nhật theo kỳ báo cáo{% if report_notes %}<span title="{% for note in report_notes %}{{ note }} {% endfor %}"> · Lưu ý dữ liệu</span>{% endif %}</div>
   <div class="hr-report__stats">
     <article class="hr-report__stat stat-red"><span>Tổng nhân sự</span><strong>{{ stats.total_employees }}</strong><small>Đang hoạt động</small></article>
     <article class="hr-report__stat stat-blue"><span>Nhân viên mới</span><strong>{{ stats.new_employees }}</strong><small>Gia nhập trong tháng</small></article>

@@ -1,369 +1,1100 @@
 {% extends 'base_internal.html' %}
 
-{% block extra_css %}
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-    /* 1. Tự kích hoạt màu hồng + vạch đỏ cho mục Đào tạo trên Sidebar */
-    .sidebar a[href*="training"],
-    .nav-link[href*="training"],
-    aside a[href*="training"] {
-        background-color: #fef0f2 !important;
-        color: #b81c24 !important;
-        border-left: 4px solid #b81c24 !important;
-        font-weight: 600 !important;
-    }
-    .sidebar a[href*="training"] i,
-    .nav-link[href*="training"] i {
-        color: #b81c24 !important;
-    }
-
-    /* 2. Styling cho ruột Dashboard */
-    .dashboard-container {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        color: #333;
-        background-color: #f8f9fa;
-        padding: 24px;
-    }
-    .card-custom {
-        background: #ffffff;
-        border-radius: 12px;
-        border: 1px solid #eaecf0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .btn-highlands {
-        background-color: #b81c24 !important;
-        color: white !important;
-        border: none;
-        font-weight: 600;
-        border-radius: 8px;
-    }
-    .btn-highlands:hover {
-        background-color: #96151c !important;
-    }
-    .badge-cho-duyet { background-color: #fef0c7; color: #dc6803; border-radius: 6px; font-weight: 600; }
-    .badge-dang-ojt { background-color: #e0f2fe; color: #026aa2; border-radius: 6px; font-weight: 600; }
-    .badge-du-dieu-kien { background-color: #d1fad7; color: #0e9384; border-radius: 6px; font-weight: 600; }
-
-    .progress-bar-custom {
-        height: 6px;
-        border-radius: 3px;
-        background-color: #eaecf0;
-        overflow: hidden;
-    }
-    .progress-fill-red { background-color: #b81c24; height: 100%; }
-    .progress-fill-green { background-color: #12b76a; height: 100%; }
-
-    .avatar-circle {
-        width: 32px; height: 32px; background-color: #f2f4f7;
-        color: #475467; font-weight: 600; font-size: 12px;
-        border-radius: 50%; display: inline-flex;
-        align-items: center; justify-content: center;
-    }
-
-    /* ===== CỤM NÚT THAO TÁC ===== */
-.action-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-/* style chung cho tất cả nút */
-.action-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 132px;
-    height: 40px;
-    padding: 0 16px;
-    border-radius: 999px;
-    border: 1.5px solid #d9dde3;
-    background: #ffffff;
-    color: #2c2f36;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.22s ease;
-    white-space: nowrap;
-    box-sizing: border-box;
-}
-
-/* hover chung: mới đỏ khi rê chuột */
-.action-btn:hover {
-    background: #c81e2a;
-    border-color: #c81e2a;
-    color: #ffffff;
-    transform: translateY(-1px);
-    box-shadow: 0 8px 18px rgba(200, 30, 42, 0.18);
-}
-
-.action-btn:focus {
-    outline: none;
-    box-shadow: 0 0 0 4px rgba(200, 30, 42, 0.12);
-}
-
-/* nút disabled */
-.action-btn.is-disabled,
-.action-btn:disabled {
-    background: #f3f5f7;
-    color: #a0a7b4;
-    border-color: #e3e7ec;
-    cursor: not-allowed;
-    box-shadow: none;
-    transform: none;
-}
-
-.action-btn.is-disabled:hover,
-.action-btn:disabled:hover {
-    background: #f3f5f7;
-    color: #a0a7b4;
-    border-color: #e3e7ec;
-    box-shadow: none;
-    transform: none;
-}
-
-/* nếu muốn nút chính nổi hơn một chút */
-.action-btn.action-btn-primary {
-    border-color: #e4b8bd;
-    color: #b51f2d;
-    background: #fff;
-}
-
-/* nếu muốn nút phụ kiểu xám nhẹ */
-.action-btn.action-btn-secondary {
-    border-color: #d8dfe6;
-    color: #58606e;
-    background: #fff;
-}
-
-.action-btn.action-btn-secondary:hover {
-    background: #c81e2a;
-    border-color: #c81e2a;
-    color: #fff;
-}
-
-/* canh giữa cột thao tác */
-td.action-cell {
-    min-width: 290px;
-}
-
-/* mobile */
-@media (max-width: 768px) {
-    .action-group {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .action-btn {
-        width: 100%;
-    }
-}
-</style>
-
-{% endblock %}
+{% block title %}Quản lý tập sự | Highlands Coffee{% endblock %}
 
 {% block content %}
 
-<!-- Tự động gắn class active cho menu Đào tạo bằng JS -->
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const trainingLinks = document.querySelectorAll('a[href*="training"]');
-        trainingLinks.forEach(link => {
-            link.classList.add('active');
-        });
-    });
-</script>
+<style>
+/* ===== DASHBOARD ĐÀO TẠO - ĐỒNG BỘ QUẢN LÝ NHÂN VIÊN ===== */
 
-<div class="dashboard-container">
-    <!-- Header Title & Breadcrumb -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-1 fs-7">
-                    <li class="breadcrumb-item text-muted">Đào tạo</li>
-                    <li class="breadcrumb-item active text-dark fw-semibold">Quản lý tập sự</li>
-                </ol>
-            </nav>
-            <h2 class="fw-bold text-dark mb-1 fs-3">Dashboard Quản lý Tập sự</h2>
-            <p class="text-muted small mb-0 fs-7">Cửa hàng Highlands Coffee - Chi nhánh Đà Nẵng</p>
+.tsu-page {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px 12px 45px;
+    font-family: 'Montserrat', sans-serif;
+    color: #253246;
+}
+
+.tsu-page * {
+    box-sizing: border-box;
+}
+
+/* TIÊU ĐỀ */
+.tsu-heading {
+    margin-bottom: 22px;
+}
+
+.tsu-breadcrumb {
+    margin-bottom: 7px;
+    font-size: 12px;
+    color: #8d97a5;
+}
+
+.tsu-heading h1 {
+    margin: 0 0 7px;
+    font-size: 23px;
+    font-weight: 800;
+    color: #202b3d;
+}
+
+.tsu-heading p {
+    margin: 0;
+    color: #8d97a5;
+    font-size: 11px;
+}
+
+/* THỐNG KÊ */
+.tsu-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.tsu-stat {
+    position: relative;
+    min-width: 0;
+    min-height: 145px;
+    padding: 18px 18px 16px;
+    border: 1px solid #e0e5ec;
+    border-radius: 13px;
+    background: #fff;
+    text-decoration: none !important;
+    color: inherit !important;
+    transition: .2s;
+}
+
+.tsu-stat::before {
+    content: "";
+    position: absolute;
+    top: 13px;
+    left: 0;
+    width: 4px;
+    height: 40px;
+    border-radius: 0 4px 4px 0;
+    background: var(--stat-color);
+}
+
+.tsu-stat.red {
+    --stat-color: #a71930;
+}
+
+.tsu-stat.yellow {
+    --stat-color: #c99820;
+}
+
+.tsu-stat.blue {
+    --stat-color: #3678dc;
+}
+
+.tsu-stat.green {
+    --stat-color: #26865c;
+}
+
+.tsu-stat:hover,
+.tsu-stat.active {
+    border-color: var(--stat-color);
+    box-shadow: 0 5px 18px rgba(30, 40, 60, .05);
+}
+
+.tsu-stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.tsu-stat-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #253246;
+}
+
+.tsu-stat-symbol {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #f5f6f8;
+    color: var(--stat-color);
+    font-size: 17px;
+}
+
+.tsu-stat-value {
+    margin: 15px 0 10px;
+    font-size: 31px;
+    font-weight: 800;
+    line-height: 1;
+    color: #233146;
+}
+
+.tsu-stat-description {
+    font-size: 10px;
+    line-height: 1.6;
+    color: #929caa;
+}
+
+/* KHUNG DANH SÁCH */
+.tsu-panel {
+    padding: 21px;
+    border: 1px solid #e0e5ec;
+    border-radius: 13px;
+    background: #fff;
+}
+
+.tsu-panel-title {
+    margin: 0 0 8px;
+    font-size: 15px;
+    font-weight: 800;
+    color: #253246;
+}
+
+.tsu-panel-note {
+    font-size: 10px;
+    color: #95a0af;
+}
+
+/* BỘ LỌC */
+.tsu-filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto auto;
+    align-items: center;
+    gap: 11px;
+    margin: 21px 0 18px;
+}
+
+.tsu-input,
+.tsu-select {
+    width: 100%;
+    height: 40px;
+    min-width: 0;
+    padding: 0 12px;
+    border: 1px solid #dae1e9;
+    border-radius: 8px;
+    outline: none;
+    background: #fff;
+    color: #405066;
+    font: 500 11px 'Montserrat', sans-serif;
+}
+
+.tsu-input:focus,
+.tsu-select:focus {
+    border-color: #a71930;
+}
+
+.tsu-search {
+    height: 40px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 8px;
+    background: #941927;
+    color: #fff;
+    font: 700 11px 'Montserrat', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.tsu-search:hover {
+    background: #771321;
+}
+
+.tsu-reset {
+    color: #8a95a4;
+    font-size: 10px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+/* BẢNG */
+.tsu-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tsu-table {
+    width: 100%;
+    min-width: 1020px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.tsu-table thead {
+    background: #f5f7f9;
+}
+
+.tsu-table th {
+    padding: 15px 11px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #677487;
+    white-space: nowrap;
+}
+
+.tsu-table td {
+    padding: 18px 11px;
+    border-bottom: 1px solid #ebeff3;
+    vertical-align: middle;
+    font-size: 11px;
+    color: #435067;
+}
+
+.tsu-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tsu-table tbody tr:hover {
+    background: #fcfcfd;
+}
+
+.tsu-code {
+    font-size: 11px;
+    font-weight: 800;
+    color: #a71930;
+    white-space: nowrap;
+}
+
+.tsu-person {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.tsu-avatar {
+    width: 33px;
+    height: 33px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #f0f2f5;
+    color: #344357;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.tsu-name {
+    font-size: 11px;
+    font-weight: 800;
+    color: #253246;
+}
+
+.tsu-muted {
+    margin-top: 5px;
+    font-size: 10px;
+    color: #9aa4b2;
+}
+
+.tsu-position {
+    font-size: 11px;
+    font-weight: 700;
+    color: #253246;
+}
+
+.tsu-program {
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+/* TIẾN ĐỘ */
+.tsu-progress {
+    min-width: 100px;
+}
+
+.tsu-progress-num {
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    color: #253246;
+}
+
+.tsu-progress-track {
+    height: 6px;
+    border-radius: 10px;
+    background: #efe5e8;
+    overflow: hidden;
+}
+
+.tsu-progress-bar {
+    height: 100%;
+    border-radius: 10px;
+    background: #a71930;
+}
+
+/* TRẠNG THÁI */
+.tsu-badge {
+    display: inline-block;
+    padding: 8px 11px;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.tsu-badge.wait {
+    background: #fff2da;
+    color: #b47c13;
+}
+
+.tsu-badge.ojt {
+    background: #e4f1ff;
+    color: #2c76c7;
+}
+
+.tsu-badge.ready {
+    background: #e4f4e9;
+    color: #238050;
+}
+
+.tsu-badge.exam {
+    background: #eeeafd;
+    color: #7456b1;
+}
+
+/* THAO TÁC */
+.tsu-actions {
+    display: flex;
+    gap: 7px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.tsu-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 33px;
+    padding: 8px 12px;
+    border: 1px solid #dce2e9;
+    border-radius: 22px;
+    background: #fff;
+    color: #344256;
+    font: 700 10px 'Montserrat', sans-serif;
+    text-decoration: none !important;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.tsu-action:hover {
+    color: #941927;
+    border-color: #941927;
+}
+
+.tsu-action.primary {
+    background: #941927;
+    border-color: #941927;
+    color: #fff;
+}
+
+.tsu-action.primary:hover {
+    background: #781420;
+    color: #fff;
+}
+
+.tsu-empty {
+    padding: 32px !important;
+    text-align: center;
+    color: #97a1ae !important;
+}
+
+@media (max-width: 1120px) {
+    .tsu-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tsu-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .tsu-stats,
+    .tsu-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .tsu-page {
+        padding: 15px 5px 35px;
+    }
+}
+
+
+/* ===== BỘ LỌC TRẠNG THÁI CÓ ICON ===== */
+
+.tsu-status-dropdown {
+    position: relative;
+    min-width: 0;
+}
+
+.tsu-status-trigger {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #dae1e9;
+    border-radius: 8px;
+    background: #fff;
+    color: #405066;
+    font: 500 11px 'Montserrat', sans-serif;
+    cursor: pointer;
+}
+
+.tsu-status-trigger:hover,
+.tsu-status-dropdown.is-open .tsu-status-trigger {
+    border-color: #941927;
+}
+
+.tsu-status-trigger-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.tsu-status-trigger-label > span:last-child {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tsu-status-trigger-icon {
+    color: #941927;
+    font-size: 13px;
+}
+
+.tsu-status-menu {
+    position: absolute;
+    z-index: 1000;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%;
+    min-width: 220px;
+    padding: 6px;
+    border: 1px solid #e5e8ed;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 12px 35px rgba(25, 35, 50, .14);
+    display: none;
+}
+
+.tsu-status-dropdown.is-open .tsu-status-menu {
+    display: block;
+}
+
+.tsu-status-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 11px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: #344256;
+    text-align: left;
+    font: 600 11px 'Montserrat', sans-serif;
+    cursor: pointer;
+}
+
+.tsu-status-option i {
+    width: 16px;
+    text-align: center;
+    font-size: 15px;
+    color: #941927;
+}
+
+.tsu-status-option:hover,
+.tsu-status-option.is-selected {
+    background: #fff0f2;
+    color: #941927;
+}
+
+/* ===== NÚT THAO TÁC THEO GIAI ĐOẠN ===== */
+
+.tsu-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.tsu-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 35px;
+    padding: 8px 13px;
+    border-radius: 999px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-decoration: none !important;
+    transition: all .2s ease;
+}
+
+.tsu-action i {
+    font-size: 13px;
+}
+
+/* Hành động chính: màu đỏ Highlands */
+.tsu-action-main {
+    background: #941927;
+    border: 1px solid #941927;
+    color: #fff !important;
+}
+
+.tsu-action-main:hover {
+    background: #791422;
+    border-color: #791422;
+    box-shadow: 0 4px 11px rgba(148,25,39,.18);
+    transform: translateY(-1px);
+}
+
+/* Xem hồ sơ: nền trắng, viền xám */
+.tsu-action-detail {
+    background: #fff;
+    border: 1px solid #dde3ea;
+    color: #344256 !important;
+}
+
+.tsu-action-detail:hover {
+    border-color: #941927;
+    color: #941927 !important;
+    background: #fff8f9;
+}
+
+/* Trạng thái đã xếp lịch: không phải nút bấm */
+.tsu-action-pending {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 35px;
+    padding: 8px 13px;
+    border-radius: 999px;
+    background: #f4f5f7;
+    border: 1px solid #e0e4e9;
+    color: #667183;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+
+</style>
+
+<div class="tsu-page">
+
+    <!-- TIÊU ĐỀ -->
+    <div class="tsu-heading">
+        <div class="tsu-breadcrumb">
+            Đào tạo / Quản lý tập sự
         </div>
+
+        <h1>Dashboard Quản lý Tập sự</h1>
+
+        <p>
+            Theo dõi và quản lý chương trình đào tạo nhân viên
+            Highlands Coffee.
+        </p>
     </div>
 
-    <!-- 4 Thẻ Thống Kê (Hiển thị con số thực) -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card-custom p-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted fs-7">Tổng số nhân viên tập sự</span>
-                    <span class="badge rounded-circle p-2 bg-danger-subtle text-danger"><i class="bi bi-people-fill"></i></span>
-                </div>
-                <div class="fs-2 fw-bold text-dark">{{ tong_so_tap_su|default:0 }} <span class="fs-7 fw-normal text-muted">Nhân viên</span></div>
-                <div class="text-muted fs-8 mt-1">Tại chi nhánh Đà Nẵng</div>
+    <!-- THÔNG BÁO -->
+    {% if messages %}
+        {% for message in messages %}
+            <div style="
+                padding: 13px 16px;
+                margin-bottom: 15px;
+                border: 1px solid #ead1d5;
+                border-radius: 8px;
+                background: #fff4f5;
+                color: #941927;
+                font-size: 11px;">
+                {{ message }}
             </div>
-        </div>
+        {% endfor %}
+    {% endif %}
 
-        <div class="col-md-3">
-            <div class="card-custom p-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted fs-7">Chờ duyệt lộ trình</span>
-                    <span class="badge rounded-circle p-2 bg-warning-subtle text-warning"><i class="bi bi-folder-fill"></i></span>
-                </div>
-                <div class="fs-2 fw-bold text-dark">{{ cho_duyet_lo_trinh|default:0 }} <span class="fs-7 fw-normal text-muted">Hồ sơ</span></div>
-                <div class="text-warning fw-semibold fs-8 mt-1">Cần duyệt lộ trình đào tạo</div>
-            </div>
-        </div>
+    <!-- THỐNG KÊ -->
+    <div class="tsu-stats">
 
-        <div class="col-md-3">
-            <div class="card-custom p-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted fs-7">Đang thực hành OJT</span>
-                    <span class="badge rounded-circle p-2 bg-primary-subtle text-primary"><i class="bi bi-card-checklist"></i></span>
-                </div>
-                <div class="fs-2 fw-bold text-dark">{{ dang_thuc_hanh_ojt|default:0 }} <span class="fs-7 fw-normal text-muted">Nhân viên</span></div>
-                <div class="text-primary fw-semibold fs-8 mt-1">Đang thực hành tại cửa hàng</div>
-            </div>
-        </div>
+        <a href="{% url 'training:dashboard_quan_ly_tap_su' %}"
+           class="tsu-stat red {% if not current_stat %}active{% endif %}">
 
-        <div class="col-md-3">
-            <div class="card-custom p-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted fs-7">Đủ điều kiện thi tổng kết</span>
-                    <span class="badge rounded-circle p-2 bg-success-subtle text-success"><i class="bi bi-check-circle-fill"></i></span>
-                </div>
-                <div class="fs-2 fw-bold text-dark">{{ du_dieu_kien_thi|default:0 }} <span class="fs-7 fw-normal text-muted">Nhân viên</span></div>
-                <div class="text-success fw-semibold fs-8 mt-1">100% OJT đã hoàn thành</div>
+            <div class="tsu-stat-top">
+                <span class="tsu-stat-label">
+                    Tổng số nhân viên tập sự
+                </span>
+                <span class="tsu-stat-symbol">👥</span>
             </div>
-        </div>
+
+            <div class="tsu-stat-value">
+                {{ tong_so_tap_su }}
+            </div>
+
+            <div class="tsu-stat-description">
+                Nhân viên đang trong quá trình đào tạo
+            </div>
+        </a>
+
+        <a href="?stat=cho_duyet"
+           class="tsu-stat yellow {% if current_stat == 'cho_duyet' %}active{% endif %}">
+
+            <div class="tsu-stat-top">
+                <span class="tsu-stat-label">
+                    Chờ duyệt lộ trình
+                </span>
+                <span class="tsu-stat-symbol">◷</span>
+            </div>
+
+            <div class="tsu-stat-value">
+                {{ cho_duyet_lo_trinh }}
+            </div>
+
+            <div class="tsu-stat-description">
+                Chương trình đang chờ phê duyệt
+            </div>
+        </a>
+
+        <a href="?stat=dang_ojt"
+           class="tsu-stat blue {% if current_stat == 'dang_ojt' %}active{% endif %}">
+
+            <div class="tsu-stat-top">
+                <span class="tsu-stat-label">
+                    Đang thực hành OJT
+                </span>
+                <span class="tsu-stat-symbol">☑</span>
+            </div>
+
+            <div class="tsu-stat-value">
+                {{ dang_thuc_hanh_ojt }}
+            </div>
+
+            <div class="tsu-stat-description">
+                Nhân viên đang thực hành tại cửa hàng
+            </div>
+        </a>
+
+        <a href="?stat=du_dieu_kien"
+           class="tsu-stat green {% if current_stat == 'du_dieu_kien' %}active{% endif %}">
+
+            <div class="tsu-stat-top">
+                <span class="tsu-stat-label">
+                    Đủ điều kiện thi tổng kết
+                </span>
+                <span class="tsu-stat-symbol">✓</span>
+            </div>
+
+            <div class="tsu-stat-value">
+                {{ du_dieu_kien_thi }}
+            </div>
+
+            <div class="tsu-stat-description">
+                Hoàn thành OJT hoặc đủ điều kiện thi lại
+            </div>
+        </a>
+
     </div>
 
-    <!-- Bảng Danh Sách & Bộ Lọc Dữ Liệu -->
-    <div class="card-custom p-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div class="d-flex align-items-center gap-2">
-                <h5 class="fw-bold mb-0 text-dark fs-6">Nhân viên tập sự</h5>
-                <span class="badge bg-danger-subtle text-danger rounded-pill px-2">{{ tong_so_tap_su|default:0 }}</span>
-            </div>
+    <!-- DANH SÁCH -->
+    <section class="tsu-panel">
+
+        <h2 class="tsu-panel-title">
+            Danh sách nhân viên tập sự
+        </h2>
+
+        <div class="tsu-panel-note">
+            Theo dõi tiến độ OJT, tình trạng phê duyệt
+            và các bước đào tạo tiếp theo.
         </div>
 
-        <!-- Filter Bar -->
-        <form method="GET" class="row g-2 mb-3">
-            <div class="col-md-5">
-                <div class="input-group">
-                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                    <input type="text" name="search" class="form-control border-start-0 fs-7" placeholder="Tìm kiếm theo Họ tên, Mã NV (NV001...)" value="{{ request.GET.search }}">
-                </div>
-            </div>
-            <div class="col-md-2">
-                <select name="vi_tri" aria-label="Vị trí" class="form-select fs-7">
-                    <option value="">Tất cả vị trí</option>
-                    <option value="Pha chế">Pha chế</option>
-                    <option value="Thu ngân">Thu ngân</option>
-                    <option value="Phục vụ">Phục vụ</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <select name="hinh_thuc" aria-label="Hình thức" class="form-select fs-7">
-                    <option value="">Tất cả hình thức</option>
-                    <option value="Full-time">Full-time</option>
-                    <option value="Part-time">Part-time</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select name="trang_thai" aria-label="Trạng thái" class="form-select fs-7">
-                    <option value="">Trạng thái tập sự</option>
-                    <option value="Chờ duyệt">Chờ duyệt</option>
-                    <option value="Đang OJT">Đang OJT</option>
-                    <option value="Đủ điều kiện thi">Đủ điều kiện thi</option>
-                </select>
-            </div>
+        <!-- BỘ LỌC -->
+        <form method="GET" class="tsu-filters">
+
+            <input
+                type="text"
+                name="search"
+                class="tsu-input"
+                placeholder="Tìm tên, mã nhân viên..."
+                value="{{ search_query|default:'' }}"
+            >
+
+            <select name="vi_tri" class="tsu-select">
+                <option value="">Tất cả vị trí</option>
+
+                <option value="Phục vụ"
+                  {% if vi_tri_selected == 'Phục vụ' %}selected{% endif %}>
+                    Phục vụ
+                </option>
+
+                <option value="Pha chế"
+                  {% if vi_tri_selected == 'Pha chế' %}selected{% endif %}>
+                    Pha chế
+                </option>
+
+                <option value="Thu ngân"
+                  {% if vi_tri_selected == 'Thu ngân' %}selected{% endif %}>
+                    Thu ngân
+                </option>
+            </select>
+
+
+<div class="tsu-status-dropdown" id="tsuStatusDropdown">
+
+    <input
+        type="hidden"
+        name="trang_thai"
+        id="tsuStatusValue"
+        value="{{ trang_thai_selected|default:'' }}"
+    >
+
+    <button
+        type="button"
+        class="tsu-status-trigger"
+        id="tsuStatusTrigger"
+        aria-haspopup="listbox"
+        aria-expanded="false"
+    >
+        <span class="tsu-status-trigger-label">
+            <span class="tsu-status-trigger-icon">
+                <i class="bi bi-funnel"></i>
+            </span>
+            <span id="tsuStatusText">
+                Tất cả trạng thái
+            </span>
+        </span>
+
+        <i class="bi bi-chevron-down"></i>
+    </button>
+
+    <div
+        class="tsu-status-menu"
+        id="tsuStatusMenu"
+        role="listbox"
+        aria-label="Lọc trạng thái tập sự"
+    >
+
+        <button type="button" class="tsu-status-option"
+                data-value="" data-icon="bi-funnel">
+            <i class="bi bi-funnel"></i>
+            <span>Tất cả trạng thái</span>
+        </button>
+
+        <button type="button" class="tsu-status-option"
+                data-value="Chờ duyệt" data-icon="bi-clock-history">
+            <i class="bi bi-clock-history"></i>
+            <span>Chờ duyệt</span>
+        </button>
+
+        <button type="button" class="tsu-status-option"
+                data-value="Đang OJT" data-icon="bi-clipboard-check">
+            <i class="bi bi-clipboard-check"></i>
+            <span>Đang OJT</span>
+        </button>
+
+        <button type="button" class="tsu-status-option"
+                data-value="Đủ điều kiện thi" data-icon="bi-mortarboard">
+            <i class="bi bi-mortarboard"></i>
+            <span>Đủ điều kiện thi</span>
+        </button>
+
+        <button type="button" class="tsu-status-option"
+                data-value="Đã xếp lịch thi" data-icon="bi-calendar-check">
+            <i class="bi bi-calendar-check"></i>
+            <span>Đã xếp lịch thi</span>
+        </button>
+
+        <button type="button" class="tsu-status-option"
+                data-value="Thi không đạt" data-icon="bi-arrow-repeat">
+            <i class="bi bi-arrow-repeat"></i>
+            <span>Thi không đạt</span>
+        </button>
+
+        <button type="button" class="tsu-status-option"
+                data-value="Chờ chuyển hồ sơ" data-icon="bi-file-earmark-check">
+            <i class="bi bi-file-earmark-check"></i>
+            <span>Chờ chuyển hồ sơ</span>
+        </button>
+
+    </div>
+</div>
+
+
+            <button type="submit" class="tsu-search">
+                Tìm kiếm
+            </button>
+
+            <a href="{% url 'training:dashboard_quan_ly_tap_su' %}"
+               class="tsu-reset">
+                Đặt lại
+            </a>
+
         </form>
 
-        <!-- Table -->
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0" style="font-size: 13px;">
-                <thead class="table-light text-muted">
+        <!-- BẢNG -->
+        <div class="tsu-table-wrap">
+            <table class="tsu-table">
+
+                <thead>
                     <tr>
-                        <th class="fw-medium">MÃ NV</th>
-                        <th class="fw-medium">HỌ & TÊN</th>
-                        <th class="fw-medium">VỊ TRÍ & HÌNH THỨC</th>
-                        <th class="fw-medium">LỘ TRÌNH ĐÀO TẠO</th>
-                        <th class="fw-medium" style="width: 15%;">TIẾN ĐỘ OJT</th>
-                        <th class="fw-medium">TRẠNG THÁI HỒ SƠ</th>
-                        <th class="fw-medium text-center">THAO TÁC TÁC VỤ</th>
+                        <th>MÃ NHÂN VIÊN</th>
+                        <th>THÔNG TIN NHÂN VIÊN</th>
+                        <th>VỊ TRÍ</th>
+                        <th>LỘ TRÌNH ĐÀO TẠO</th>
+                        <th>TIẾN ĐỘ OJT</th>
+                        <th>TRẠNG THÁI</th>
+                        <th>THAO TÁC</th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    {% for item in danh_sach_tap_su %}
+
+                {% for ct in danh_sach_tap_su %}
                     <tr>
-                        <td class="text-secondary fw-medium">{{ item.ma_nv.manv }}</td>
+
                         <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="avatar-circle">
-                                    {{ item.ma_nv.ho_ten|slice:":2"|upper }}
+                            <span class="tsu-code">
+                                {{ ct.ma_nv.manv }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="tsu-person">
+                                <div class="tsu-avatar">
+                                    {{ ct.ma_nv.ho_ten|first|upper }}
                                 </div>
-                                <a href="{% url 'training:duyet_chuong_trinh' item.ma_ct %}"
-                                   class="fw-semibold text-dark text-decoration-none">{{ item.ma_nv.ho_ten }}
-                                </a>
+
+                                <div>
+                                    <div class="tsu-name">
+                                        {{ ct.ma_nv.ho_ten }}
+                                    </div>
+
+                                    <div class="tsu-muted">
+                                        {{ ct.ma_nv.email|default:"Chưa có email" }}
+                                    </div>
+                                </div>
                             </div>
                         </td>
+
                         <td>
-                            <div class="fw-semibold text-dark">{{ item.ma_nv.vi_tri }}</div>
-                            <div class="text-muted fs-8">Part-time</div>
+                            <div class="tsu-position">
+                                {{ ct.ma_nv.vi_tri|default:"—" }}
+                            </div>
                         </td>
-                        <td class="text-secondary">{{ item.ten_ct }}</td>
+
                         <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="fw-bold fs-8">{{ item.tong_tien_do }}%</span>
-                                <div class="progress-bar-custom flex-grow-1">
-                                    <div class="{% if item.tong_tien_do == 100 %}progress-fill-green{% else %}progress-fill-red{% endif %}"
-                                         width="{{ item.tong_tien_do }}%"></div>
+                            <div class="tsu-program">
+                                {{ ct.ten_ct }}
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="tsu-progress">
+                                <div class="tsu-progress-num">
+                                    {{ ct.tong_tien_do|floatformat:1 }}%
+                                </div>
+
+                                <div class="tsu-progress-track">
+                                    <div class="tsu-progress-bar"
+                                         style="width:{{ ct.tong_tien_do|stringformat:'f' }}%">
+                                    </div>
                                 </div>
                             </div>
                         </td>
+
                         <td>
-                            {% if item.trang_thai_duyet == 'Chờ duyệt' %}
-                                <span class="badge badge-cho-duyet px-2 py-1">Chờ duyệt</span>
-                            {% elif item.tong_tien_do == 100 %}
-                                <span class="badge badge-du-dieu-kien px-2 py-1">Đủ điều kiện thi</span>
+                            {% if ct.giai_doan == 'cho_duyet' %}
+                                <span class="tsu-badge wait">
+                                    Chờ duyệt
+                                </span>
+
+                            {% elif ct.giai_doan == 'dang_ojt' %}
+                                <span class="tsu-badge ojt">
+                                    Đang OJT
+                                </span>
+
+                            {% elif ct.giai_doan == 'du_dieu_kien' %}
+                                <span class="tsu-badge ready">
+                                    Đủ điều kiện thi
+                                </span>
+
+                            {% elif ct.giai_doan == 'da_xep_lich' %}
+                                <span class="tsu-badge exam">
+                                    Đã xếp lịch thi
+                                </span>
+
+                            {% elif ct.giai_doan == 'thi_lai' %}
+                                <span class="tsu-badge wait">
+                                    Thi không đạt
+                                </span>
+
+                            {% elif ct.giai_doan == 'cho_chuyen_ho_so' %}
+                                <span class="tsu-badge ready">
+                                    Chờ chuyển hồ sơ
+                                </span>
+
                             {% else %}
-                                <span class="badge badge-dang-ojt px-2 py-1">Đang OJT</span>
+                                <span class="tsu-badge wait">
+                                    Đang xử lý
+                                </span>
                             {% endif %}
                         </td>
-                        <td class="text-center">
-                            {% if item.trang_thai_duyet == 'Chờ duyệt' %}
-                            <a href="{% url 'training:duyet_chuong_trinh' item.ma_ct %}"
-                               class="btn btn-outline-danger btn-sm px-3 fs-8 fw-semibold">
-                               Duyệt lộ trình
-                            </a>
-                            {% elif item.tong_tien_do == 100 %}
-                                <a href="{% url 'training:bo_tri_thi' ma_nv=item.ma_nv.manv %}"
-                                   class="btn btn-highlands btn-sm px-3 fs-8">
-                                    Bố trí thi
-                                </a>
-                            {% else %}
-                                <a href="{% url 'training:cap_nhat_tien_do_ojt' ma_nv=item.ma_nv.manv %}"
-                                   class="btn btn-outline-secondary btn-sm px-3 fs-8 fw-semibold">
-                                    Tích checklist
-                                </a>
-                            {% endif %}
-                            <a href="{% url 'training:trang_thai_ho_so' ma_nv=item.ma_nv.manv %}"
-                               class="btn btn-outline-danger btn-sm px-3"
-                               style="margin-top: 6px; display: inline-block;">
-                                <i class="bi bi-clipboard-check"></i>
-                                Xem trạng thái hồ sơ
-                            </a>
+
+                        <td>
+
+<div class="tsu-actions">
+
+    {% if ct.giai_doan == 'cho_duyet' %}
+        <a class="tsu-action tsu-action-main"
+           href="{% url 'training:duyet_chuong_trinh' ct.pk %}">
+            <i class="bi bi-clipboard-check"></i>
+            <span>Duyệt lộ trình</span>
+        </a>
+
+    {% elif ct.giai_doan == 'dang_ojt' %}
+        <a class="tsu-action tsu-action-main"
+           href="{% url 'training:cap_nhat_tien_do_ojt' ct.ma_nv.manv %}">
+            <i class="bi bi-list-check"></i>
+            <span>Tích checklist</span>
+        </a>
+
+    {% elif ct.giai_doan == 'du_dieu_kien' %}
+        <a class="tsu-action tsu-action-main"
+           href="{% url 'training:bo_tri_thi' ct.ma_nv.manv %}">
+            <i class="bi bi-calendar-plus"></i>
+            <span>Bố trí thi</span>
+        </a>
+
+    {% elif ct.giai_doan == 'thi_lai' %}
+        <a class="tsu-action tsu-action-main"
+           href="{% url 'training:bo_tri_thi' ct.ma_nv.manv %}">
+            <i class="bi bi-arrow-repeat"></i>
+            <span>Bố trí thi lại</span>
+        </a>
+
+    {% elif ct.giai_doan == 'da_xep_lich' %}
+        <span class="tsu-action-pending">
+            <i class="bi bi-calendar-check"></i>
+            Đã xếp lịch thi
+        </span>
+
+    {% elif ct.giai_doan == 'cho_chuyen_ho_so' %}
+        <a class="tsu-action tsu-action-main"
+           href="{% url 'training:trang_thai_ho_so' ct.ma_nv.manv %}">
+            <i class="bi bi-send-check"></i>
+            <span>Chuyển hồ sơ</span>
+        </a>
+
+    {% endif %}
+
+    <a class="tsu-action tsu-action-detail"
+       href="{% url 'training:trang_thai_ho_so' ct.ma_nv.manv %}">
+        <i class="bi bi-file-earmark-text"></i>
+        <span>Xem hồ sơ</span>
+    </a>
+
+</div>
 
                         </td>
+
                     </tr>
-                    {% empty %}
+
+                {% empty %}
                     <tr>
-                        <td colspan="7" class="text-center py-4 text-muted">Chưa có dữ liệu nhân viên tập sự.</td>
+                        <td colspan="7" class="tsu-empty">
+                            Không tìm thấy nhân viên tập sự
+                            phù hợp với điều kiện lọc.
+                        </td>
                     </tr>
-                    {% endfor %}
+                {% endfor %}
+
                 </tbody>
             </table>
         </div>
-    </div>
+
+    </section>
+
 </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const dropdown = document.getElementById('tsuStatusDropdown');
+    const trigger = document.getElementById('tsuStatusTrigger');
+    const menu = document.getElementById('tsuStatusMenu');
+    const hiddenInput = document.getElementById('tsuStatusValue');
+    const statusText = document.getElementById('tsuStatusText');
+    const triggerIcon = trigger.querySelector(
+        '.tsu-status-trigger-icon i'
+    );
+    const options = menu.querySelectorAll('.tsu-status-option');
+
+    function closeDropdown() {
+        dropdown.classList.remove('is-open');
+        trigger.setAttribute('aria-expanded', 'false');
+    }
+
+    function selectOption(option) {
+        const value = option.dataset.value;
+        const icon = option.dataset.icon;
+
+        hiddenInput.value = value;
+        statusText.textContent = option.querySelector('span').textContent;
+        triggerIcon.className = 'bi ' + icon;
+
+        options.forEach(item => {
+            item.classList.toggle('is-selected', item === option);
+            item.setAttribute(
+                'aria-selected',
+                item === option ? 'true' : 'false'
+            );
+        });
+
+        closeDropdown();
+    }
+
+    trigger.addEventListener('click', function () {
+        const isOpen = dropdown.classList.toggle('is-open');
+        trigger.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    options.forEach(option => {
+        option.setAttribute('role', 'option');
+
+        option.addEventListener('click', function () {
+            selectOption(option);
+        });
+    });
+
+    document.addEventListener('click', function (event) {
+        if (!dropdown.contains(event.target)) {
+            closeDropdown();
+        }
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closeDropdown();
+        }
+    });
+
+    // Khôi phục trạng thái đã chọn sau khi lọc
+    const selected = Array.from(options).find(
+        option => option.dataset.value === hiddenInput.value
+    );
+
+    if (selected) {
+        selectOption(selected);
+    }
+});
+</script>
+
 {% endblock %}

@@ -287,12 +287,12 @@
     <!-- THANH SIDEBAR DỌC -->
     <aside class="internal-sidebar">
         <nav class="sidebar-menu">
-            <a href="{% url 'home' %}" class="{% if active_menu == 'dashboard' %}active{% endif %}">
+            <a href="{% url 'accounts:dashboard' %}" class="{% if active_menu == 'dashboard' %}active{% endif %}">
                 <span class="menu-icon">▦</span>
                 <span>Tổng quan</span>
             </a>
 
-            <a href="#" class="{% if active_menu == 'employees' %}active{% endif %}">
+            <a href="{% url 'employees:quan_ly_ho_so' %}" class="{% if active_menu == 'employees' %}active{% endif %}">
                 <span class="menu-icon">♙</span>
                 <span>Quản lý nhân viên</span>
             </a>
@@ -302,32 +302,32 @@
                 <span>Tuyển dụng</span>
             </a>
 
-            <a href="#" class="{% if active_menu == 'contracts' %}active{% endif %}">
+            <a href="{% url 'contracts:tong_quan_hop_dong' %}" class="{% if active_menu == 'contracts' %}active{% endif %}">
                 <span class="menu-icon">▤</span>
                 <span>Hợp đồng &amp; Phúc lợi</span>
             </a>
 
-            <a href="#" class="{% if active_menu == 'scheduling' %}active{% endif %}">
+            <a href="{% url 'scheduling:dashboard' %}" class="{% if active_menu == 'scheduling' %}active{% endif %}">
                 <span class="menu-icon">▦</span>
                 <span>Phân ca làm việc</span>
             </a>
 
-            <a href="#" class="{% if active_menu == 'attendance' %}active{% endif %}">
+            <a href="{% url 'attendance:dashboard' %}" class="{% if active_menu == 'attendance' %}active{% endif %}">
                 <span class="menu-icon">◷</span>
                 <span>Chấm công</span>
             </a>
 
-            <a href="#" class="{% if active_menu == 'payroll' %}active{% endif %}">
+            <a href="{% url 'payroll:management' %}" class="{% if active_menu == 'payroll' %}active{% endif %}">
                 <span class="menu-icon">▤</span>
                 <span>Quản lý lương</span>
             </a>
 
-            <a href="#" class="{% if active_menu == 'training' %}active{% endif %}">
+            <a href="{% url 'training:dashboard_quan_ly_tap_su' %}" class="{% if active_menu == 'training' %}active{% endif %}">
                 <span class="menu-icon">♧</span>
                 <span>Đào tạo</span>
             </a>
 
-            <a href="#" class="{% if active_menu == 'reports' %}active{% endif %}">
+            <a href="{% url 'reports:monthly_dashboard' %}" class="{% if active_menu == 'reports' %}active{% endif %}">
                 <span class="menu-icon">▥</span>
                 <span>Báo cáo thống kê</span>
             </a>
@@ -357,7 +357,6 @@
                     {% endfor %}
                 </select>
 
-                <!-- ĐOẠN CODE MỚI (ĐÃ ĐỔI THÀNH INPUT ĐỂ GÕ TỰ DO) -->
                 <input type="text" name="ma_ho_so" value="{{ ma_ho_so_filter }}" class="filter-input" placeholder="🔍 Nhập mã hồ sơ (VD: HS001)">
 
                 <select name="trang_thai">
@@ -371,7 +370,6 @@
 
                 <button type="submit" class="btn-search">Tìm kiếm</button>
             </form>
-            <!-- ĐÃ XÓA DÒNG QUY ƯỚC TRẠNG THÁI THEO YÊU CẦU -->
         </div>
 
         <div class="card-container">
@@ -389,12 +387,10 @@
 
             {% for hs in danh_sach_hs %}
             <div class="table-row">
-                <!-- CỘT 1: ĐÃ ĐỔI TÊN THÀNH MÃ HỒ SƠ VÀ XÓA HẲN CÁC DÒNG UV PHỤ -->
                 <div class="col-center">
                     <strong style="color: #8A1A22; font-size: 14px;">{{ hs.ma_ho_so }}</strong>
                 </div>
 
-                <!-- CỘT 2: CHỈ HIỂN THỊ HỌ TÊN -->
                 <div class="col-center">
                     <strong style="font-size: 14px; color: #111;">{{ hs.ma_ung_vien.ho_ten }}</strong>
                 </div>
@@ -415,7 +411,6 @@
                 </div>
 
                 <div class="action-btns">
-                    <!-- FIX ĐƯỜNG DẪN CV DÙNG {{ hs.cv_ung_vien.url }} CHUẨN DJANGO MEDIA -->
                     <button type="button" class="action-btn" onclick="openDetailModal('{{ hs.ma_ung_vien.ma_ung_vien }}', '{{ hs.ma_ung_vien.ho_ten }}', '{{ hs.ma_ung_vien.ngay_sinh|date:"d/m/Y" }}', '{{ hs.ma_ung_vien.gioi_tinh }}', '{{ hs.ma_ung_vien.sdt }}', '{{ hs.ma_ung_vien.email }}', '{{ hs.ma_ung_vien.dia_chi }}', '{{ hs.ma_ho_so }}', '{{ hs.ma_dot.ten_dot }}', '{{ hs.ma_vi_tri.ten_vi_tri }}', '{{ hs.ngay_nop|date:"d/m/Y" }}', '{{ hs.trang_thai }}', '{% if hs.cv_ung_vien %}{{ hs.cv_ung_vien.url }}{% else %}#{% endif %}')">Xem hồ sơ</button>
 
                     {% if hs.trang_thai == 'Chờ xét duyệt' %}

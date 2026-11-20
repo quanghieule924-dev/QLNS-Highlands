@@ -12,34 +12,43 @@
 
 {% block content %}
 
-<div class="page-container">
+<div class="page-container contract-list-page">
 
     <!-- TIÊU ĐỀ TRANG -->
     <div class="contract-breadcrumb"><a href="{% url 'contracts:tong_quan_hop_dong' %}">Hợp đồng &amp; Phúc lợi</a><span>›</span><span class="breadcrumb-current">Danh sách hợp đồng</span></div>
     <div class="page-header">
-      <div>
-        {% if request.user.role == 'admin' %}
-            <h1>Quản lý hợp đồng</h1>
-        {% else %}
-            <h1>Hợp đồng của tôi</h1>
-        {% endif %}
-      </div>
-
-      {% if request.user.role == 'admin' %}
-        <div class="page-header-actions">
-
-            <a href="{% url 'contracts:them_hop_dong' %}"
-               class="btn btn-primary">
-                + Thêm hợp đồng
-            </a>
-
-            <a href="{% url 'contracts:hop_dong_sap_het_han' %}"
-                class="btn btn-secondary">
-                <i class="fas fa-exclamation-triangle"></i>
-                Hợp đồng sắp hết hạn
-            </a>
+        <div>
+            {% if request.user.role == 'admin' %}
+                <h1>Quản lý hợp đồng</h1>
+            {% else %}
+                <h1>Hợp đồng của tôi</h1>
+            {% endif %}
         </div>
-      {% endif %}
+
+        {% if request.user.role == 'employee' %}
+            <div class="page-header-actions">
+                <a href="{% url 'contracts:phuc_loi_cua_toi' %}"
+                   class="btn btn-primary">
+                    <i class="fas fa-gift"></i>
+                    Phúc lợi của tôi
+                </a>
+            </div>
+        {% endif %}
+
+        {% if request.user.role == 'admin' %}
+            <div class="page-header-actions">
+                <a href="{% url 'contracts:them_hop_dong' %}"
+                   class="btn btn-primary">
+                    + Thêm hợp đồng
+                </a>
+
+                <a href="{% url 'contracts:hop_dong_sap_het_han' %}"
+                   class="btn btn-secondary">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Hợp đồng sắp hết hạn
+                </a>
+            </div>
+        {% endif %}
     </div>
 
     <!-- KHU VỰC TÌM KIẾM VÀ LỌC -->

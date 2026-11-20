@@ -99,6 +99,8 @@ def quan_ly_tuyen_dung(request):
 
     # NƠI TRẢ VỀ GIAO DIỆN CHUẨN KHI TRUY CẬP BẰNG PHƯƠNG THỨC GET
     return render(request, 'recruitment/noi_bo_tuyen_dung.html', context)
+
+
 # 2. TRANG CÔNG KHAI DÀNH CHO ỨNG VIÊN (Có hỗ trợ tìm kiếm & lọc)
 def recruitment_list_view(request):
     q = request.GET.get('q', '')
@@ -134,6 +136,8 @@ def recruitment_list_view(request):
 
         ngay_bd = item.ngay_bat_dau.strftime('%d/%m/%Y') if item.ngay_bat_dau else ''
         ngay_kt = item.ngay_ket_thuc.strftime('%d/%m/%Y') if item.ngay_ket_thuc else ''
+
+        # Sửa lại lỗi dấu xuống dòng bị ngắt quãng ở code gốc của bro
         thoi_gian_tuyen = f"{ngay_bd} - {ngay_kt}" if (ngay_bd and ngay_kt) else "Đang cập nhật"
 
         if q and q.lower() not in item.ten_dot.lower() and q.lower() not in ten_vt.lower():
@@ -159,6 +163,25 @@ def recruitment_list_view(request):
             'chi_nhanh': 'Chi nhánh Bạch Đằng, Đà Nẵng',
             'dia_chi_cn': '256 Bạch Đằng, Đà Nẵng',
         })
+
+    # =========================================================================
+    # BỔ SUNG ĐOẠN SẮP XẾP ƯU TIÊN: "Đang tuyển" luôn đứng đầu, sau đó mới đến mã đợt mới nhất
+    # =========================================================================
+    def sap_xep_tuyen_dung(x):
+        # Trạng thái "Đang tuyển" nhận giá trị ưu tiên 0 (đứng trên), còn lại là 1
+        do_uu_tien = 0 if x['trang_thai'] == 'Đang tuyển' else 1
+        # Sắp xếp phụ theo mã đợt giảm dần (mã mới hơn / lớn hơn lên trên)
+        return (do_uu_tien, str(x['ma_dot']))
+
+    # Dùng hàm sorted với reverse=False cho độ ưu tiên (0 lên đầu), và reverse=True cho mã đợt (mới nhất lên trên)
+    # Ta đảo chiều mã đợt bằng cách dùng `-` hoặc sắp xếp trực tiếp:
+    danh_sach_tuyen_dung.sort(key=lambda x: (0 if x['trang_thai'] == 'Đang tuyển' else 1, str(x['ma_dot'])),
+                              reverse=False)
+
+    # Để chắc chắn mã đợt lớn hơn (mới hơn) nằm trên trong cùng nhóm trạng thái, ta có thể sort theo kiểu:
+    danh_sach_tuyen_dung.sort(key=lambda x: str(x['ma_dot']), reverse=True)  # Sort phụ theo mã giảm dần trước
+    danh_sach_tuyen_dung.sort(
+        key=lambda x: 0 if x['trang_thai'] == 'Đang tuyển' else 1)  # Sau đó sort chính đưa 'Đang tuyển' lên đầu
 
     paginator = Paginator(danh_sach_tuyen_dung, 10)
     page_number = request.GET.get('page')

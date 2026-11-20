@@ -53,98 +53,126 @@ def lay_ma_de_nguon(vi_tri):
     )
 
 
+
 @transaction.atomic
-def tao_de_random(lich_thi, vi_tri, so_cau=5):
+def tao_de_random(lich_thi, vi_tri, so_cau=10):
     """
-    Tạo đề thi riêng từ ngân hàng câu hỏi.
-    Random một lần, sau đó lưu cố định.
+    Tạo đề thi tổng kết từ ngân hàng theo vị trí.
+    Mỗi lịch thi có một đề riêng.
+    Đề được random một lần và lưu cố định.
     """
 
-    if not isinstance(so_cau, int) or so_cau <= 0:
+    # 1. Kiểm tra số câu hỏi
+    if not isinstance(so_cau, int) or isinstance(so_cau, bool) or so_cau <= 0:
         raise ValueError(
-            'Số câu thi phải là số nguyên dương.'
+            "Số câu thi phải là số nguyên dương."
         )
 
-    # Tuyệt đối không tạo đề thật cho lịch nguồn
-    if lich_thi.ma_lt.startswith('BANKLT'):
+    # 2. Xác định ngân hàng theo vị trí
+    ma_ngan_hang = {
+        "Phục vụ": "BANKPV001",
+        "Nhân viên phục vụ": "BANKPV001",
+        "Pha chế": "BANKPC001",
+        "Nhân viên pha chế": "BANKPC001",
+        "Thu ngân": "BANKTN001",
+        "Nhân viên thu ngân": "BANKTN001",
+    }
+
+    vi_tri = str(vi_tri or "").strip()
+
+    ma_de_nguon = ma_ngan_hang.get(vi_tri)
+
+    if not ma_de_nguon:
         raise ValueError(
-            'Không được tạo đề thi trên lịch ngân hàng.'
+            f"Chưa hỗ trợ ngân hàng câu hỏi cho vị trí: {vi_tri}"
         )
 
-    # Khóa lịch trong giao dịch để hạn chế tạo trùng
+    # 3. Không tạo đề thật cho lịch ngân hàng
+    if lich_thi.ma_lt.startswith("BANKLT"):
+        raise ValueError(
+            "Không được tạo đề thi trên lịch ngân hàng."
+        )
+
+    # 4. Lấy và khóa lịch thi hiện tại
     lich = (
         LichThi.objects
         .select_for_update()
         .get(pk=lich_thi.pk)
     )
 
+    # 5. Mỗi lịch chỉ có một đề thi
     if DeThi.objects.filter(ma_lt=lich).exists():
         raise ValueError(
-            'Lịch thi này đã có đề thi.'
+            "Lịch thi này đã được tạo đề trước đó."
         )
 
-    # Tự tìm ngân hàng theo vị trí
-    ma_de_nguon = lay_ma_de_nguon(vi_tri)
-
-    try:
-        de_nguon = DeThi.objects.get(
+    # 6. Tìm đúng đề nguồn
+    de_nguon = (
+        DeThi.objects
+        .filter(
             ma_dt=ma_de_nguon,
-            ma_lt__ma_lt__startswith='BANKLT'
+            ma_lt__ma_lt__startswith="BANKLT"
         )
+        .first()
+    )
 
-    except DeThi.DoesNotExist:
+    if de_nguon is None:
         raise ValueError(
-            f'Chưa tạo ngân hàng đề {ma_de_nguon}.'
+            f"Không tìm thấy ngân hàng {ma_de_nguon} "
+            f"cho vị trí {vi_tri}."
         )
 
-    # Lấy các câu hỏi nguồn
+    # 7. Lấy câu hỏi từ ngân hàng nguồn
     ngan_hang = list(
         CauHoi.objects.filter(
             ma_dt=de_nguon
-        ).order_by('ma_ch')
+        ).order_by("ma_ch")
     )
 
     if len(ngan_hang) < so_cau:
         raise ValueError(
-            f'Ngân hàng {de_nguon.ten_de_thi} '
-            f'chỉ có {len(ngan_hang)} câu hỏi. '
-            f'Cần tối thiểu {so_cau} câu.'
+            f"Ngân hàng {vi_tri} hiện có "
+            f"{len(ngan_hang)} câu hỏi. "
+            f"Cần tối thiểu {so_cau} câu."
         )
 
-    # Chọn ngẫu nhiên không trùng câu
+    # 8. Random không lặp câu
     cau_hoi_chon = random.sample(
         ngan_hang,
         so_cau
     )
 
-    # Tạo mã đề mới, tối đa 20 ký tự
-    ma_de_moi = 'DT' + uuid.uuid4().hex[:16]
-
+    # 9. Tạo đề mới cho lịch thi nhân viên
     de_moi = DeThi.objects.create(
-        ma_dt=ma_de_moi,
+        ma_dt="DT" + uuid.uuid4().hex[:16],
         ma_lt=lich,
-        ten_de_thi=f'Đề thi tổng kết {vi_tri}',
+        ten_de_thi=f"Đề thi tổng kết {vi_tri}",
         thoi_luong=10 if so_cau == 5 else 30
     )
 
-    # Điểm các câu cộng lại bằng 100
+    # 10. Chia đều tổng điểm 100
     diem_moi_cau = 100.0 / so_cau
+
+    # 11. Sao chép câu hỏi vào đề thi riêng
+    ds_cau_hoi_moi = []
 
     for stt, cau in enumerate(cau_hoi_chon, start=1):
 
-        # Q001... Q002... giúp lưu thứ tự
-        # câu hỏi đã được random
-        ma_cau_moi = (
-            f'Q{stt:03d}'
-            f'{uuid.uuid4().hex[:15]}'
+        ds_cau_hoi_moi.append(
+            CauHoi(
+                ma_ch=(
+                    f"Q{stt:03d}"
+                    f"{uuid.uuid4().hex[:15]}"
+                ),
+                ma_dt=de_moi,
+                noi_dung_ch=cau.noi_dung_ch,
+                dap_an_dung=cau.dap_an_dung,
+                diem=diem_moi_cau
+            )
         )
 
-        CauHoi.objects.create(
-            ma_ch=ma_cau_moi,
-            ma_dt=de_moi,
-            noi_dung_ch=cau.noi_dung_ch,
-            dap_an_dung=cau.dap_an_dung,
-            diem=diem_moi_cau
-        )
+    CauHoi.objects.bulk_create(ds_cau_hoi_moi)
 
+    # 12. Trả về đề thi vừa tạo
     return de_moi
+

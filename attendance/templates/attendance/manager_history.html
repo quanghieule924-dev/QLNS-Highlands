@@ -1,0 +1,539 @@
+
+{% extends "base_internal.html" %}
+
+{% block title %}
+Lịch sử chấm công | Highlands HRM
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .mh-page {
+        padding: 18px 20px 35px;
+        font-family: 'Montserrat', sans-serif;
+        color: #253047;
+    }
+
+    .mh-heading {
+        background: #fff;
+        border-left: 5px solid #c8102e;
+        border-radius: 14px;
+        padding: 24px 28px;
+        margin-bottom: 24px;
+        box-shadow: 0 3px 14px rgba(0,0,0,.04);
+    }
+
+    .mh-heading h2 {
+        margin: 0 0 8px;
+        font-size: 24px;
+    }
+
+    .mh-heading p {
+        margin: 0;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .mh-tabs {
+        display: flex;
+        gap: 22px;
+        flex-wrap: wrap;
+        border-bottom: 1px solid #dfe3ea;
+        margin-bottom: 24px;
+    }
+
+    .mh-tab {
+        padding: 13px 7px;
+        border-bottom: 3px solid transparent;
+        color: #64748b;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .mh-tab.active {
+        color: #c8102e;
+        border-bottom-color: #c8102e;
+    }
+
+    .mh-tab.pending {
+        color: #a1a9b7;
+    }
+
+    .mh-filter {
+        display: flex;
+        align-items: end;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+    }
+
+    .mh-field {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .mh-field label {
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .mh-input {
+        background: #fff;
+        border: 1px solid #d9dee7;
+        border-radius: 9px;
+        padding: 12px;
+        font: inherit;
+        font-size: 13px;
+        min-width: 185px;
+        height: 44px;
+    }
+
+    .mh-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 9px;
+        background: #c8102e;
+        color: #fff;
+        padding: 12px 18px;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        height: 44px;
+    }
+
+    .mh-btn:hover {
+        background: #ab0d27;
+        color: #fff;
+    }
+
+    .mh-export {
+        background: #fff;
+        color: #253047;
+        border: 1px solid #d9dee7;
+    }
+
+    .mh-export:hover {
+        background: #f5f6f9;
+        color: #253047;
+    }
+
+    .mh-summary {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .mh-stat {
+        background: #fff;
+        border: 1px solid #e5e9f0;
+        border-radius: 13px;
+        padding: 21px;
+    }
+
+    .mh-stat span {
+        display: block;
+        color: #64748b;
+        font-size: 13px;
+        margin-bottom: 14px;
+    }
+
+    .mh-stat strong {
+        display: block;
+        color: #253047;
+        font-size: 27px;
+    }
+
+    .mh-section-title {
+        font-size: 18px;
+        margin: 28px 0 15px;
+    }
+
+    .mh-card {
+        background: #fff;
+        border: 1px solid #e5e9f0;
+        border-radius: 13px;
+        overflow: hidden;
+    }
+
+    .mh-table-wrap {
+        overflow-x: auto;
+    }
+
+    .mh-table {
+        width: 100%;
+        min-width: 1050px;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+    .mh-table th {
+        background: #f9e1e6;
+        color: #80283a;
+        padding: 15px 13px;
+        text-align: left;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .mh-table td {
+        padding: 16px 13px;
+        border-bottom: 1px solid #edf0f4;
+        vertical-align: middle;
+    }
+
+    .mh-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .mh-table tbody tr:hover {
+        background: #fafbfc;
+    }
+
+    .mh-name {
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .mh-code {
+        font-size: 12px;
+        color: #8792a3;
+    }
+
+    .mh-badge {
+        display: inline-block;
+        border-radius: 20px;
+        padding: 7px 11px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .mh-da-checkin {
+        background: #fff0d6;
+        color: #9c6500;
+    }
+
+    .mh-da-checkout {
+        background: #e0f5e8;
+        color: #16794b;
+    }
+
+    .mh-chua-cham {
+        background: #f0f1f4;
+        color: #64748b;
+    }
+
+    .mh-chua-den-ngay {
+        background: #e8f0fe;
+        color: #3560a0;
+    }
+
+    .mh-can-kiem-tra {
+        background: #ffe4e6;
+        color: #be123c;
+    }
+
+    .mh-empty {
+        padding: 35px;
+        text-align: center;
+        color: #64748b;
+    }
+
+    .mh-note {
+        margin-top: 16px;
+        color: #718096;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    @media (max-width: 1100px) {
+        .mh-summary {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 600px) {
+        .mh-page {
+            padding: 12px;
+        }
+
+        .mh-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .mh-heading {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="mh-page">
+
+    <!-- TIÊU ĐỀ -->
+    <div class="mh-heading">
+        <h2>Quản lý chấm công</h2>
+        <p>
+            Theo dõi, tổng hợp và đối soát
+            dữ liệu chấm công của nhân viên tại cửa hàng.
+        </p>
+    </div>
+
+    <!-- TAB -->
+    <div class="mh-tabs">
+
+        <a
+            href="{% url 'attendance:manager_dashboard' %}"
+            class="mh-tab"
+        >
+            Chấm công hôm nay
+        </a>
+
+        <span class="mh-tab active">
+            Lịch sử chấm công
+        </span>
+
+       <!-- <span class="mh-tab pending">
+            Giải trình
+        </span> -->
+
+<a
+    href="{% url 'attendance:manager_face_station' %}"
+    class="mh-tab"
+>
+    Face ID &amp; Trạm
+</a>
+
+    </div>
+
+    <!-- BỘ LỌC -->
+    <form
+        method="get"
+        action="{% url 'attendance:manager_history' %}"
+        class="mh-filter"
+    >
+
+        <div class="mh-field">
+            <label for="month">Chọn tháng</label>
+            <input
+                type="month"
+                id="month"
+                name="month"
+                class="mh-input"
+                value="{{ thang_chon }}"
+                min="2000-01"
+                max="2100-12"
+            >
+        </div>
+
+        <div class="mh-field">
+            <label for="q">Tìm nhân viên</label>
+            <input
+                type="text"
+                id="q"
+                name="q"
+                class="mh-input"
+                value="{{ tu_khoa }}"
+                placeholder="Tên hoặc mã NV..."
+            >
+        </div>
+
+        <button type="submit" class="mh-btn">
+            Xem dữ liệu
+        </button>
+
+        <a
+            class="mh-btn mh-export"
+            href="{% url 'attendance:manager_export' %}?month={{ thang_chon|urlencode }}&amp;q={{ tu_khoa|urlencode }}"
+        >
+            Xuất Excel
+        </a>
+
+    </form>
+
+    <!-- THỐNG KÊ -->
+    <div class="mh-summary">
+
+        <div class="mh-stat">
+            <span>Lượt ca theo lịch</span>
+            <strong>{{ tong_luot_ca }}</strong>
+        </div>
+
+        <div class="mh-stat">
+            <span>Ca hoàn thành</span>
+            <strong>{{ tong_ca_hoan_thanh }}</strong>
+        </div>
+
+        <div class="mh-stat">
+            <span>Tổng giờ thực tế</span>
+            <strong>{{ tong_gio }}</strong>
+        </div>
+
+        <div class="mh-stat">
+            <span>Lượt đi muộn</span>
+            <strong>{{ tong_luot_di_muon }}</strong>
+        </div>
+
+    </div>
+
+    <!-- BẢNG TỔNG HỢP -->
+    <h3 class="mh-section-title">
+        Tổng hợp theo nhân viên
+    </h3>
+
+    <div class="mh-card">
+        <div class="mh-table-wrap">
+            <table class="mh-table">
+
+                <thead>
+                    <tr>
+                        <th>Mã NV</th>
+                        <th>Nhân viên</th>
+                        <th>Số ca theo lịch</th>
+                        <th>Ca hoàn thành</th>
+                        <th>Tổng giờ làm</th>
+                        <th>Lượt đi muộn</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in tong_hop %}
+                        <tr>
+                            <td>{{ item.ma_nv }}</td>
+                            <td>
+                                <strong>{{ item.ho_ten }}</strong>
+                            </td>
+                            <td>{{ item.so_ca }}</td>
+                            <td>{{ item.ca_hoan_thanh }}</td>
+                            <td>{{ item.tong_gio }}</td>
+                            <td>{{ item.di_muon }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" class="mh-empty">
+                                Không có dữ liệu trong tháng đã chọn.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+    <!-- BẢNG CHI TIẾT -->
+    <h3 class="mh-section-title">
+        Chi tiết chấm công
+    </h3>
+
+    <div class="mh-card">
+        <div class="mh-table-wrap">
+            <table class="mh-table">
+
+                <thead>
+                    <tr>
+                        <th>Ngày làm</th>
+                        <th>Nhân viên</th>
+                        <th>Ca làm</th>
+                        <th>Giờ theo lịch</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Giờ thực tế</th>
+                        <th>Trạng thái</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in chi_tiet %}
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ item.ngay_lam|date:"d/m/Y" }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                <div class="mh-name">
+                                    {{ item.ho_ten }}
+                                </div>
+                                <div class="mh-code">
+                                    {{ item.ma_nv }}
+                                </div>
+                            </td>
+
+                            <td>{{ item.ten_ca }}</td>
+
+                            <td>
+                                {% if item.bat_dau and item.ket_thuc %}
+                                    {{ item.bat_dau|date:"H:i" }}
+                                    –
+                                    {{ item.ket_thuc|date:"H:i" }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if item.checkin %}
+                                    {{ item.checkin|date:"H:i:s" }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if item.checkout %}
+                                    {{ item.checkout|date:"H:i:s" }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ item.gio_thuc_te }}
+                            </td>
+
+                            <td>
+                                <span class="mh-badge mh-{{ item.mau_trang_thai }}">
+                                    {{ item.trang_thai }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {{ item.ghi_chu }}
+                            </td>
+
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="9" class="mh-empty">
+                                Không tìm thấy bản ghi chấm công
+                                trong tháng được chọn.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+    <p class="mh-note">
+        Số giờ thực tế được tính từ thời gian Check-in
+        đến Check-out và chưa áp dụng các quy tắc
+        tính lương. Ca chưa đến ngày không được xem
+        là nhân viên vắng mặt.
+    </p>
+
+</div>
+
+{% endblock %}

@@ -551,12 +551,13 @@ Trạng thái hồ sơ tập sự | Highlands Coffee
 
         {% if du_dieu_kien_xet_duyet %}
 
-            <button type="button"
-                    class="profile-button primary"
-                    disabled>
-                <i class="bi bi-arrow-right-circle"></i>
-                Chuyển sang Hợp đồng & Phúc lợi
-            </button>
+    <a href="/contracts/hop-dong/them/?nhan_vien={{ nhan_vien.pk }}"
+       class="profile-button primary">
+
+        <i class="bi bi-arrow-right-circle"></i>
+        Chuyển sang Hợp đồng & Phúc lợi
+
+    </a>
 
         {% endif %}
 

@@ -1,12 +1,11 @@
 
 from django import forms
 from django.forms import inlineformset_factory
+from employees.models import NhanVien
 
 from .models import (
     HopDong,
     ThongBao,
-    YeuCauNghiTruocHan,
-    YeuCauChinhSuaHD,
     BHXH,
     CheDoPhucLoi,
     PhucLoiHopDong,
@@ -15,7 +14,6 @@ from .models import (
 )
 
 from django.utils import timezone
-from .models import HopDong
 
 # =========================================================
 # 1. FORM QUẢN LÝ HỢP ĐỒNG
@@ -35,7 +33,6 @@ class HopDongForm(forms.ModelForm):
             'hinh_thuc_luong',
             'muc_luong',
         ]
-
         widgets = {
             'mahd': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -79,6 +76,18 @@ class HopDongForm(forms.ModelForm):
                 'class': 'form-control',
             }),
         }
+
+
+#Mới thêm ngày 6/11
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            # Chỉ cho phép chọn nhân viên đã hoàn thành đào tạo
+            self.fields['nhan_vien'].queryset = (
+                NhanVien.objects.filter(
+                    trang_thai='Chính thức'
+                ).order_by('ho_ten')
+            )
 
 
 class GiaHanHopDongForm(forms.ModelForm):
@@ -146,114 +155,6 @@ class ThongBaoForm(forms.ModelForm):
             }),
         }
 
-
-# =========================================================
-# 3. FORM YÊU CẦU NGHỈ TRƯỚC HẠN
-# =========================================================
-
-class YeuCauNghiTruocHanForm(forms.ModelForm):
-
-    class Meta:
-        model = YeuCauNghiTruocHan
-        fields = [
-            'mayc',
-            'hop_dong',
-            'ngay_muon_nghi',
-            'ly_do',
-        ]
-
-        widgets = {
-            'mayc': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Nhập mã yêu cầu',
-            }),
-            'hop_dong': forms.Select(attrs={
-                'class': 'form-control',
-            }),
-            'ngay_muon_nghi': forms.DateInput(attrs={
-                'class': 'form-control',
-                'type': 'date',
-            }),
-            'ly_do': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 4,
-                'placeholder': 'Nhập lý do nghỉ trước hạn',
-            }),
-        }
-
-    def __init__(self, *args, nhan_vien=None, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # Chỉ hiển thị hợp đồng thuộc nhân viên đang đăng nhập
-        if nhan_vien is not None:
-            from django import forms
-
-            hop_dong_field = self.fields['hop_dong']
-
-            if isinstance(hop_dong_field, forms.ModelChoiceField):
-                hop_dong_field.queryset = HopDong.objects.filter(
-                    nhan_vien=nhan_vien
-                )
-
-        else:
-            from django import forms
-
-            hop_dong_field = self.fields['hop_dong']
-
-            if isinstance(hop_dong_field, forms.ModelChoiceField):
-                hop_dong_field.queryset = HopDong.objects.none()
-
-# =========================================================
-# 4. FORM YÊU CẦU CHỈNH SỬA HỢP ĐỒNG
-# =========================================================
-
-class YeuCauChinhSuaHDForm(forms.ModelForm):
-
-    class Meta:
-        model = YeuCauChinhSuaHD
-        fields = ['noi_dung']
-
-        widgets = {
-            'noi_dung': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 4,
-                'placeholder': 'Nhập nội dung cần chỉnh sửa',
-            }),
-        }
-
-class DuyetYeuCauNghiTruocHanForm(forms.ModelForm):
-
-    class Meta:
-        model = YeuCauNghiTruocHan
-        fields = [
-            'trang_thai_duyet',
-            'ngay_duyet',
-        ]
-
-        widgets = {
-            'trang_thai_duyet': forms.Select(attrs={
-                'class': 'form-control',
-            }),
-            'ngay_duyet': forms.DateInput(attrs={
-                'class': 'form-control',
-                'type': 'date',
-            }),
-        }
-
-
-class DuyetYeuCauChinhSuaHDForm(forms.ModelForm):
-
-    class Meta:
-        model = YeuCauChinhSuaHD
-        fields = [
-            'trang_thai_cs',
-        ]
-
-        widgets = {
-            'trang_thai_cs': forms.Select(attrs={
-                'class': 'form-control',
-            }),
-        }
 
 # =========================================================
 # 5. FORM QUẢN LÝ BẢO HIỂM XÃ HỘI

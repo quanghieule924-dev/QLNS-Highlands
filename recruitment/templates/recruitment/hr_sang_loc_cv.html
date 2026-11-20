@@ -407,12 +407,12 @@
     <!-- THANH SIDEBAR DỌC -->
     <aside class="internal-sidebar">
         <nav class="sidebar-menu">
-            <a href="{% url 'home' %}" class="{% if active_menu == 'dashboard' %}active{% endif %}">
+            <a href="{% url 'accounts:dashboard' %}" class="{% if active_menu == 'dashboard' %}active{% endif %}">
                 <span class="menu-icon">▦</span>
                 <span>Tổng quan</span>
             </a>
 
-            <a href="#" class="{% if active_menu == 'employees' %}active{% endif %}">
+            <a href="{% url 'employees:quan_ly_ho_so' %}" class="{% if active_menu == 'employees' %}active{% endif %}">
                 <span class="menu-icon">♙</span>
                 <span>Quản lý nhân viên</span>
             </a>
@@ -422,32 +422,32 @@
                 <span>Tuyển dụng</span>
             </a>
 
-            <a href="#" class="{% if active_menu == 'contracts' %}active{% endif %}">
+            <a href="{% url 'contracts:tong_quan_hop_dong' %}" class="{% if active_menu == 'contracts' %}active{% endif %}">
                 <span class="menu-icon">▤</span>
                 <span>Hợp đồng &amp; Phúc lợi</span>
             </a>
 
-            <a href="#" class="{% if active_menu == 'scheduling' %}active{% endif %}">
+            <a href="{% url 'scheduling:dashboard' %}" class="{% if active_menu == 'scheduling' %}active{% endif %}">
                 <span class="menu-icon">▦</span>
                 <span>Phân ca làm việc</span>
             </a>
 
-            <a href="#" class="{% if active_menu == 'attendance' %}active{% endif %}">
+            <a href="{% url 'attendance:dashboard' %}" class="{% if active_menu == 'attendance' %}active{% endif %}">
                 <span class="menu-icon">◷</span>
                 <span>Chấm công</span>
             </a>
 
-            <a href="#" class="{% if active_menu == 'payroll' %}active{% endif %}">
+            <a href="{% url 'payroll:management' %}" class="{% if active_menu == 'payroll' %}active{% endif %}">
                 <span class="menu-icon">▤</span>
                 <span>Quản lý lương</span>
             </a>
 
-            <a href="#" class="{% if active_menu == 'training' %}active{% endif %}">
+            <a href="{% url 'training:dashboard_quan_ly_tap_su' %}" class="{% if active_menu == 'training' %}active{% endif %}">
                 <span class="menu-icon">♧</span>
                 <span>Đào tạo</span>
             </a>
 
-            <a href="#" class="{% if active_menu == 'reports' %}active{% endif %}">
+            <a href="{% url 'reports:monthly_dashboard' %}" class="{% if active_menu == 'reports' %}active{% endif %}">
                 <span class="menu-icon">▥</span>
                 <span>Báo cáo thống kê</span>
             </a>
@@ -476,7 +476,6 @@
                 <option value="Pha chế" {% if vi_tri_filter == 'Pha chế' %}selected{% endif %}>Pha chế</option>
             </select>
 
-            <!-- ĐOẠN CODE MỚI (ĐÃ ĐỔI THÀNH INPUT ĐỂ GÕ TỰ DO) -->
             <input type="text" name="ma_ho_so" value="{{ ma_ho_so_filter }}" class="filter-input" placeholder="🔍 Nhập mã hồ sơ ">
 
             <select name="trang_thai" class="filter-select">
@@ -504,7 +503,6 @@
                         <div class="cv-name">{{ hs.ma_ung_vien.ho_ten }}</div>
                     </div>
 
-                    <!-- BỐ CỤC 4 THUỘC TÍNH CHIA KIỂU 2 x 2 -->
                     <div class="cv-grid-2x2">
                         <div class="cv-grid-item highlight">📋 {{ hs.ma_ho_so }}</div>
                         <div class="cv-grid-item">💼 {{ hs.ma_vi_tri.ten_vi_tri }}</div>
@@ -531,7 +529,6 @@
                         <div class="cv-name">{{ hs.ma_ung_vien.ho_ten }}</div>
                     </div>
 
-                    <!-- BỐ CỤC 4 THUỘC TÍNH CHIA KIỂU 2 x 2 -->
                     <div class="cv-grid-2x2">
                         <div class="cv-grid-item highlight">📋 {{ hs.ma_ho_so }}</div>
                         <div class="cv-grid-item">💼 {{ hs.ma_vi_tri.ten_vi_tri }}</div>

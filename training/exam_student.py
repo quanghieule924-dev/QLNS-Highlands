@@ -24,12 +24,12 @@ from .models import (ChuongTrinhTapSu,BaiHoc,TienDoTapSu,LichThi,DeThi,CauHoi,
 
 CA_THI = {
     'Sang': (9, 0, 10, 0),
-    'Chieu': (14, 0, 15, 0),
+    'Chieu': (12, 0, 15, 0),
     'Toi': (19, 0, 20, 0),
 
     # Hỗ trợ dữ liệu cũ trong database
     'Ca Sáng (09:00 - 10:00)': (9, 0, 10, 0),
-    'Ca Chiều (14:00 - 15:00)': (14, 0, 15, 0),
+    'Ca Chiều (12:00 - 15:00)': (12, 0, 15, 0),
     'Ca Tối (19:00 - 20:00)': (19, 0, 20, 0),
 }
 

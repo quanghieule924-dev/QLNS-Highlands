@@ -1,0 +1,721 @@
+
+{% extends "base_internal.html" %}
+
+{% block title %}
+Đăng ký Face ID | Highlands HRM
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .face-page {
+        padding: 18px 20px 35px;
+        font-family: 'Montserrat', sans-serif;
+        color: #243047;
+    }
+
+    .face-heading {
+        background: white;
+        border-left: 5px solid #c8102e;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 22px;
+        box-shadow: 0 3px 14px rgba(0,0,0,.04);
+    }
+
+    .face-heading h2 {
+        margin: 0 0 8px;
+        font-size: 24px;
+    }
+
+    .face-heading p {
+        margin: 0;
+        font-size: 14px;
+        color: #64748b;
+    }
+
+    .face-layout {
+        display: grid;
+        grid-template-columns: minmax(300px, .8fr)
+                               minmax(0, 1.2fr);
+        gap: 20px;
+        align-items: start;
+    }
+
+    .face-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 24px;
+        min-width: 0;
+    }
+
+    .face-card h3 {
+        margin: 0 0 20px;
+        font-size: 18px;
+    }
+
+    .face-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 9px;
+    }
+
+    .face-select {
+        width: 100%;
+        padding: 13px;
+        border: 1px solid #d7dce5;
+        border-radius: 9px;
+        font: inherit;
+        font-size: 14px;
+        background: #fff;
+        margin-bottom: 20px;
+    }
+
+    .face-note {
+        background: #f7f8fa;
+        border-radius: 10px;
+        padding: 15px;
+        font-size: 13px;
+        color: #64748b;
+        line-height: 1.8;
+        margin-bottom: 20px;
+    }
+
+    .face-consent {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 13px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .face-consent input {
+        margin-top: 4px;
+        accent-color: #c8102e;
+    }
+
+    .face-camera {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        background: #111827;
+        border-radius: 12px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .face-camera video,
+    .face-camera img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: none;
+    }
+
+    .face-camera video {
+        transform: scaleX(-1);
+    }
+
+    .face-placeholder {
+        color: #cbd5e1;
+        text-align: center;
+        line-height: 1.7;
+        padding: 25px;
+    }
+
+    .face-guide {
+        position: absolute;
+        width: 48%;
+        height: 76%;
+        border: 2px dashed rgba(255,255,255,.7);
+        border-radius: 45%;
+        display: none;
+        pointer-events: none;
+    }
+
+    .face-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 18px;
+    }
+
+    .face-btn {
+        border: none;
+        padding: 12px 17px;
+        border-radius: 9px;
+        font: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .face-btn:disabled {
+        opacity: .45;
+        cursor: not-allowed;
+    }
+
+    .face-btn-primary {
+        background: #c8102e;
+        color: #fff;
+    }
+
+    .face-btn-secondary {
+        background: #e9edf2;
+        color: #334155;
+    }
+
+    .face-message {
+        margin-top: 15px;
+        padding: 13px 15px;
+        background: #f1f5f9;
+        border-radius: 9px;
+        color: #475569;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .face-message.error {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+
+    @media (max-width: 850px) {
+        .face-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .face-page {
+            padding: 12px;
+        }
+    }
+</style>
+
+<div class="face-page">
+
+    <div class="face-heading">
+        <h2>Đăng ký khuôn mặt Face ID</h2>
+        <p>
+            Thiết lập dữ liệu nhận diện khuôn mặt
+            cho nhân viên Highlands Coffee
+        </p>
+    </div>
+
+    <div class="face-layout">
+
+        <!-- THÔNG TIN NHÂN VIÊN -->
+        <section class="face-card">
+
+            <h3>Thông tin đăng ký</h3>
+
+            <label class="face-label" for="employeeSelect">
+                Chọn nhân viên
+            </label>
+
+            <select
+                id="employeeSelect"
+                class="face-select"
+            >
+                <option value="">
+                    -- Chọn nhân viên --
+                </option>
+
+                {% for nv in danh_sach_nhan_vien %}
+                    <option value="{{ nv.pk }}">
+                        {{ nv.manv }} - {{ nv.ho_ten }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <div class="face-note">
+                <strong>Hướng dẫn chụp khuôn mặt</strong>
+                <p>
+                    Nhân viên đứng trước camera,
+                    nhìn thẳng vào ống kính,
+                    giữ khuôn mặt rõ và đủ ánh sáng.
+                </p>
+                <p>
+                    Không đeo kính râm, khẩu trang
+                    hoặc che khuất khuôn mặt.
+                </p>
+            </div>
+
+            <label class="face-consent">
+                <input
+                    type="checkbox"
+                    id="faceConsent"
+                >
+                <span>
+                    Nhân viên đã được thông báo mục đích
+                    sử dụng dữ liệu khuôn mặt và đồng ý
+                    thực hiện bước chụp thử.
+                </span>
+            </label>
+
+            <div class="face-note">
+                <strong>Trạng thái:</strong>
+                Chế độ chụp thử ảnh mẫu.
+                Chưa lưu dữ liệu Face ID vào hệ thống.
+            </div>
+
+        </section>
+
+        <!-- CAMERA -->
+        <section class="face-card">
+
+            <h3>Camera đăng ký khuôn mặt</h3>
+
+            <div class="face-camera">
+
+                <video
+                    id="faceVideo"
+                    autoplay
+                    muted
+                    playsinline
+                ></video>
+
+                <img
+                    id="faceCaptured"
+                    alt="Ảnh khuôn mặt vừa chụp"
+                >
+
+                <div
+                    class="face-guide"
+                    id="faceGuide"
+                ></div>
+
+                <div
+                    class="face-placeholder"
+                    id="facePlaceholder"
+                >
+                    Camera chưa được bật.
+                    <p>
+                        Chọn nhân viên và nhấn
+                        Mở camera.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="face-buttons">
+
+                <button
+                    type="button"
+                    class="face-btn face-btn-primary"
+                    id="openFaceCamera"
+                >
+                    Mở camera
+                </button>
+
+                <button
+                    type="button"
+                    class="face-btn face-btn-secondary"
+                    id="captureFace"
+                    disabled
+                >
+                    Chụp khuôn mặt
+                </button>
+
+                <button
+                    type="button"
+                    class="face-btn face-btn-secondary"
+                    id="retakeFace"
+                    disabled
+                >
+                    Chụp lại
+
+<button
+    type="button"
+    class="face-btn face-btn-primary"
+    id="saveFace"
+    disabled
+>
+    Lưu Face ID
+</button>
+
+                </button>
+
+                <button
+                    type="button"
+                    class="face-btn face-btn-secondary"
+                    id="stopFaceCamera"
+                    disabled
+                >
+                    Tắt camera
+                </button>
+
+            </div>
+
+            <div
+                class="face-message"
+                id="faceMessage"
+                role="status"
+                aria-live="polite"
+            >
+                Vui lòng chọn nhân viên để bắt đầu.
+            </div>
+
+            <canvas
+                id="faceCanvas"
+                style="display: none;"
+            ></canvas>
+
+        </section>
+
+    </div>
+
+</div>
+
+<div style="display:none;">
+    {% csrf_token %}
+</div>
+
+<script>
+(function () {
+
+    const employeeSelect =
+        document.getElementById("employeeSelect");
+
+    const consent =
+        document.getElementById("faceConsent");
+
+    const video =
+        document.getElementById("faceVideo");
+
+    const captured =
+        document.getElementById("faceCaptured");
+
+    const placeholder =
+        document.getElementById("facePlaceholder");
+
+    const guide =
+        document.getElementById("faceGuide");
+
+    const canvas =
+        document.getElementById("faceCanvas");
+
+    const openBtn =
+        document.getElementById("openFaceCamera");
+
+    const captureBtn =
+        document.getElementById("captureFace");
+
+    const retakeBtn =
+        document.getElementById("retakeFace");
+
+    const stopBtn =
+        document.getElementById("stopFaceCamera");
+
+    const message =
+        document.getElementById("faceMessage");
+
+    const saveBtn = document.getElementById("saveFace");
+    let stream = null;
+    let starting = false;
+    let active = true;
+
+    function notify(text, error = false) {
+        message.textContent = text;
+        message.classList.toggle("error", error);
+    }
+
+    function clearCapture() {
+        captured.removeAttribute("src");
+        captured.style.display = "none";
+        retakeBtn.disabled = true;
+        saveBtn.disabled = true;
+    }
+
+    function stopCamera() {
+
+        if (stream) {
+            stream.getTracks().forEach(
+                track => track.stop()
+            );
+            stream = null;
+        }
+
+        video.pause();
+        video.srcObject = null;
+        video.style.display = "none";
+        guide.style.display = "none";
+
+        clearCapture();
+
+        placeholder.style.display = "block";
+
+        captureBtn.disabled = true;
+        stopBtn.disabled = true;
+        openBtn.disabled = false;
+
+        canvas.width = 0;
+        canvas.height = 0;
+    }
+
+    async function openCamera() {
+
+        if (starting || stream) {
+            return;
+        }
+
+        if (!employeeSelect.value) {
+            notify(
+                "Vui lòng chọn nhân viên trước.",
+                true
+            );
+            return;
+        }
+
+        if (!consent.checked) {
+            notify(
+                "Cần xác nhận nhân viên đồng ý chụp thử.",
+                true
+            );
+            return;
+        }
+
+        if (!navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia) {
+            notify(
+                "Camera không khả dụng hoặc trang chưa " +
+                "chạy trong môi trường an toàn.",
+                true
+            );
+            return;
+        }
+
+        starting = true;
+        openBtn.disabled = true;
+
+        notify("Đang mở camera...");
+
+        let newStream = null;
+
+        try {
+
+            newStream =
+                await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: "user"
+                    },
+                    audio: false
+                });
+
+            if (!active) {
+                newStream.getTracks().forEach(
+                    track => track.stop()
+                );
+                return;
+            }
+
+            stream = newStream;
+            video.srcObject = stream;
+
+            await video.play();
+
+            video.style.display = "block";
+            placeholder.style.display = "none";
+            guide.style.display = "block";
+
+            captureBtn.disabled = false;
+            stopBtn.disabled = false;
+
+            notify(
+                "Camera đã mở. Đặt khuôn mặt " +
+                "vào khung hình rồi nhấn Chụp khuôn mặt."
+            );
+
+        } catch (error) {
+
+            if (newStream) {
+                newStream.getTracks().forEach(
+                    track => track.stop()
+                );
+            }
+
+            stream = null;
+            video.srcObject = null;
+            openBtn.disabled = false;
+
+            notify(
+                "Không thể mở camera: " + error.message,
+                true
+            );
+
+        } finally {
+            starting = false;
+        }
+    }
+
+    function captureFace() {
+
+        if (!stream || video.readyState < 2) {
+            notify("Camera chưa sẵn sàng.", true);
+            return;
+        }
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        if (!canvas.width || !canvas.height) {
+            notify("Chưa nhận được hình ảnh camera.", true);
+            return;
+        }
+
+        const ctx = canvas.getContext("2d");
+
+        ctx.drawImage(
+            video,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        // Chỉ giữ ảnh trong bộ nhớ của trang.
+        // Chưa gửi ảnh lên server.
+        captured.src = canvas.toDataURL("image/jpeg", 0.85);
+
+        captured.style.display = "block";
+        video.style.display = "none";
+        guide.style.display = "none";
+
+        captureBtn.disabled = true;
+        retakeBtn.disabled = false;
+        saveBtn.disabled = false;
+
+        notify(
+            "Đã chụp ảnh thử thành công. " +
+            "Ảnh chưa được lưu vào database. " +
+            "Bạn có thể chụp lại."
+        );
+    }
+
+    function retakeFace() {
+
+        if (!stream) {
+            notify("Vui lòng mở camera lại.", true);
+            return;
+        }
+
+        clearCapture();
+
+        video.style.display = "block";
+        guide.style.display = "block";
+        captureBtn.disabled = false;
+
+        notify("Đã sẵn sàng chụp lại khuôn mặt.");
+    }
+
+    openBtn.addEventListener("click", openCamera);
+    captureBtn.addEventListener("click", captureFace);
+    retakeBtn.addEventListener("click", retakeFace);
+
+    stopBtn.addEventListener("click", function () {
+        stopCamera();
+        notify("Camera đã tắt. Ảnh chụp thử đã được xóa.");
+    });
+
+    employeeSelect.addEventListener("change", function () {
+        stopCamera();
+        notify("Đã chọn nhân viên. Có thể mở camera.");
+    });
+
+    consent.addEventListener("change", function () {
+        stopCamera();
+        notify(
+            consent.checked
+                ? "Đã xác nhận đồng ý chụp thử."
+                : "Vui lòng xác nhận đồng ý trước khi mở camera."
+        );
+    });
+
+
+async function saveFaceEnrollment() {
+
+    if (!employeeSelect.value || !consent.checked) {
+        notify(
+            "Vui lòng chọn nhân viên và xác nhận đồng ý.",
+            true
+        );
+        return;
+    }
+
+    if (!captured.src || !canvas.width || !canvas.height) {
+        notify("Vui lòng chụp khuôn mặt trước.", true);
+        return;
+    }
+
+    saveBtn.disabled = true;
+
+    notify("Đang kiểm tra và lưu mẫu khuôn mặt...");
+
+    try {
+        // Chuyển ảnh từ canvas thành JPEG
+        const blob = await new Promise((resolve) => {
+            canvas.toBlob(resolve, "image/jpeg", 0.85);
+        });
+
+        if (!blob) {
+            throw new Error("Không thể tạo ảnh JPEG.");
+        }
+
+        const formData = new FormData();
+
+        formData.append("ma_nv", employeeSelect.value);
+        formData.append("consent", "yes");
+        formData.append("image", blob, "face.jpg");
+
+        const csrfToken = document.querySelector(
+            'input[name="csrfmiddlewaretoken"]'
+        ).value;
+
+        const response = await fetch(
+            "{% url 'attendance:save_face_enrollment' %}",
+            {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken
+                },
+                body: formData,
+                credentials: "same-origin"
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(
+                result.message || "Không thể lưu Face ID."
+            );
+        }
+
+        stopCamera();
+
+        notify(result.message);
+
+    } catch (error) {
+
+        notify(error.message, true);
+
+        saveBtn.disabled = false;
+    }
+}
+
+saveBtn.addEventListener("click", saveFaceEnrollment);
+
+
+    window.addEventListener("pagehide", function () {
+        active = false;
+        stopCamera();
+    });
+
+})();
+</script>
+
+{% endblock %}

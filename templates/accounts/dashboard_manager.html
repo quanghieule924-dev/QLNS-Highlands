@@ -4,26 +4,32 @@
 {% block extra_css %}<link rel="stylesheet" href="{% static 'css/dashboard_new.css' %}">{% endblock %}
 {% block content %}
 <div class="dash-page">
-  <div class="dash-head"><div><div class="dash-kicker">KHÔNG GIAN QUẢN LÝ</div><h1>Tổng quan quản lý</h1><p>Thông tin nhân sự và các hoạt động cần theo dõi trong hệ thống.</p></div><div class="dash-date">{{ today|date:"l, d/m/Y" }}</div></div>
+  <div class="dash-head"><div><div class="dash-kicker"></div><h1>Tổng quan quản lý</h1><p></p></div><div class="dash-date">{{ today|date:"l, d/m/Y" }}</div></div>
   <section class="dash-metrics" aria-label="Chỉ số nhân sự">
-    <a class="dash-metric metric-red" href="{% url 'accounts:module' 'employees' %}"><span class="metric-icon">♙</span><small>Nhân viên</small><strong>{{ employee_count }}</strong><span>Hồ sơ nhân viên <b>↗</b></span></a>
-    <a class="dash-metric metric-blue" href="{% url 'accounts:module' 'recruitment' %}"><span class="metric-icon">▤</span><small>Hồ sơ ứng tuyển</small><strong>{{ application_count }}</strong><span>Hồ sơ đã ghi nhận <b>↗</b></span></a>
-    <a class="dash-metric metric-violet" href="{% url 'accounts:module' 'contracts' %}"><span class="metric-icon">▣</span><small>Hợp đồng</small><strong>{{ contract_count }}</strong><span>Hợp đồng trên hệ thống <b>↗</b></span></a>
-    <a class="dash-metric metric-teal" href="{% url 'accounts:module' 'scheduling' %}"><span class="metric-icon">◷</span><small>Lượt phân ca hôm nay</small><strong>{{ shifts_today }}</strong><span>Ngày {{ today|date:"d/m/Y" }} <b>↗</b></span></a>
+    <a class="dash-metric metric-red" href="{% url 'employees:quan_ly_ho_so' %}"><span class="metric-icon">♙</span><small>Nhân viên</small><strong>{{ employee_count }}</strong><span>Hồ sơ nhân viên <b>↗</b></span></a>
+    <a class="dash-metric metric-blue" href="{% url 'recruitment:quan_ly_tuyen_dung' %}"><span class="metric-icon">▤</span><small>Hồ sơ ứng tuyển</small><strong>{{ application_count }}</strong><span>Hồ sơ đã ghi nhận <b>↗</b></span></a>
+    <a class="dash-metric metric-violet" href="{% url 'contracts:danh_sach_hop_dong' %}"><span class="metric-icon">▣</span><small>Hợp đồng</small><strong>{{ contract_count }}</strong><span>Hợp đồng trên hệ thống <b>↗</b></span></a>
+    <a class="dash-metric metric-teal" href="{% url 'scheduling:dashboard' %}"><span class="metric-icon">◷</span><small>Lượt phân ca hôm nay</small><strong>{{ shifts_today }}</strong><span>Ngày {{ today|date:"d/m/Y" }} <b>↗</b></span></a>
+  </section>
+  <section class="dash-metrics" aria-label="Các chỉ số hoạt động bổ sung">
+    <a class="dash-metric metric-blue" href="{% url 'attendance:manager_dashboard' %}"><span class="metric-icon">✓</span><small>Đã check-in hôm nay</small><strong>{{ attendance_today }}</strong><span>Xem chấm công <b>↗</b></span></a>
+    <a class="dash-metric metric-red" href="{% url 'attendance:manager_dashboard' %}"><span class="metric-icon">!</span><small>Yêu cầu điều chỉnh công chờ duyệt</small><strong>{{ pending_attendance_requests }}</strong><span>Xử lý yêu cầu <b>↗</b></span></a>
+    <a class="dash-metric metric-teal" href="{% url 'employees:quan_ly_ho_so' %}"><span class="metric-icon">♙</span><small>Nhân viên vào làm tháng này</small><strong>{{ new_employees_month }}</strong><span>Hồ sơ nhân viên <b>↗</b></span></a>
+    <a class="dash-metric metric-violet" href="{% url 'training:dashboard_quan_ly_tap_su' %}"><span class="metric-icon">▣</span><small>Chương trình đào tạo</small><strong>{{ training_program_count }}</strong><span>Xem đào tạo <b>↗</b></span></a>
   </section>
   <div class="dash-two-col">
-    <section class="dash-panel"><div class="dash-panel-head"><div><h2>Hồ sơ ứng tuyển gần đây</h2><p>5 hồ sơ được nộp gần nhất</p></div><a href="{% url 'accounts:module' 'recruitment' %}">Xem tất cả →</a></div>
+    <section class="dash-panel"><div class="dash-panel-head"><div><h2>Hồ sơ ứng tuyển gần đây</h2><p>5 hồ sơ được nộp gần nhất</p></div><a href="{% url 'recruitment:quan_ly_tuyen_dung' %}">Xem tất cả →</a></div>
       <div class="dash-table-scroll"><table class="dash-table"><thead><tr><th>Ứng viên</th><th>Vị trí</th><th>Ngày nộp</th><th>Trạng thái</th></tr></thead><tbody>
       {% for item in recent_applications %}<tr><td><strong>{{ item.ma_ung_vien.ho_ten }}</strong></td><td>{{ item.ma_vi_tri.ten_vi_tri }}</td><td>{{ item.ngay_nop|date:"d/m/Y" }}</td><td><span class="dash-status">{{ item.trang_thai }}</span></td></tr>
       {% empty %}<tr><td colspan="4"><div class="dash-empty"><span>▤</span><strong>Chưa có hồ sơ ứng tuyển</strong><small>Hồ sơ mới sẽ xuất hiện tại đây khi có dữ liệu.</small></div></td></tr>{% endfor %}</tbody></table></div>
     </section>
-    <section class="dash-panel"><div class="dash-panel-head"><div><h2>Hợp đồng sắp hết hạn</h2><p>Trong 30 ngày tới</p></div><a href="{% url 'accounts:module' 'contracts' %}">Xem hợp đồng →</a></div>
+    <section class="dash-panel"><div class="dash-panel-head"><div><h2>Hợp đồng sắp hết hạn</h2><p>Trong 30 ngày tới</p></div><a href="{% url 'contracts:hop_dong_sap_het_han' %}">Xem hợp đồng →</a></div>
       <div class="dash-list">{% for item in expiring_contracts %}<div class="dash-list-row"><span class="dash-dot">!</span><div><strong>{{ item.nhan_vien.ho_ten }}</strong><small>{{ item.so_hd }}</small></div><span class="dash-deadline">{{ item.ngay_ket_thuc|date:"d/m/Y" }}</span></div>{% empty %}<div class="dash-empty"><span>✓</span><strong>Chưa có hợp đồng sắp hết hạn</strong><small>Không có hợp đồng kết thúc trong 30 ngày tới.</small></div>{% endfor %}</div>
     </section>
   </div>
   <section class="dash-panel dash-quick"><div class="dash-panel-head"><div><h2>Truy cập nhanh</h2><p>Đi thẳng đến các khu vực thường dùng</p></div></div><div class="dash-quick-grid">
-    <a href="{% url 'accounts:module' 'employees' %}"><span>♙</span> Quản lý nhân viên <b>→</b></a>
-    <a href="{% url 'accounts:module' 'scheduling' %}"><span>◷</span> Phân ca làm việc <b>→</b></a>
+    <a href="{% url 'employees:quan_ly_ho_so' %}"><span>♙</span> Quản lý nhân viên <b>→</b></a>
+    <a href="{% url 'scheduling:dashboard' %}"><span>◷</span> Phân ca làm việc <b>→</b></a>
     <a href="{% url 'payroll:management' %}"><span>▤</span> Quản lý lương <b>→</b></a>
     <a href="{% url 'accounts:module' 'reports' %}"><span>▥</span> Báo cáo thống kê <b>→</b></a>
   </div></section>

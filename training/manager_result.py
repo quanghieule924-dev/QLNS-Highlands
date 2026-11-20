@@ -12,9 +12,12 @@ from django.views.decorators.http import require_POST
 def trang_thai_ho_so(request, ma_nv):
 
     # Chỉ quản lý được xem trang
-    if request.user.role != 'admin':
+    if not (
+            request.user.is_superuser
+            or getattr(request.user, 'role', None) == 'admin'
+    ):
         raise PermissionDenied(
-            'Chỉ quản lý được xem hồ sơ.'
+            'Chỉ quản lý được truy cập chức năng này.'
         )
 
     nhan_vien = get_object_or_404(
@@ -225,10 +228,12 @@ def chuyen_ho_so_tap_su(request, ma_nv):
     """
 
     if not (
-        request.user.is_superuser
-        or getattr(request.user, "role", None) == "admin"
+            request.user.is_superuser
+            or getattr(request.user, 'role', None) == 'admin'
     ):
-        raise PermissionDenied
+        raise PermissionDenied(
+            'Chỉ quản lý được truy cập chức năng này.'
+        )
 
     nhan_vien = get_object_or_404(
         NhanVien,
@@ -261,7 +266,7 @@ def chuyen_ho_so_tap_su(request, ma_nv):
                     "Nhân viên chưa có chương trình tập sự."
                 )
 
-            if nv_khoa.trang_thai:
+            if nv_khoa.trang_thai not in ("Tập sự", "Tap_su"):
                 raise ValueError(
                     "Hồ sơ này đã được xác nhận bàn giao."
                 )
@@ -314,14 +319,19 @@ def chuyen_ho_so_tap_su(request, ma_nv):
                 nv_khoa
             )
 
-            if trang_thai["trang_thai"] not in ("thi_dat", "Dat"):
-                raise ValueError(
+            if not (
+                    trang_thai["trang_thai"] == "Thi Đạt"
+                    or (
+                            isinstance(trang_thai.get("ket_qua"), dict)
+                            and trang_thai["ket_qua"].get("dat") is True
+                    )
+            ):                raise ValueError(
                     "Nhân viên chưa thi đạt tổng kết."
                 )
 
             # Chỉ đánh dấu sau khi toàn bộ
             # điều kiện được kiểm tra thành công.
-            nv_khoa.trang_thai = "Chính thức"
+            nv_khoa.trang_thai = "Chờ hợp đồng"
             nv_khoa.save(update_fields=["trang_thai"])
 
     except ValueError as error:

@@ -1,5 +1,6 @@
 {% extends 'base_internal.html' %}
 {% load static %}
+#{% load l10n %}
 
 {% block title %}
     {{ tieu_de }} | HRM System
@@ -38,39 +39,76 @@
 
         <!-- 1. THÔNG TIN NHÂN VIÊN -->
         <section class="contract-card">
-            <div class="contract-card-heading">
-                <h2>Thông tin nhân viên</h2>
-                <span>Thông tin được lấy từ hồ sơ nhân viên</span>
-            </div>
-
             <div class="employee-grid">
+
+                <!-- Chọn nhân viên -->
                 <div class="contract-field employee-select">
                     <label for="{{ form.nhan_vien.id_for_label }}">
                         Chọn nhân viên <span class="required">*</span>
                     </label>
+
                     {{ form.nhan_vien }}
+
                     {% for error in form.nhan_vien.errors %}
                         <small class="field-error">{{ error }}</small>
                     {% endfor %}
                 </div>
 
+                <!-- Ngày sinh -->
+                <div class="contract-field">
+                    <label>Ngày sinh</label>
+                    <input type="text"
+                           id="nv_ngay_sinh"
+                           class="form-control readonly-field"
+                           value=""
+                           placeholder="Tự động điền"
+                           readonly>
+                </div>
+
+                <!-- Giới tính -->
+                <div class="contract-field">
+                    <label>Giới tính</label>
+                    <input type="text"
+                           id="nv_gioi_tinh"
+                           class="form-control readonly-field"
+                           value=""
+                           placeholder="Tự động điền"
+                           readonly>
+                </div>
+
+                <!-- Vị trí -->
                 <div class="contract-field">
                     <label>Vị trí</label>
-                    <input type="text" class="form-control readonly-field"
-                           value="Thông tin từ hồ sơ nhân viên" readonly>
+                    <input type="text"
+                           id="nv_vi_tri"
+                           class="form-control readonly-field"
+                           value=""
+                           placeholder="Tự động điền"
+                           readonly>
                 </div>
 
+                <!-- Số điện thoại -->
                 <div class="contract-field">
                     <label>Số điện thoại</label>
-                    <input type="text" class="form-control readonly-field"
-                           value="—" readonly>
+                    <input type="text"
+                           id="nv_sdt"
+                           class="form-control readonly-field"
+                           value=""
+                           placeholder="Tự động điền"
+                           readonly>
                 </div>
 
+                <!-- Email -->
                 <div class="contract-field">
                     <label>Email</label>
-                    <input type="text" class="form-control readonly-field"
-                           value="—" readonly>
+                    <input type="text"
+                           id="nv_email"
+                           class="form-control readonly-field"
+                           value=""
+                           placeholder="Tự động điền"
+                           readonly>
                 </div>
+
             </div>
         </section>
 
@@ -196,7 +234,7 @@
                                    class="form-control"
                                    placeholder="Nhập giá trị"
                                    min="0" step="0.01"
-                                   value="{{ pc.gia_tri }}">
+                                   value="{{ pc.gia_tri|unlocalize }}">
                             <span>VND</span>
                         </div>
 
@@ -318,7 +356,7 @@
                                        name="muc_dong"
                                        class="form-control"
                                        min="0" step="0.01"
-                                       value="{{ bhxh.muc_dong|default:'' }}"
+                                       value="{{ bhxh.muc_dong|unlocalize }}"
                                        placeholder="Nhập mức đóng">
                                 <span>VND / tháng</span>
                             </div>
@@ -438,5 +476,66 @@ document.addEventListener('DOMContentLoaded', function () {
         attachRemoveEvent(row.querySelector('.btn-remove-allowance'));
     });
 });
+
+
+// Tự động điền thông tin nhân viên
+const nhanVienSelect = document.getElementById('id_nhan_vien');
+
+const cacTruongNhanVien = {
+    ngay_sinh: document.getElementById('nv_ngay_sinh'),
+    gioi_tinh: document.getElementById('nv_gioi_tinh'),
+    vi_tri: document.getElementById('nv_vi_tri'),
+    sdt: document.getElementById('nv_sdt'),
+    email: document.getElementById('nv_email')
+};
+
+// Xóa thông tin nhân viên
+function xoaThongTinNhanVien() {
+    Object.values(cacTruongNhanVien).forEach(function (input) {
+        input.value = '';
+    });
+}
+
+// Hàm lấy thông tin nhân viên
+async function hienThiThongTinNhanVien(maNhanVien) {
+    xoaThongTinNhanVien();
+
+    if (!maNhanVien) {
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `/contracts/nhan-vien/${encodeURIComponent(maNhanVien)}/thong-tin/`
+        );
+
+        if (!response.ok) {
+            throw new Error('Không lấy được thông tin nhân viên');
+        }
+
+        const data = await response.json();
+
+        cacTruongNhanVien.ngay_sinh.value = data.ngay_sinh || '';
+        cacTruongNhanVien.gioi_tinh.value = data.gioi_tinh || '';
+        cacTruongNhanVien.vi_tri.value = data.vi_tri || '';
+        cacTruongNhanVien.sdt.value = data.sdt || '';
+        cacTruongNhanVien.email.value = data.email || '';
+
+    } catch (error) {
+        console.error(error);
+        alert('Không thể tải thông tin nhân viên. Vui lòng thử lại!');
+    }
+}
+
+// Khi thay đổi nhân viên
+nhanVienSelect.addEventListener('change', function () {
+    hienThiThongTinNhanVien(this.value);
+});
+
+// Khi vừa mở trang: tự động lấy thông tin nhân viên đã được chọn
+if (nhanVienSelect.value) {
+    hienThiThongTinNhanVien(nhanVienSelect.value);
+}
+
 </script>
 {% endblock %}

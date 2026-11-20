@@ -5,8 +5,11 @@ from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.utils import timezone
 from datetime import timedelta
-from django.forms import HiddenInput
-from django import forms
+
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET
+from employees.models import NhanVien
 
 
 
@@ -18,8 +21,6 @@ from .models import ThongBao
 
 from .models import (
     HopDong,
-    YeuCauNghiTruocHan,
-    YeuCauChinhSuaHD,
     BHXH,
     PhuCap,
     PhucLoiHopDong,
@@ -29,16 +30,14 @@ from .models import (
 from .forms import (
     HopDongForm,
     GiaHanHopDongForm,
-    YeuCauNghiTruocHanForm,
-    YeuCauChinhSuaHDForm,
-    DuyetYeuCauNghiTruocHanForm,
-    DuyetYeuCauChinhSuaHDForm,
     ChamDutHopDongForm,
     CheDoPhucLoiForm,
 )
 
 from .decorators import role_required
 
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 
 def tao_ma_tu_dong(model, truong_ma, tien_to):
     """
@@ -68,29 +67,31 @@ def luu_thong_tin_lien_quan(request, hop_dong):
     # ==========================================
     # 1. LƯU THÔNG TIN BẢO HIỂM XÃ HỘI
     # ==========================================
-
+#Cập nhật ngày 8/11
     co_tham_gia_bhxh = request.POST.get('co_tham_gia_bhxh') == 'on'
 
     if co_tham_gia_bhxh:
+
         # Kiểm tra hợp đồng đã có thông tin BHXH chưa
-        bhxh_hien_tai = BHXH.objects.filter(
+        bhxh = BHXH.objects.filter(
             hop_dong=hop_dong
         ).first()
 
-        bhxh = BHXH(
-            mabh=(
-                bhxh_hien_tai.mabh
-                if bhxh_hien_tai
-                else tao_ma_tu_dong(BHXH, 'mabh', 'BH')
-            ),
-            hop_dong=hop_dong,
-            ma_so_bh=request.POST.get('ma_so_bh'),
-            muc_dong=request.POST.get('muc_dong'),
-            ngay_tham_gia=request.POST.get('ngay_tham_gia'),
-            trang_thai=request.POST.get(
-                'trang_thai_bhxh',
-                'dang_tham_gia'
+        # Nếu chưa có thì tạo mới
+        if bhxh is None:
+            bhxh = BHXH(
+                mabh=tao_ma_tu_dong(BHXH, 'mabh', 'BH'),
+                hop_dong=hop_dong
             )
+
+        # Nếu đã có thì cập nhật đối tượng cũ
+        # Không tạo đối tượng mới với mã BHXH cũ
+        bhxh.ma_so_bh = request.POST.get('ma_so_bh')
+        bhxh.muc_dong = request.POST.get('muc_dong')
+        bhxh.ngay_tham_gia = request.POST.get('ngay_tham_gia')
+        bhxh.trang_thai = request.POST.get(
+            'trang_thai_bhxh',
+            'dang_tham_gia'
         )
 
         bhxh.full_clean()
@@ -300,6 +301,11 @@ def them_hop_dong(request):
 
                     # Lưu thông tin BHXH, phụ cấp và phúc lợi
                     luu_thong_tin_lien_quan(request, hop_dong)
+                    nhan_vien = hop_dong.nhan_vien
+
+                    if nhan_vien.trang_thai in ['Tập sự', 'Tap_su']:
+                        nhan_vien.trang_thai = 'Chờ hợp đồng'
+                        nhan_vien.save(update_fields=['trang_thai'])
 
                 messages.success(
                     request,
@@ -373,12 +379,10 @@ def chi_tiet_hop_dong(request, mahd):
         hop_dong=hop_dong
     ).select_related('che_do')
 
-    # Lấy danh sách yêu cầu chỉnh sửa
-    yeu_cau_chinh_suas = hop_dong.yeu_cau_chinh_sua.all()
+
 
     context = {
         'hop_dong': hop_dong,
-        'yeu_cau_chinh_suas': yeu_cau_chinh_suas,
         'bhxh': bhxh,
         'danh_sach_phu_cap': danh_sach_phu_cap,
         'danh_sach_phuc_loi': danh_sach_phuc_loi,
@@ -441,8 +445,9 @@ def sua_hop_dong(request, mahd):
                     mahd=hop_dong.mahd
                 )
 
+#Cập nhât
             except ValidationError as e:
-                form.add_error(None, e)
+                form.add_error(None, "; ".join(e.messages))
 
     else:
         form = HopDongForm(instance=hop_dong)
@@ -534,189 +539,49 @@ def xoa_hop_dong(request, mahd):
 
 @role_required('admin', 'employee')
 def hop_dong_sap_het_han(request):
+    # Tự động gọi tạo thông báo hợp đồng sắp hết hạn nếu là admin
+    if request.user.role == 'admin':
+        tao_thong_bao_hop_dong_sap_het_han()
 
-    # Lấy các hợp đồng sắp hết hạn
-    hop_dongs = HopDong.objects.filter(
+    # Lấy toàn bộ hợp đồng đang hiệu lực, có thời hạn
+    hop_dongs_qs = HopDong.objects.select_related(
+        'nhan_vien',
+        'hop_dong_truoc'
+    ).filter(
         trang_thai_hd='dang_hieu_luc',
         loai_hd='co_thoi_han'
     ).order_by('ngay_ket_thuc')
 
     # Nhân viên chỉ xem hợp đồng của chính mình
     if request.user.role == 'employee':
-        hop_dongs = hop_dongs.filter(
+        hop_dongs_qs = hop_dongs_qs.filter(
             nhan_vien__tai_khoan=request.user
         )
 
-    # Tìm kiếm
-    tu_khoa = request.GET.get('q', '').strip()
-
-    if tu_khoa:
-        hop_dongs = hop_dongs.filter(
-            Q(mahd__icontains=tu_khoa) |
-            Q(so_hd__icontains=tu_khoa) |
-            Q(nhan_vien__ho_ten__icontains=tu_khoa)
-        )
-
-    # Chỉ giữ hợp đồng còn tối đa 30 ngày trước khi hết hạn
+    # Lọc danh sách thực tế các hợp đồng thực sự sắp hết hạn
     hop_dongs = [
-        hd for hd in hop_dongs
+        hd for hd in hop_dongs_qs
         if hd.sap_het_han
     ]
+
+    # Tìm kiếm theo từ khóa (nếu có nhập)
+    tu_khoa = request.GET.get('q', '').strip()
+    if tu_khoa:
+        tu_khoa_lower = tu_khoa.lower()
+        hop_dongs = [
+            hd for hd in hop_dongs
+            if tu_khoa_lower in str(hd.mahd).lower()
+            or tu_khoa_lower in str(hd.so_hd).lower()
+            or (hd.nhan_vien and tu_khoa_lower in str(hd.nhan_vien.ho_ten).lower())
+        ]
 
     return render(
         request,
         'contracts/hop_dong_sap_het_han.html',
         {
             'hop_dongs': hop_dongs,
+            'tu_khoa': tu_khoa,
             'active_menu': 'contracts',
-        }
-    )
-# # =========================================================
-# # 7. NHÂN VIÊN GỬI YÊU CẦU NGHỈ TRƯỚC HẠN
-# # =========================================================
-#
-# @role_required('employee')
-# def gui_yeu_cau_nghi(request):
-#
-#     nhan_vien = getattr(request.user, 'nhan_vien', None)
-#
-#     if nhan_vien is None:
-#         messages.error(
-#             request,
-#             'Tài khoản chưa được liên kết với hồ sơ nhân viên.'
-#         )
-#         return redirect('contracts:danh_sach_hop_dong')
-#
-#     if request.method == 'POST':
-#         form = YeuCauNghiTruocHanForm(
-#             request.POST,
-#             nhan_vien=nhan_vien
-#         )
-#
-#         if form.is_valid():
-#
-#             yeu_cau = form.save(commit=False)
-#
-#             yeu_cau.ngay_gui = timezone.localdate()
-#             yeu_cau.trang_thai_duyet = 'cho_duyet'
-#             yeu_cau.ngay_duyet = None
-#
-#             try:
-#                 yeu_cau.full_clean()
-#                 yeu_cau.save()
-#
-#                 messages.success(
-#                     request,
-#                     'Gửi yêu cầu nghỉ trước hạn thành công!'
-#                 )
-#
-#                 return redirect('contracts:danh_sach_hop_dong')
-#
-#             except ValidationError as e:
-#                 form.add_error(None, e)
-#
-#     else:
-#         form = YeuCauNghiTruocHanForm(
-#             nhan_vien=nhan_vien
-#         )
-#
-#     return render(
-#         request,
-#         'contracts/form_yeu_cau_nghi.html',
-#         {
-#             'form': form,
-#             'tieu_de': 'Gửi yêu cầu nghỉ trước hạn',
-#         }
-#     )
-#
-
-# =========================================================
-# 8. NHÂN VIÊN GỬI YÊU CẦU CHỈNH SỬA HỢP ĐỒNG
-# =========================================================
-
-@role_required('employee')
-def gui_yeu_cau_chinh_sua(request, mahd):
-    messages.warning(request, 'Chức năng yêu cầu chỉnh sửa hợp đồng hiện đã tạm khóa.')
-
-    return redirect(
-        'contracts:chi_tiet_hop_dong',
-        mahd=mahd
-    )
-
-    nhan_vien = getattr(request.user, 'nhan_vien', None)
-
-    if nhan_vien is None:
-        messages.error(
-            request,
-            'Tài khoản chưa được liên kết với hồ sơ nhân viên.'
-        )
-        return redirect('contracts:danh_sach_hop_dong')
-
-    # Lấy đúng hợp đồng thuộc nhân viên đang đăng nhập
-    hop_dong = get_object_or_404(
-        HopDong,
-        mahd=mahd,
-        nhan_vien=nhan_vien
-    )
-
-    # Chỉ cho phép yêu cầu chỉnh sửa hợp đồng đang chờ ký
-    if hop_dong.trang_thai_hd != 'cho_ky':
-        messages.error(
-            request,
-            'Chỉ có thể yêu cầu chỉnh sửa hợp đồng đang chờ ký.'
-        )
-        return redirect(
-            'contracts:chi_tiet_hop_dong',
-            mahd=mahd
-        )
-
-    if request.method == 'POST':
-        form = YeuCauChinhSuaHDForm(request.POST)
-        print("FORM CLASS:", YeuCauChinhSuaHDForm)
-        print("FORM FIELDS:", list(form.fields.keys()))
-        print("FORM ERRORS:", form.errors)
-
-        if form.is_valid():
-            yeu_cau = form.save(commit=False)
-
-            # Tự động tạo mã yêu cầu chỉnh sửa
-            yeu_cau.macs = 'YCS' + uuid.uuid4().hex[:8].upper()
-
-            # Tự động gán thông tin yêu cầu
-            yeu_cau.hop_dong = hop_dong
-            yeu_cau.ngay_yeu_cau = timezone.localdate()
-            yeu_cau.trang_thai_cs = 'cho_duyet'
-
-            try:
-                yeu_cau.full_clean()
-                yeu_cau.save()
-
-                messages.success(
-                    request,
-                    'Gửi yêu cầu chỉnh sửa hợp đồng thành công!'
-                )
-
-                return redirect(
-                    'contracts:chi_tiet_hop_dong',
-                    mahd=mahd
-                )
-
-            except ValidationError as e:
-                form.add_error(None, e)
-
-        else:
-            print("FORM ERRORS:", form.errors)
-
-    else:
-        form = YeuCauChinhSuaHDForm()
-
-    return render(
-        request,
-        'contracts/form_yeu_cau_chinh_sua.html',
-        {
-            'form': form,
-            'tieu_de': 'Gửi yêu cầu chỉnh sửa hợp đồng',
-            'hop_dong': hop_dong,
         }
     )
 
@@ -1061,18 +926,20 @@ def mo_thong_bao(request, matb):
 # 10. QUẢN LÝ CHẾ ĐỘ PHÚC LỢI
 # =========================================================
 
-# 10.1. Danh sách chế độ phúc lợi
-@role_required('admin')
-def danh_sach_che_do_phuc_loi(request):
-
+# Hàm phụ lấy danh sách phúc lợi có phân trang
+def _get_che_do_phuc_loi_page(request):
     che_do_phuc_loi = CheDoPhucLoi.objects.all()
-
-    # Phân trang: 8 chế độ mỗi trang
     paginator = Paginator(che_do_phuc_loi, 8)
 
     trang_hien_tai = request.GET.get('page', 1)
 
-    page_obj = paginator.get_page(trang_hien_tai)
+    return paginator.get_page(trang_hien_tai)
+
+
+# 10.1. Danh sách chế độ phúc lợi
+@role_required('admin')
+def danh_sach_che_do_phuc_loi(request):
+    page_obj = _get_che_do_phuc_loi_page(request)
 
     return render(
         request,
@@ -1088,7 +955,6 @@ def danh_sach_che_do_phuc_loi(request):
 # 10.2. Thêm chế độ phúc lợi
 @role_required('admin')
 def them_che_do_phuc_loi(request):
-
     if request.method == 'POST':
         form = CheDoPhucLoiForm(request.POST)
 
@@ -1117,12 +983,17 @@ def them_che_do_phuc_loi(request):
     else:
         form = CheDoPhucLoiForm()
 
+    page_obj = _get_che_do_phuc_loi_page(request)
+
     return render(
         request,
-        'contracts/form_che_do_phuc_loi.html',
+        'contracts/danh_sach_che_do_phuc_loi.html',
         {
+            'page_obj': page_obj,
+            'che_do_phuc_loi': page_obj,
             'form': form,
             'tieu_de': 'Thêm chế độ phúc lợi',
+            'mo_popup': True,
             'active_menu': 'contracts',
         }
     )
@@ -1131,7 +1002,6 @@ def them_che_do_phuc_loi(request):
 # 10.3. Sửa chế độ phúc lợi
 @role_required('admin')
 def sua_che_do_phuc_loi(request, mapl):
-
     che_do = get_object_or_404(
         CheDoPhucLoi,
         mapl=mapl
@@ -1165,18 +1035,21 @@ def sua_che_do_phuc_loi(request, mapl):
     else:
         form = CheDoPhucLoiForm(instance=che_do)
 
+    page_obj = _get_che_do_phuc_loi_page(request)
+
     return render(
         request,
-        'contracts/form_che_do_phuc_loi.html',
+        'contracts/danh_sach_che_do_phuc_loi.html',
         {
+            'page_obj': page_obj,
+            'che_do_phuc_loi': page_obj,
             'form': form,
             'che_do': che_do,
             'tieu_de': 'Sửa chế độ phúc lợi',
+            'mo_popup': True,
             'active_menu': 'contracts',
         }
     )
-
-
 
 # =========================================================
 # 11. TỔNG QUAN HỢP ĐỒNG VÀ PHÚC LỢI
@@ -1241,4 +1114,84 @@ def tong_quan_hop_dong(request):
 
             'active_menu': 'contracts',
         }
+    )
+
+
+
+
+@require_GET
+def lay_thong_tin_nhan_vien(request, manv):
+    try:
+        nhan_vien = NhanVien.objects.get(manv=manv)
+
+        return JsonResponse({
+            'ngay_sinh': (
+                nhan_vien.ngay_sinh.strftime('%d/%m/%Y')
+                if nhan_vien.ngay_sinh else ''
+            ),
+            'gioi_tinh': nhan_vien.gioi_tinh or '',
+            'sdt': nhan_vien.sdt or '',
+            'email': nhan_vien.email or '',
+            'vi_tri': nhan_vien.vi_tri or '',
+        })
+
+    except NhanVien.DoesNotExist:
+        return JsonResponse(
+            {'error': 'Không tìm thấy nhân viên'},
+            status=404
+        )
+
+
+@login_required
+def phuc_loi_cua_toi(request):
+    # Chỉ cho phép nhân viên truy cập
+    if request.user.role != 'employee':
+        return HttpResponseForbidden("Bạn không có quyền truy cập.")
+
+    # Lấy hồ sơ nhân viên liên kết với tài khoản đang đăng nhập
+    try:
+        nhan_vien = request.user.nhan_vien
+    except NhanVien.DoesNotExist:
+        return render(request, 'contracts/phuc_loi_cua_toi.html', {
+            'phuc_lois': [],
+            'thong_bao': 'Tài khoản chưa được liên kết với hồ sơ nhân viên.'
+        })
+
+    # Chỉ lấy hợp đồng đang có hiệu lực của nhân viên này
+    hop_dongs = (
+        HopDong.objects
+        .filter(
+            nhan_vien=nhan_vien,
+            trang_thai_hd='dang_hieu_luc'
+        )
+        .prefetch_related(
+            'phuc_loi_hop_dong__che_do'
+        )
+    )
+
+    # Lấy danh sách phúc lợi thuộc các hợp đồng đang hiệu lực
+    phuc_lois = []
+
+    for hop_dong in hop_dongs:
+        for item in hop_dong.phuc_loi_hop_dong.all():
+            phuc_lois.append({
+                'hop_dong': hop_dong,
+                'che_do': item.che_do,
+                'gia_tri': item.gia_tri,
+            })
+
+    context = {
+        'phuc_lois': phuc_lois,
+        'hop_dongs': hop_dongs,
+        'thong_bao': (
+            'Chưa có chế độ phúc lợi nào được áp dụng '
+            'cho hợp đồng đang có hiệu lực.'
+            if not phuc_lois else ''
+        )
+    }
+
+    return render(
+        request,
+        'contracts/phuc_loi_cua_toi.html',
+        context
     )

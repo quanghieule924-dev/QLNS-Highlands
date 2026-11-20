@@ -6,17 +6,14 @@ app_name = 'training'
 urlpatterns = [
     # 1. Hiển thị
     path('dashboard/', views.dashboard_quan_ly_tap_su, name='dashboard_quan_ly_tap_su'),
-    path('lo-trinh/<int:ma_ct>/', views.lo_trinh_tap_su, name='lo_trinh_tap_su'),
     path('ket-qua-thi/<int:ma_kq>/', views.ket_qua_thi, name='ket_qua_thi'),
 
     # 2. Thao tác tác vụ
     path('duyet-lo-trinh/<int:ma_ct>/', views.duyet_lo_trinh, name='duyet_lo_trinh'),
     path('tich-checklist/<str:ma_nv>/', views.cap_nhat_tien_do_ojt, name='cap_nhat_tien_do_ojt'),
     path('bo-tri-thi/<str:ma_nv>/', views.bo_tri_thi, name='bo_tri_thi'),
-    path('tao-ho-so/', views.tao_ho_so_tap_su, name='tao_ho_so_tap_su'),
     path('duyet-chuong-trinh/<str:pk>/',views.duyet_chuong_trinh,name='duyet_chuong_trinh'),
     path('', views.dao_tao, name='dao_tao'),
-    path('nhan-vien/',views.dao_tao_nhan_vien,name='dao_tao_nhan_vien'),
     path('chinh-sua-chuong-trinh/<str:pk>/',views.chinh_sua_chuong_trinh,name='chinh_sua_chuong_trinh'),
     path('nhan-vien/',views.dao_tao_nhan_vien,name='dao_tao_nhan_vien'),
     path('lich-thi-nhan-vien/',views.lich_thi_nhan_vien,name='lich_thi_nhan_vien'),

@@ -1,21 +1,10 @@
 from django.db import models
 from django.conf import settings
 
-from django.conf import settings # Huyền thêm
 
 # Create your models here.
 
 class NhanVien(models.Model):
-    #Huyền
-    tai_khoan = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='nhan_vien',
-        verbose_name='Tài khoản'
-    ) #huyền
-
     manv = models.CharField(max_length=20, primary_key=True, verbose_name="Mã nhân viên")
     ho_ten = models.CharField(max_length=255, verbose_name="Họ tên")
     ngay_sinh = models.DateField(verbose_name="Ngày sinh", null=True, blank=True)
@@ -26,7 +15,16 @@ class NhanVien(models.Model):
     dia_chi = models.TextField(verbose_name="Địa chỉ", null=True, blank=True)
     trang_thai = models.CharField(max_length=50, verbose_name="Trạng thái", null=True, blank=True)
     ngay_vao_lam = models.DateField(verbose_name="Ngày vào làm", null=True, blank=True)
-    tai_khoan = models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name='ho_so_nhan_vien')
+
+    # Trường liên kết tài khoản (Chỉ giữ lại 1 lần duy nhất)
+    tai_khoan = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='nhan_vien',
+        verbose_name='Tài khoản'
+    )
 
     def __str__(self):
         return self.ho_ten
@@ -57,7 +55,6 @@ class TiepNhanNhanVien(models.Model):
         choices=TRANG_THAI_CHOICES,
         default='CHO_TIEP_NHAN'
     )
-
     chi_nhanh = models.CharField(max_length=255, blank=True, default='')
     ghi_chu = models.TextField(blank=True, default='')
 

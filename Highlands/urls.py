@@ -1,16 +1,15 @@
-
 from django.contrib import admin
 from django.urls import path, include
 from django.shortcuts import render
 from django.conf import settings
 from django.conf.urls.static import static
 
+
 def home(request):
     return render(request, 'home.html')
 
 
 def internal_preview(request):
-    # Trang xem thử giao diện quản lý (Admin)
     return render(
         request,
         'internal_preview.html',
@@ -23,7 +22,6 @@ def internal_preview(request):
 
 
 def employee_preview(request):
-    # Trang xem thử giao diện nhân viên
     return render(
         request,
         'employee_preview.html',
@@ -35,7 +33,6 @@ def employee_preview(request):
     )
 
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
 
@@ -45,7 +42,7 @@ urlpatterns = [
     # Đăng nhập, đăng ký, dashboard, đăng xuất
     path('accounts/', include('accounts.urls')),
 
-    # Kết nối app recruitment (đảm bảo căn lề thẳng hàng với các path bên trên)
+    # Kết nối app recruitment
     path('recruitment/', include('recruitment.urls')),
 
     path('training/', include('training.urls')),
@@ -66,10 +63,14 @@ urlpatterns = [
         name='employee_preview',
     ),
 
+    # --- TÍCH HỢP ĐẦY ĐỦ TẤT CẢ CÁC APP CỦA NHÓM ---
     # Trang hợp đồng
     path('contracts/', include('contracts.urls')),
+
     path('payroll/', include('payroll.urls')),
     path('reports/', include('reports.urls')),
+    path('scheduling/', include('scheduling.urls', namespace='scheduling')),
+    path('attendance/', include('attendance.urls')),
 ]
 
 if settings.DEBUG:

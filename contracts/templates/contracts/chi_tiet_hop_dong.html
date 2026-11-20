@@ -34,16 +34,64 @@
 
     <!-- THÔNG TIN NHÂN VIÊN -->
     <section class="contract-card">
+
         <div class="contract-card-heading">
             <h2>Thông tin nhân viên</h2>
-            <span>Thông tin nhân viên thuộc hợp đồng</span>
+            <span>Thông tin lấy từ hồ sơ nhân viên</span>
         </div>
 
-        <div class="detail-info-grid">
-            <div class="detail-info-item">
-                <span>Nhân viên</span>
-                <strong>{{ hop_dong.nhan_vien }}</strong>
+        <div class="contract-grid">
+
+            <div class="contract-field">
+                <label>Họ và tên</label>
+                <input type="text"
+                       class="form-control readonly-field"
+                       value="{{ hop_dong.nhan_vien.ho_ten|default:'—' }}"
+                       readonly>
             </div>
+
+            <div class="contract-field">
+                <label>Ngày sinh</label>
+                <input type="text"
+                       class="form-control readonly-field"
+                       value="{{ hop_dong.nhan_vien.ngay_sinh|date:'d/m/Y'|default:'—' }}"
+                       readonly>
+            </div>
+
+            <div class="contract-field">
+                <label>Giới tính</label>
+                <input type="text"
+                       class="form-control readonly-field"
+                       value="{{ hop_dong.nhan_vien.gioi_tinh|default:'—' }}"
+                       readonly>
+            </div>
+
+            <div class="contract-field">
+                <label>Vị trí làm việc</label>
+                <input type="text"
+                       class="form-control readonly-field"
+                       value="{{ hop_dong.nhan_vien.vi_tri|default:'—' }}"
+                       readonly>
+            </div>
+
+            <div class="contract-field">
+                <label>Số điện thoại</label>
+                <input type="text"
+                       class="form-control readonly-field"
+                       value="{{ hop_dong.nhan_vien.sdt|default:'—' }}"
+                       readonly>
+            </div>
+
+            <div class="contract-field">
+                <label>Email</label>
+                <input type="text"
+                       class="form-control readonly-field"
+                       value="{{ hop_dong.nhan_vien.email|default:'—' }}"
+                       readonly>
+            </div>
+
+
+
         </div>
     </section>
 
